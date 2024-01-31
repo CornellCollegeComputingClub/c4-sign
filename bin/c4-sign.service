@@ -1,0 +1,13 @@
+[Unit]
+Description=C4 Sign
+
+[Service]
+SyslogIdentifier=c4-sign
+User=c4
+Type=simple
+ExecStart=/home/c4/c4-sign/bin/start_sign.sh
+ExecStopPost=/home/c4/c4-sign/bin/stop_sign.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
