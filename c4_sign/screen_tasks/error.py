@@ -1,10 +1,6 @@
 from datetime import timedelta
 from c4_sign.base_task import ScreenTask
 from c4_sign.consts import COLOR_RED, FONT_4x6
-try:
-    from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
-except ImportError:
-    from RGBMatrixEmulator import graphics, RGBMatrix, RGBMatrixOptions
 
 # meta, i know!
 class ErrorScreenTask(ScreenTask):

@@ -1,11 +1,6 @@
 import arrow
 from datetime import timedelta
 
-try:
-    from rgbmatrix import graphics
-except ImportError:
-    from RGBMatrixEmulator import graphics
-
 from c4_sign.consts import COLOR_GRAY, COLOR_PURPLE, FONT_4x6
 
 class RepeatingTask:

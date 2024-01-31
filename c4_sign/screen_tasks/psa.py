@@ -1,17 +1,11 @@
 from datetime import timedelta
 import arrow
-import requests
 import random
-import json
 import segno
 import io
 from c4_sign.base_task import ScreenTask
-from c4_sign.consts import COLOR_CYAN, COLOR_PURPLE, COLOR_WHITE, DEV_MODE, FONT_4x6, FONT_5x7, FONT_9x15
+from c4_sign.consts import COLOR_CYAN, COLOR_PURPLE, COLOR_WHITE, FONT_4x6, FONT_5x7, FONT_9x15
 from c4_sign.util import requests_get_1hr_cache
-try:
-    from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
-except ImportError:
-    from RGBMatrixEmulator import graphics, RGBMatrix, RGBMatrixOptions
 
 class RandomPSA(ScreenTask):
     psa: dict
@@ -112,40 +106,6 @@ class Slogan(ScreenTask):
         else:
             graphics.DrawText(canvas, FONT_4x6, 1, 24, COLOR_WHITE, msg.strip().center(16))
         # graphics.DrawText(canvas, FONT_4x6, 1, 15, COLOR_WHITE, self.slogan.center(16))
-    
-    @classmethod
-    def construct_from_config(cls, config):
-        return cls()
-
-class ShowsAndCounting(ScreenTask):
-    # literally just for tabling lol
-    def __init__(self):
-        super().__init__(suggested_run_time=timedelta(seconds=15))
-    
-    def prepare(self):
-        self.shows = "10"
-        return super().prepare()
-    
-    def draw_frame(self, canvas, delta_time):
-        self.draw_header(canvas)
-        graphics.DrawText(canvas, FONT_9x15, 23, 20, COLOR_CYAN, self.shows)
-        graphics.DrawText(canvas, FONT_4x6, 1, 30, COLOR_WHITE, "Shows & Counting")
-    
-    @classmethod
-    def construct_from_config(cls, config):
-        return cls()
-
-class Relics(ScreenTask):
-    def __init__(self):
-        super().__init__(suggested_run_time=timedelta(seconds=15))
-    
-    def prepare(self):
-        return super().prepare()
-    
-    def draw_frame(self, canvas, delta_time):
-        graphics.DrawText(canvas, FONT_9x15, 5, 16, COLOR_WHITE, "Relics")
-        graphics.DrawText(canvas, FONT_4x6, 0, 25, COLOR_CYAN, "Thurs. 8-10pm".center(16))
-        # graphics.DrawText(canvas, FONT_4x6, 1, 30, COLOR_CYAN, "krnl-radio.github.io")
     
     @classmethod
     def construct_from_config(cls, config):

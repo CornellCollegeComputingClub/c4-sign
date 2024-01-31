@@ -1,11 +1,6 @@
 from datetime import timedelta
 from c4_sign.base_task import ScreenTask
-from c4_sign.consts import COLOR_CYAN, COLOR_GRAY, COLOR_WHITE, FONT_4x6, FONT_5x7
-from c4_sign.radioco_data import get_current_track
-try:
-    from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
-except ImportError:
-    from RGBMatrixEmulator import graphics, RGBMatrix, RGBMatrixOptions
+from c4_sign.consts import COLOR_GRAY, COLOR_WHITE, FONT_4x6, FONT_5x7
 
 
 class KRNLNowPlaying(ScreenTask):

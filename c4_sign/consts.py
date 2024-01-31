@@ -1,7 +1,3 @@
-try:
-    from rgbmatrix import graphics
-except ImportError:
-    from RGBMatrixEmulator import graphics
 from pkg_resources import resource_filename
 
 
