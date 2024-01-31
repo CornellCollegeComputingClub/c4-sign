@@ -4,7 +4,7 @@ setup(
     name='c4_sign',
     version='0.0.1',    
     description='funny sign go brrrrrrrr',
-    url='https://github.com/totallynotmark6/krnl-sign',
+    url='https://github.com/CornellCollegeComputingClub/c4-sign',
     author='Mark Smith',
     author_email='totallynotmark6@gmail.com',
     license='none',

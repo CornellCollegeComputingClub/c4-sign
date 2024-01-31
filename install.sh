@@ -1,5 +1,5 @@
 sudo apt install -y python3-pip git
-git clone https://github.com/totallynotmark6/krnl-sign.git
+git clone https://github.com/CornellCollegeComputingClub/c4-sign
 cd c4-sign
 git config pull.rebase false
 sudo ./rgbmatrixinstall.sh
