@@ -24,7 +24,7 @@ def clear_screen(canvas: any) -> None:
     fill_screen(canvas, 0)
 
 
-def stroke_line(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
+def stroke_line(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     """
     Colors a line of pixels between one point and another.
     :param canvas: The canvas the line will be drawn on.
@@ -35,7 +35,58 @@ def stroke_line(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int) -> 
     :param color: The color the line will be given.
     :return: None.
     """
-    pass
+
+    # Bresenham's line algorithm: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+
+    if abs(y2 - y1) < abs(x2 - x1):
+        if x1 > x2:
+            __stroke_line_low(canvas, x2, y2, x1, y1, color)
+        else:
+            __stroke_line_low(canvas, x1, y1, x2, y2, color)
+    else:
+        if y1 > y2:
+            __stroke_line_high(canvas, x2, y2, x1, y1, color)
+        else:
+            __stroke_line_high(canvas, x1, y1, x2, y2, color)
+
+
+
+def __stroke_line_low(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+    dx = x2 - x1
+    dy = y2 - y1
+    yi = 1
+    if dy < 0:
+        yi = -1
+        dy = -dy
+    D = (2 * dy) - dx
+    y = y1
+
+    for x in range(x1, x2):
+        canvas.set_pixel(x, y, color)
+        if D > 0:
+            y = y + yi
+            D = D + (2 * (dy - dx))
+        else:
+            D = D + 2 * dy
+
+
+def __stroke_line_high(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+    dx = x2 - x1
+    dy = y2 - y1
+    xi = 1
+    if dx < 0:
+        xi = -1
+        dx = -dx
+    D = (2 * dx) - dy
+    x = x1
+
+    for y in range(y1, y2):
+        canvas.set_pixel(x, y, color)
+        if D > 0:
+            x = x + xi
+            D = D + (2 * (dx - dy))
+        else:
+            D = D + 2 * dx
 
 
 def stroke_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
@@ -151,6 +202,14 @@ def draw_image(canvas: any, top_left_x: int, top_left_y: int, image) -> None:
     """
     pass
 
+
 c = Canvas()
 
+fill_screen(c, (32, 0, 64))
+
+import random
+for i in range(200):
+    x1, y1, x2, y2 = [random.randint(0, 31) for x in range(4)]
+    r, g, b = [random.randint(0, 255) for x in range(3)]
+    stroke_line(c, x1, y1, x2, y2, (r, g, b))
 c.debug()
