@@ -11,7 +11,8 @@ setup(
     packages=['c4_sign'],
     install_requires=['requests',
                       'arrow',
-                      'segno'
+                      'segno',
+                      'numpy'
                       ],
     extras_require={
         'physical': ['rpi_ws281x', 'adafruit-circuitpython-neopixel'],

@@ -62,6 +62,7 @@ class OneTimeTask:
         pass
 
 class ScreenTask:
+    ignore = False
     def __init__(self, suggested_run_time=timedelta(), max_run_time=timedelta()):
         self.started = None
         self.elapsed_time = timedelta()
@@ -77,15 +78,6 @@ class ScreenTask:
     
     def set_max_run_time(self, max_run_time):
         self.max_run_time = max_run_time
-
-    def draw_header(self, canvas):
-        now = arrow.now()
-        current_time = now.format("h:mm").rjust(5)
-        current_date = now.format("ddd,MMM D")
-        graphics.DrawLine(canvas, 0, 7, 63, 7, COLOR_GRAY)
-        graphics.DrawLine(canvas, 21, 0, 21, 7, COLOR_GRAY)
-        graphics.DrawText(canvas, FONT_4x6, 1, 6, COLOR_PURPLE, current_time)
-        graphics.DrawText(canvas, FONT_4x6, 23, 6, COLOR_PURPLE, current_date)
     
     def prepare(self):
         """
@@ -139,13 +131,17 @@ class ScreenTask:
 
     If this method returns True, the task will be stopped soon after!
     """
-    def draw_frame(self, canvas, delta_time):
+    def draw_frame(self, canvas, delta_time) -> bool:
         # override this method to run code when the screen is updated!
         # return True if you're done updating!
         raise NotImplementedError
     
-    @classmethod
-    def construct_from_config(cls, config):
-        # override this method to construct a task from a config!
-        raise NotImplementedError
+    """
+    This method is called every time the LCD screen is updated.
+    
+    Returns a 32 character string to display on the LCD screen.
+    """
+    def get_lcd_text(self) -> str:
+        # override this method to return text for the LCD screen!
+        return " " * 32
 

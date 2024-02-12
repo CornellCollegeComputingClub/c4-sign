@@ -1,12 +1,10 @@
-import requests
-from c4_sign.screen_tasks.now_playing import KRNLNowPlaying
-from c4_sign.screen_tasks.psa import RandomPSA
+import importlib
 
+from c4_sign.base_task import ScreenTask
 
 class ScreenManager:
     def __init__(self):
-        self.live_tasks = []
-        self.not_live_tasks = []
+        self.tasks = []
         self.current_task = None
         self.index = 0
 
@@ -15,10 +13,13 @@ class ScreenManager:
         return self.tasks
 
     def update_tasks(self):
-        # TODO: replace this with locally stored data
-        live_req = requests.get("https://raw.githubusercontent.com/KRNL-Radio/data-sink/main/sign/live_layout.json")
-        self.tasks = []
-        pass
+        # import all files in screen_tasks
+        mod = importlib.import_module("c4_sign.screen_tasks")
+        for obj in mod.__all__:
+            obj = importlib.import_module(f"c4_sign.screen_tasks.{obj}")
+            for name, obj in obj.__dict__.items():
+                if isinstance(obj, type) and issubclass(obj, ScreenTask) and obj != ScreenTask and obj.ignore is False:
+                    self.tasks.append(obj())
 
     def override_current_task(self, task):
         if self.current_task:

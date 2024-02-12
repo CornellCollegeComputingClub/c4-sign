@@ -3,7 +3,6 @@ from datetime import timedelta
 import arrow
 from c4_sign.base_task import RepeatingTask
 from c4_sign.consts import DEV_MODE
-from c4_sign.screen import blank_screen
 from c4_sign.update import check_for_updates
 
 
@@ -17,7 +16,6 @@ class UpdateTask(RepeatingTask):
     
     def on_run(self):
         if check_for_updates():
-            blank_screen()
             exit(5)
 
 class TaskManager:

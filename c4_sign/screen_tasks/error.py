@@ -4,6 +4,7 @@ from c4_sign.consts import COLOR_RED, FONT_4x6
 
 # meta, i know!
 class ErrorScreenTask(ScreenTask):
+    ignore = True
     def __init__(self, error: Exception):
         super().__init__(timedelta(seconds=10), timedelta(minutes=1))
         self.error = error

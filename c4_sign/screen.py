@@ -1,14 +1,12 @@
-from time import sleep
 import traceback
 import arrow
 from c4_sign.ScreenManager import ScreenManager
-from c4_sign.consts import COLOR_RED, COLOR_WHITE, FONT_4x6, FONT_5x7
 
 from c4_sign.screen_tasks.error import ErrorScreenTask
 _neopixels = None
 _lcd = None
+_canvas = None
 _screen_manager = ScreenManager()
-_frame_count = 0
 _last_update = arrow.now()
 
 
@@ -20,21 +18,10 @@ def init_matrix():
     _lcd = None # TODO: this!
     _screen_manager.update_tasks()
 
-def clear_matrix():
-    global _matrix
-    if _matrix is not None:
-        _matrix.Clear()
-
 def screen_active():
     now = arrow.now()
     # normal hours! between 6 am and midnight.
     return now.hour >= 6 and now.hour < 24
-
-def blank_screen():
-    global _matrix, _canvas
-    canvas = _canvas
-    canvas.Clear()
-    _canvas = _matrix.SwapOnVSync(canvas)
 
 def update_screen():
     global _matrix, _canvas, _last_update, _screen_manager
