@@ -242,10 +242,6 @@ def fill_ellipse(canvas: Canvas, cx: int, cy: int, rx: int, ry: int, color: int 
     dy = 2 * rx * rx * y
 
     while dx < dy:
-        canvas.set_pixel(x + cx, y + cy, 0xFF0000)
-        canvas.set_pixel(-x + cx, y + cy, 0xFF0000)
-        canvas.set_pixel(x + cx, -y + cy, 0xFF0000)
-        canvas.set_pixel(-x + cx, -y + cy, 0xFF0000)
 
         __stroke_horizontal_line(canvas, -x + cx, x + cx, y + cy, color)
         __stroke_horizontal_line(canvas, -x + cx, x + cx, -y + cy, color)
@@ -363,21 +359,32 @@ def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.nd
     :param image: The image to draw.
     :return: None
     """
+
     width, height, depth = image.shape
 
-    # Shhhhhhhhhhhh🤫 🤫🤫🤫🤫
-    canvas.data[top_left_x : top_left_x + width, top_left_y : top_left_y + height] = image
+    for y in range(top_left_y, top_left_y + height):
+        for x in range(top_left_x, top_left_x + width):
+            alpha = (image[y][x][3] / 255)
+            r = int((1 - alpha) * canvas.data[y][x][0] + alpha * image[y][x][0])
+            g = int((1 - alpha) * canvas.data[y][x][1] + alpha * image[y][x][1])
+            b = int((1 - alpha) * canvas.data[y][x][2] + alpha * image[y][x][2])
+
+            canvas.data[y][x] = (r, g, b)
+
+    # Shhhhhhhhhhhh🤫
+    # canvas.data[top_left_x : top_left_x + width, top_left_y : top_left_y + height] = background
 
 
 c = Canvas()
 
 fill_screen(c, (32, 0, 64))
 
-import random
-for i in range(200):
-    x, y, rx, ry = [random.randint(0, 31) for x in range(4)]
-    rgb = tuple([random.randint(0, 255) for x in range(3)])
+from PIL import Image
+import numpy
+bad_apple = numpy.asarray(Image.open("/home/mac/Downloads/bad_apple.bmp"))
+minecraft = numpy.asarray(Image.open("/home/mac/Downloads/MinecraftIcon.png"))
 
-    fill_ellipse(c, x, y, rx//2, ry//2, rgb)
+draw_image(c, 0, 0, bad_apple)
+draw_image(c, -15, -15, minecraft)
 
 c.debug()
