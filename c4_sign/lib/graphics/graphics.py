@@ -89,7 +89,7 @@ def __stroke_line_high(canvas: any, x1: int, y1: int, x2: int, y2: int, color: i
             D = D + 2 * dx
 
 
-def stroke_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
+def stroke_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     """
     Colors the edges of a rectangle whose corners are defined by two points.
 
@@ -102,22 +102,50 @@ def stroke_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int) -> 
     :param color: The color the rectangle will be colored.
     :return:
     """
-    pass
+
+    dx = abs(x2 - x1)
+    x = min(x1, x2)
+
+    dy = abs(y2 - y1)
+    y = min(y1, y2)
+
+    for i in range(x, x + dx + 1):
+        canvas.set_pixel(i, y, color)
+
+    for i in range(x, x + dx + 1):
+        canvas.set_pixel(i, y + dy, color)
+
+    for i in range(y + 1, y + dy):
+        canvas.set_pixel(x, i, color)
+
+    for i in range(y + 1, y + dy):
+        canvas.set_pixel(x + dx, i, color)
 
 
-def fill_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
+def fill_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     """
-        Colors the inside of a rectangle whose corners are defined by two points.
+    Colors the inside of a rectangle whose corners are defined by two points.
 
-        This function colors the interior of the rectangle. See stroke_rect in order to color the edges.
-        :param canvas: The canvas the rectangle will be drawn on.
-        :param x1: The x-coordinate of the rectangle's top left corner.
-        :param y1: The y-coordinate of the rectangle's top left corner.
-        :param x2: The x-coordinate of the rectangle's bottom right corner.
-        :param y2: The y-coordinate of the rectangle's bottom right corner.
-        :param color: The color the rectangle will be colored.
-        :return: None.
-        """
+    This function colors the interior of the rectangle. See stroke_rect in order to color the edges.
+    :param canvas: The canvas the rectangle will be drawn on.
+    :param x1: The x-coordinate of the rectangle's top left corner.
+    :param y1: The y-coordinate of the rectangle's top left corner.
+    :param x2: The x-coordinate of the rectangle's bottom right corner.
+    :param y2: The y-coordinate of the rectangle's bottom right corner.
+    :param color: The color the rectangle will be colored.
+    :return: None.
+    """
+
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
+
+    x = min(x1, x2)
+    y = min(y1, y2)
+
+    for i in range(dx+1):
+        for j in range(dy+1):
+            canvas.set_pixel(x + i, y + j, color)
+
     pass
 
 
@@ -211,5 +239,7 @@ import random
 for i in range(200):
     x1, y1, x2, y2 = [random.randint(0, 31) for x in range(4)]
     r, g, b = [random.randint(0, 255) for x in range(3)]
-    stroke_line(c, x1, y1, x2, y2, (r, g, b))
+    stroke_rect(c, x1, y1, x2, y2, (r, g, b))
+
+fill_rect(c, 5, 5, 10, 15, (255, 255, 255))
 c.debug()
