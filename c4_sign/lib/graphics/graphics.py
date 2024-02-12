@@ -1,4 +1,7 @@
-def fill_screen(canvas: any, color: int) -> None:
+from ..canvas import Canvas
+
+
+def fill_screen(canvas: any, color: int | tuple[int, int, int]) -> None:
     """
     Sets the entire screen to the same color.
 
@@ -148,3 +151,6 @@ def draw_image(canvas: any, top_left_x: int, top_left_y: int, image) -> None:
     """
     pass
 
+c = Canvas()
+
+c.debug()

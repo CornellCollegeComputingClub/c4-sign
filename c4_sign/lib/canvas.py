@@ -24,3 +24,18 @@ class Canvas:
     
     def tobytes(self):
         return self.data.tobytes()
+
+    def debug(self) -> None:
+        for y in range(0, self.height, 2):
+            for x in range(self.width):
+                # Prepare top pixel (background)
+                top_r, top_g, top_b = self.data[y][x]
+                print(f"\033[48;2;{top_r};{top_g};{top_b}m", end="")
+                # Prepare bottom pixel (foreground)
+                bottom_r, bottom_g, bottom_b = self.data[y+1][x]
+                print(f"\033[38;2;{bottom_r};{bottom_g};{bottom_b}m", end="")
+
+                # Print the actual pixels.
+                print("▄", end="")
+
+            print("\033[0m") # Reset colors
