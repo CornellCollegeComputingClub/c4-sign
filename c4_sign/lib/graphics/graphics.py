@@ -1,3 +1,5 @@
+import numpy
+
 from ..canvas import Canvas
 
 
@@ -179,7 +181,7 @@ def fill_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> None
     pass
 
 
-def stroke_polyline(canvas: Canvas, points: list[tuple[int, int]], color: int) -> None:
+def stroke_polyline(canvas: Canvas, points: list[tuple[int, int]], color: int | tuple[int, int, int]) -> None:
     """
     Colors a sequence of lines, making a path.
 
@@ -189,7 +191,10 @@ def stroke_polyline(canvas: Canvas, points: list[tuple[int, int]], color: int) -
     :param color: The color to draw the lines with.
     :return: None.
     """
-    pass
+    for i in range(len(points) - 1):
+        x1, y1 = points[i]
+        x2, y2 = points[i+1]
+        stroke_line(canvas, x1, y1, x2, y2, color)
 
 
 def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> None:
@@ -218,7 +223,7 @@ def draw_text(canvas: Canvas, text: str, x: int, y: int, color: int) -> None:
     pass
 
 
-def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image) -> None:
+def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.ndarray) -> None:
     """
     Draws an image on the canvas. Useful for "sprites", photos, and other graphics!
 
@@ -226,20 +231,24 @@ def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image) -> None:
     :param top_left_x: The x-coordinate of the top left corner of the image.
     :param top_left_y: The y-coordinate of the top left corner of the image.
     :param image: The image to draw.
-    :return:
+    :return: None
     """
-    pass
+    width, height, depth = image.shape
+
+    # Shhhhhhhhhhhh🤫 🤫🤫🤫🤫
+    canvas.data[top_left_x : top_left_x + width, top_left_y : top_left_y + height] = image
 
 
 c = Canvas()
 
 fill_screen(c, (32, 0, 64))
 
-import random
-for i in range(200):
-    x1, y1, x2, y2 = [random.randint(0, 31) for x in range(4)]
-    r, g, b = [random.randint(0, 255) for x in range(3)]
-    stroke_rect(c, x1, y1, x2, y2, (r, g, b))
+from PIL import Image
+import numpy
 
-fill_rect(c, 5, 5, 10, 15, (255, 255, 255))
+img = numpy.asarray(Image.open("/home/mac/Downloads/bad_apple.bmp"))[...,:3]
+
+draw_image(c, 0, 0, img)
+
+
 c.debug()
