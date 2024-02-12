@@ -91,6 +91,14 @@ def __stroke_line_high(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color
             D = D + 2 * dx
 
 
+def __stroke_horizontal_line(canvas: Canvas, x1: int, x2: int, y: int, color: int | tuple[int, int, int]) -> None:
+    a = min(x1, x2)
+    b = max(x1, x2)
+
+    for i in range(a, b+1):
+        canvas.set_pixel(i, y, color)
+
+
 def stroke_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     """
     Colors the edges of a rectangle whose corners are defined by two points.
@@ -151,6 +159,128 @@ def fill_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | t
     pass
 
 
+def stroke_ellipse(canvas: Canvas, cx: int, cy: int, rx: int, ry: int, color: int | tuple[int, int, int]) -> None:
+    """
+    Draws the outline of an ellipse on the canvas centered at (cx, cy).
+
+    :param canvas: The canvas to draw on.
+    :param cx: The x-coordinate of the center of the ellipse.
+    :param cy: The y-coordinate of the center of the ellipse.
+    :param rx: The radius of the ellipse in the x- direction.
+    :param ry: The radius of the ellipse in the y- direction.
+    :param color: The color of the ellipse.
+    :return: None.
+    """
+    # Implementation of midpoint-ellipse algorithm: https://www.geeksforgeeks.org/midpoint-ellipse-drawing-algorithm/
+    x = 0
+    y = ry
+
+    d1 = ((ry * ry) - (rx * rx * ry) + (0.25 * rx * rx))
+
+    dx = 2 * ry * ry * x
+    dy = 2 * rx * rx * y
+
+    while dx < dy:
+        canvas.set_pixel(x + cx, y + cy, color)
+        canvas.set_pixel(-x + cx, y + cy, color)
+        canvas.set_pixel(x + cx, -y + cy, color)
+        canvas.set_pixel(-x + cx, -y + cy, color)
+
+        # PLOT
+        if d1 < 0:
+            x += 1
+            dx = dx + 2 * ry * ry
+            d1 = d1 + dx + ry * ry
+        else:
+            x += 1
+            y -= 1
+            dx = dx + (2 * ry * ry)
+            dy = dy - (2 * rx * rx)
+            d1 = d1 + dx - dy + (ry * ry)
+
+    d2 = (((ry * ry) * ((x + 0.5) * (x + 0.5))) + ((rx * rx) * ((y - 1) * (y - 1))) - (rx * rx * ry * ry))
+
+    while y >= 0:
+        canvas.set_pixel(x + cx, y + cy, color)
+        canvas.set_pixel(-x + cx, y + cy, color)
+        canvas.set_pixel(x + cx, -y + cy, color)
+        canvas.set_pixel(-x + cx, -y + cy, color)
+
+        if d2 > 0:
+            y -= 1
+            dy = dy - (2 * rx * rx)
+            d2 = d2 + (rx * rx) - dy
+        else:
+            y -= 1
+            x += 1
+            dx = dx + (2 * ry * ry)
+            dy = dy - (2 * rx * rx)
+            d2 = d2 + dx - dy + (rx * rx)
+
+
+def fill_ellipse(canvas: Canvas, cx: int, cy: int, rx: int, ry: int, color: int | tuple[int, int, int]) -> None:
+    """
+    Draws a filled ellipse on the canvas centered at (cx, cy).
+
+    :param canvas: The canvas to draw on.
+    :param cx: The x-coordinate of the center of the ellipse.
+    :param cy: The y-coordinate of the center of the ellipse.
+    :param rx: The radius of the ellipse in the x- direction.
+    :param ry: The radius of the ellipse in the y- direction.
+    :param color: The color of the ellipse.
+    :return: None.
+    """
+    # Implementation of midpoint-ellipse algorithm: https://www.geeksforgeeks.org/midpoint-ellipse-drawing-algorithm/
+    # See this stackoverflow link for discussion:
+    # https://stackoverflow.com/questions/10878209/midpoint-circle-algorithm-for-filled-circles
+    x = 0
+    y = ry
+
+    d1 = ((ry * ry) - (rx * rx * ry) + (0.25 * rx * rx))
+
+    dx = 2 * ry * ry * x
+    dy = 2 * rx * rx * y
+
+    while dx < dy:
+        canvas.set_pixel(x + cx, y + cy, 0xFF0000)
+        canvas.set_pixel(-x + cx, y + cy, 0xFF0000)
+        canvas.set_pixel(x + cx, -y + cy, 0xFF0000)
+        canvas.set_pixel(-x + cx, -y + cy, 0xFF0000)
+
+        __stroke_horizontal_line(canvas, -x + cx, x + cx, y + cy, color)
+        __stroke_horizontal_line(canvas, -x + cx, x + cx, -y + cy, color)
+
+        # PLOT
+        if d1 < 0:
+            x += 1
+            dx = dx + 2 * ry * ry
+            d1 = d1 + dx + ry * ry
+        else:
+            x += 1
+            y -= 1
+            dx = dx + (2 * ry * ry)
+            dy = dy - (2 * rx * rx)
+            d1 = d1 + dx - dy + (ry * ry)
+
+    d2 = (((ry * ry) * ((x + 0.5) * (x + 0.5))) + ((rx * rx) * ((y - 1) * (y - 1))) - (rx * rx * ry * ry))
+
+    while y >= 0:
+
+        __stroke_horizontal_line(canvas, x + cx, -x + cx, y + cy, color)
+        __stroke_horizontal_line(canvas, x + cx, -x + cx, -y + cy, color)
+
+        if d2 > 0:
+            y -= 1
+            dy = dy - (2 * rx * rx)
+            d2 = d2 + (rx * rx) - dy
+        else:
+            y -= 1
+            x += 1
+            dx = dx + (2 * ry * ry)
+            dy = dy - (2 * rx * rx)
+            d2 = d2 + dx - dy + (rx * rx)
+
+
 def stroke_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> None:
     """
     Strokes the edge of a circle with a color.
@@ -163,7 +293,7 @@ def stroke_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> No
     :param color: The color to draw the circle with.
     :return: None.
     """
-    pass
+    stroke_ellipse(canvas, x, y, radius, radius, color)
 
 
 def fill_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> None:
@@ -178,7 +308,7 @@ def fill_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> None
     :param color: The color to draw the circle with.
     :return: None.
     """
-    pass
+    fill_ellipse(canvas, x, y, radius, radius, color)
 
 
 def stroke_polyline(canvas: Canvas, points: list[tuple[int, int]], color: int | tuple[int, int, int]) -> None:
@@ -243,12 +373,11 @@ c = Canvas()
 
 fill_screen(c, (32, 0, 64))
 
-from PIL import Image
-import numpy
+import random
+for i in range(200):
+    x, y, rx, ry = [random.randint(0, 31) for x in range(4)]
+    rgb = tuple([random.randint(0, 255) for x in range(3)])
 
-img = numpy.asarray(Image.open("/home/mac/Downloads/bad_apple.bmp"))[...,:3]
-
-draw_image(c, 0, 0, img)
-
+    fill_ellipse(c, x, y, rx//2, ry//2, rgb)
 
 c.debug()

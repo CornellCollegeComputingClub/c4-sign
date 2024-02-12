@@ -10,6 +10,9 @@ class Canvas:
         return self.data[y][x]
     
     def set_pixel(self, x: int, y: int, color: tuple | int):
+        if x < 0 or x >= self.width or y < 0 or y >= self.height:
+            return # Just ignore mistakes
+
         if isinstance(color, tuple):
             self.data[y][x] = color
         else:
