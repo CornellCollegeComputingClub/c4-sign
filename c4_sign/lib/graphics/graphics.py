@@ -1,7 +1,7 @@
 from ..canvas import Canvas
 
 
-def fill_screen(canvas: any, color: int | tuple[int, int, int]) -> None:
+def fill_screen(canvas: Canvas, color: int | tuple[int, int, int]) -> None:
     """
     Sets the entire screen to the same color.
 
@@ -13,7 +13,7 @@ def fill_screen(canvas: any, color: int | tuple[int, int, int]) -> None:
         canvas.set_pixel(i % 32, i//32, color)
 
 
-def clear_screen(canvas: any) -> None:
+def clear_screen(canvas: Canvas) -> None:
     """
     Clears the screen. (Sets the entire screen to black).
 
@@ -24,7 +24,7 @@ def clear_screen(canvas: any) -> None:
     fill_screen(canvas, 0)
 
 
-def stroke_line(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def stroke_line(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     """
     Colors a line of pixels between one point and another.
     :param canvas: The canvas the line will be drawn on.
@@ -51,7 +51,7 @@ def stroke_line(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tu
 
 
 
-def __stroke_line_low(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def __stroke_line_low(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     dx = x2 - x1
     dy = y2 - y1
     yi = 1
@@ -70,7 +70,7 @@ def __stroke_line_low(canvas: any, x1: int, y1: int, x2: int, y2: int, color: in
             D = D + 2 * dy
 
 
-def __stroke_line_high(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def __stroke_line_high(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     dx = x2 - x1
     dy = y2 - y1
     xi = 1
@@ -89,7 +89,7 @@ def __stroke_line_high(canvas: any, x1: int, y1: int, x2: int, y2: int, color: i
             D = D + 2 * dx
 
 
-def stroke_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def stroke_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     """
     Colors the edges of a rectangle whose corners are defined by two points.
 
@@ -122,7 +122,7 @@ def stroke_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tu
         canvas.set_pixel(x + dx, i, color)
 
 
-def fill_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def fill_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
     """
     Colors the inside of a rectangle whose corners are defined by two points.
 
@@ -149,7 +149,7 @@ def fill_rect(canvas: any, x1: int, y1: int, x2: int, y2: int, color: int | tupl
     pass
 
 
-def stroke_circle(canvas: any, x: int, y: int, radius: int, color: int) -> None:
+def stroke_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> None:
     """
     Strokes the edge of a circle with a color.
 
@@ -164,7 +164,7 @@ def stroke_circle(canvas: any, x: int, y: int, radius: int, color: int) -> None:
     pass
 
 
-def fill_circle(canvas: any, x: int, y: int, radius: int, color: int) -> None:
+def fill_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> None:
     """
     Fills a circle with a color.
 
@@ -179,7 +179,7 @@ def fill_circle(canvas: any, x: int, y: int, radius: int, color: int) -> None:
     pass
 
 
-def stroke_polyline(canvas: any, points: list[tuple[int, int]], color: int) -> None:
+def stroke_polyline(canvas: Canvas, points: list[tuple[int, int]], color: int) -> None:
     """
     Colors a sequence of lines, making a path.
 
@@ -192,7 +192,7 @@ def stroke_polyline(canvas: any, points: list[tuple[int, int]], color: int) -> N
     pass
 
 
-def fill_polygon(canvas: any, points: list[tuple[int, int]], color: int) -> None:
+def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> None:
     """
     Fills the interior of a polygon with the desired color.
 
@@ -205,7 +205,7 @@ def fill_polygon(canvas: any, points: list[tuple[int, int]], color: int) -> None
     pass
 
 
-def draw_text(canvas: any, text: str, x: int, y: int, color: int) -> None:
+def draw_text(canvas: Canvas, text: str, x: int, y: int, color: int) -> None:
     """
     Draws the desired text on the screen at the appropriate x and y coordinates.
     :param canvas: The canvas to draw the text on.
@@ -218,7 +218,7 @@ def draw_text(canvas: any, text: str, x: int, y: int, color: int) -> None:
     pass
 
 
-def draw_image(canvas: any, top_left_x: int, top_left_y: int, image) -> None:
+def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image) -> None:
     """
     Draws an image on the canvas. Useful for "sprites", photos, and other graphics!
 
