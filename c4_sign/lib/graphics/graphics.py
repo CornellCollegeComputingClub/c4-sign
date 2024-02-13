@@ -362,17 +362,22 @@ def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.nd
 
     width, height, depth = image.shape
 
-    for y in range(top_left_y, top_left_y + height):
-        for x in range(top_left_x, top_left_x + width):
-            alpha = (image[y][x][3] / 255)
-            r = int((1 - alpha) * canvas.data[y][x][0] + alpha * image[y][x][0])
-            g = int((1 - alpha) * canvas.data[y][x][1] + alpha * image[y][x][1])
-            b = int((1 - alpha) * canvas.data[y][x][2] + alpha * image[y][x][2])
+    tly = min(32, max(0, top_left_y))
+    tlx = min(32, max(0, top_left_x))
+    bry = min(32, max(0, top_left_y + height))
+    brx = min(32, max(0, top_left_x + width))
 
+    for y in range(tly, bry):
+        for x in range(tlx, brx):
+            source_y = y - top_left_y
+            source_x = x - top_left_x
+            alpha = 1 if depth == 3 else (image[source_y][source_x][3] / 255)
+            r = int((1 - alpha) * canvas.data[y][x][0] + alpha * image[source_y][source_x][0])
+            g = int((1 - alpha) * canvas.data[y][x][1] + alpha * image[source_y][source_x][1])
+            b = int((1 - alpha) * canvas.data[y][x][2] + alpha * image[source_y][source_x][2])
+
+            # Shhhhhhh....
             canvas.data[y][x] = (r, g, b)
-
-    # Shhhhhhhhhhhh🤫
-    # canvas.data[top_left_x : top_left_x + width, top_left_y : top_left_y + height] = background
 
 
 c = Canvas()
@@ -381,10 +386,9 @@ fill_screen(c, (32, 0, 64))
 
 from PIL import Image
 import numpy
-bad_apple = numpy.asarray(Image.open("/home/mac/Downloads/bad_apple.bmp"))
-minecraft = numpy.asarray(Image.open("/home/mac/Downloads/MinecraftIcon.png"))
+card = numpy.asarray(Image.open("/home/mac/Downloads/MinecraftIconSmall.png").convert("RGBA"))
 
-draw_image(c, 0, 0, bad_apple)
-draw_image(c, -15, -15, minecraft)
+# draw_image(c, 0, 0, bad_apple)
+draw_image(c, 24, -5, card)
 
 c.debug()
