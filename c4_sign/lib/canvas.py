@@ -1,4 +1,5 @@
 import numpy
+import curses
 
 class Canvas:
     def __init__(self):
@@ -29,6 +30,9 @@ class Canvas:
         return self.data.tobytes()
 
     def debug(self) -> None:
+        print("\033[0G", end="") # Move cursor to 0,0
+        print("\033[0d", end="")
+        print("\033[2J", end="") # Clear screen
         for y in range(0, self.height, 2):
             for x in range(self.width):
                 # Prepare top pixel (background)

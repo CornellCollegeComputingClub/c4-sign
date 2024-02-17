@@ -63,7 +63,7 @@ class OneTimeTask:
 
 class ScreenTask:
     ignore = False
-    def __init__(self, suggested_run_time=timedelta(), max_run_time=timedelta()):
+    def __init__(self, suggested_run_time=timedelta(seconds=30), max_run_time=timedelta(seconds=60)):
         self.started = None
         self.elapsed_time = timedelta()
         self.suggested_run_time = suggested_run_time

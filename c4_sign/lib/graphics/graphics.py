@@ -379,16 +379,16 @@ def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.nd
             # Shhhhhhh....
             canvas.data[y][x] = (r, g, b)
 
+if __name__ == "__main__":
+    c = Canvas()
 
-c = Canvas()
+    fill_screen(c, (32, 0, 64))
 
-fill_screen(c, (32, 0, 64))
+    from PIL import Image
+    import numpy
+    card = numpy.asarray(Image.open("/home/mac/Downloads/MinecraftIconSmall.png").convert("RGBA"))
 
-from PIL import Image
-import numpy
-card = numpy.asarray(Image.open("/home/mac/Downloads/MinecraftIconSmall.png").convert("RGBA"))
+    # draw_image(c, 0, 0, bad_apple)
+    draw_image(c, 24, -5, card)
 
-# draw_image(c, 0, 0, bad_apple)
-draw_image(c, 24, -5, card)
-
-c.debug()
+    c.debug()

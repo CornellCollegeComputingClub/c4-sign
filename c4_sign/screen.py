@@ -1,21 +1,22 @@
 import traceback
 import arrow
 from c4_sign.ScreenManager import ScreenManager
+from c4_sign.lib.canvas import Canvas
 
 from c4_sign.screen_tasks.error import ErrorScreenTask
-_neopixels = None
-_lcd = None
-_canvas = None
+_screen = None
 _screen_manager = ScreenManager()
 _last_update = arrow.now()
 
 
-def init_matrix():
-    global _neopixels, _lcd
-    # 4 separate panels, TODO: figure out THAT.
-    _neopixels = None # TODO: this!
-    # lcd is 2col x 16char
-    _lcd = None # TODO: this!
+def init_matrix(simulator):
+    global _screen
+    if simulator:
+        from c4_sign.lib.screen.simulator import SimulatorScreen
+        _screen = SimulatorScreen()
+    else:
+        from c4_sign.lib.screen.matrix import MatrixScreen
+        _screen = MatrixScreen()
     _screen_manager.update_tasks()
 
 def screen_active():
@@ -24,22 +25,21 @@ def screen_active():
     return now.hour >= 6 and now.hour < 24
 
 def update_screen():
-    global _matrix, _canvas, _last_update, _screen_manager
+    global _screen, _last_update, _screen_manager
     
     now = arrow.now()
     delta_t = now - _last_update
     _last_update = now
     
     # clear canvas
-    canvas = _canvas
-    canvas.Clear()
+    canvas = Canvas()
 
     # brightness
     if screen_active():
-        _matrix.brightness = 100
+        _screen.brightness = 100
     else:
-        _matrix.brightness = 0
-        _canvas = _matrix.SwapOnVSync(canvas)
+        _screen.brightness = 0
+        _screen.update_display(canvas)
         return # don't draw anything!
 
     # draw stuff
@@ -51,6 +51,4 @@ def update_screen():
         print(e.__traceback__.tb_frame.f_code.co_filename, e.__traceback__.tb_lineno)
         _screen_manager.override_current_task(ErrorScreenTask(e))
     
-    # update the screen~
-    _canvas = _matrix.SwapOnVSync(canvas)
-
+    _screen.update_display(canvas)

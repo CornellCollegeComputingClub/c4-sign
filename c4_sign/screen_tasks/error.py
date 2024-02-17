@@ -10,6 +10,7 @@ class ErrorScreenTask(ScreenTask):
         self.error = error
     
     def draw_frame(self, canvas, delta_time):
+        return
         graphics.DrawText(canvas, FONT_4x6, 1, 7, COLOR_RED, "Error :(")
         graphics.DrawText(canvas, FONT_4x6, 1, 14, COLOR_RED, type(self.error).__name__)
         msg = str(self.error) + " " * 10
