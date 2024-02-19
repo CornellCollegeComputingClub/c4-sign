@@ -379,6 +379,7 @@ def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.nd
             # Shhhhhhh....
             canvas.data[y][x] = (r, g, b)
 
+
 if __name__ == "__main__":
     c = Canvas()
 
