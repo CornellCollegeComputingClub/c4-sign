@@ -16,8 +16,10 @@ class SimulatorScreen(ScreenBase):
             print("\033[0G", end="")  # Move cursor to 0,0
             print("\033[0d", end="")
             print("\033[2J", end="")  # Clear screen
+            print("\033[?25l", end="")  # Hide cursor
             canvas.debug()
             sleep(1/24)
-        except KeyboardInterrupt:
+        except KeyboardInterrupt:  # Should relocate this...
             print("\033[?1049l", end="")  # Disable alternate buffer
+            print("\033[?25h", end="")  # Show cursor
             sys.exit(0)
