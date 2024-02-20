@@ -17,6 +17,7 @@ class SimulatorScreen(ScreenBase):
             print("\033[0d", end="")
             print("\033[2J", end="")  # Clear screen
             print("\033[?25l", end="")  # Hide cursor
+            print("Now running: \033[7mUntitled\033[27m by \033[1mUnknown\033[22m\n\n")
             canvas.debug()
             sleep(1/24)
         except KeyboardInterrupt:  # Should relocate this...

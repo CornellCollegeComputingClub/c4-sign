@@ -5,8 +5,10 @@ import c4_sign.lib.graphics.graphics as graphics
 
 class KRNLNowPlaying(ScreenTask):
     def prepare(self):
+        self.frame = 0
         return super().prepare()
     
     def draw_frame(self, canvas, delta_time):
-        r, g, b = [random.randint(0,255) for x in range(3)]
+        r, g, b = self.frame, 0, 255 - self.frame
         graphics.fill_screen(canvas, (r, g, b))
+        self.frame += 4 % 255
