@@ -14,4 +14,4 @@ class KRNLNowPlaying(ScreenTask):
     def draw_frame(self, canvas, delta_time):
         r, g, b = self.frame, 0, 255 - self.frame
         graphics.fill_screen(canvas, (r, g, b))
-        self.frame += 4 % 255
+        self.frame = (self.frame + 4) % 255

@@ -11,8 +11,15 @@ def fill_screen(canvas: Canvas, color: int) -> None:
     :param color: The color the canvas will be set to.
     :return: None.
     """
-    for i in range(0, 1024):
-        canvas.set_pixel(i % 32, i//32, color)
+    # for i in range(0, 1024):
+    #     canvas.set_pixel(i % 32, i//32, color)
+    # needs to be a tuple (r, g, b)
+    if isinstance(color, int):
+        r, g, b = (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff
+        canvas.data[::][::] = (r, g, b)
+    else:
+        canvas.data[::][::] = color
+    
 
 
 def clear_screen(canvas: Canvas) -> None:

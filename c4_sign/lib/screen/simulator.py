@@ -13,6 +13,7 @@ class SimulatorScreen(ScreenBase):
         self.text = text
     
     def update_display(self, canvas):
+        return
         try:
             print("\033[0G", end="")  # Move cursor to 0,0
             print("\033[0d", end="")

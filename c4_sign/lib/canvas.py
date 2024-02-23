@@ -22,9 +22,18 @@ class Canvas:
             g = (color >> 8) & 0xff
             b = color & 0xff
             self.data[y][x] = (r, g, b)
+    
+    def clear(self):
+        self.data.fill(0)
 
     def tolist(self):
-        return self.data.tolist()
+        # [0xRRGGBB, 0xRRGGBB, ...]
+        pass
+
+    def __getitem__(self, key):
+        y, x = (key // self.width, key % self.width)
+        r, g, b = self.data[y][x]
+        return int((r << 16) | (g << 8) | b)
     
     def tobytes(self):
         return self.data.tobytes()
@@ -46,3 +55,8 @@ class Canvas:
                 print("▄", end="")
 
             print("\033[0m")  # Reset colors
+
+if __name__ == "__main__":
+    c = Canvas()
+    c.set_pixel(0, 0, (255, 0, 0))
+    print(c.tolist())
