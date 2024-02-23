@@ -6,10 +6,11 @@ import sys
 class SimulatorScreen(ScreenBase):
     def __init__(self):
         super().__init__()
+        self.text = ""
         print("\033[?1049h", end="")  # Enable alternate buffer
     
     def update_lcd(self, text):
-        print(text)
+        self.text = text
     
     def update_display(self, canvas):
         try:
@@ -17,7 +18,7 @@ class SimulatorScreen(ScreenBase):
             print("\033[0d", end="")
             print("\033[2J", end="")  # Clear screen
             print("\033[?25l", end="")  # Hide cursor
-            print("Now running: \033[7mUntitled\033[27m by \033[1mUnknown\033[22m\n\n")
+            print(self.text)
             canvas.debug()
             sleep(1/24)
         except KeyboardInterrupt:  # Should relocate this...

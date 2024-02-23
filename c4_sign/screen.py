@@ -7,6 +7,7 @@ from c4_sign.screen_tasks.error import ErrorScreenTask
 _screen = None
 _screen_manager = ScreenManager()
 _last_update = arrow.now()
+_last_lcd_update = arrow.now().shift(days=-1)
 
 
 def init_matrix(simulator):
@@ -25,11 +26,16 @@ def screen_active():
     return now.hour >= 6 and now.hour < 24
 
 def update_screen():
-    global _screen, _last_update, _screen_manager
+    global _screen, _last_update, _last_lcd_update, _screen_manager
     
     now = arrow.now()
     delta_t = now - _last_update
     _last_update = now
+
+    if (now - _last_lcd_update).total_seconds() > .5:
+        _last_lcd_update = now
+        text = _screen_manager.get_lcd_text()
+        _screen.update_lcd(text)
     
     # clear canvas
     canvas = Canvas()
