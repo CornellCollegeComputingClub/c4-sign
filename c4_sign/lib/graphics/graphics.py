@@ -3,7 +3,7 @@ import numpy
 from ..canvas import Canvas
 
 
-def fill_screen(canvas: Canvas, color: int | tuple[int, int, int]) -> None:
+def fill_screen(canvas: Canvas, color: int) -> None:
     """
     Sets the entire screen to the same color.
 
@@ -26,7 +26,7 @@ def clear_screen(canvas: Canvas) -> None:
     fill_screen(canvas, 0)
 
 
-def stroke_line(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def stroke_line(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
     """
     Colors a line of pixels between one point and another.
     :param canvas: The canvas the line will be drawn on.
@@ -53,7 +53,7 @@ def stroke_line(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int |
 
 
 
-def __stroke_line_low(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def __stroke_line_low(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
     dx = x2 - x1
     dy = y2 - y1
     yi = 1
@@ -72,7 +72,7 @@ def __stroke_line_low(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color:
             D = D + 2 * dy
 
 
-def __stroke_line_high(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def __stroke_line_high(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
     dx = x2 - x1
     dy = y2 - y1
     xi = 1
@@ -91,7 +91,7 @@ def __stroke_line_high(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color
             D = D + 2 * dx
 
 
-def __stroke_horizontal_line(canvas: Canvas, x1: int, x2: int, y: int, color: int | tuple[int, int, int]) -> None:
+def __stroke_horizontal_line(canvas: Canvas, x1: int, x2: int, y: int, color: int) -> None:
     a = min(x1, x2)
     b = max(x1, x2)
 
@@ -99,7 +99,7 @@ def __stroke_horizontal_line(canvas: Canvas, x1: int, x2: int, y: int, color: in
         canvas.set_pixel(i, y, color)
 
 
-def stroke_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def stroke_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
     """
     Colors the edges of a rectangle whose corners are defined by two points.
 
@@ -132,7 +132,7 @@ def stroke_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int |
         canvas.set_pixel(x + dx, i, color)
 
 
-def fill_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | tuple[int, int, int]) -> None:
+def fill_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int) -> None:
     """
     Colors the inside of a rectangle whose corners are defined by two points.
 
@@ -159,7 +159,7 @@ def fill_rect(canvas: Canvas, x1: int, y1: int, x2: int, y2: int, color: int | t
     pass
 
 
-def stroke_ellipse(canvas: Canvas, cx: int, cy: int, rx: int, ry: int, color: int | tuple[int, int, int]) -> None:
+def stroke_ellipse(canvas: Canvas, cx: int, cy: int, rx: int, ry: int, color: int) -> None:
     """
     Draws the outline of an ellipse on the canvas centered at (cx, cy).
 
@@ -218,7 +218,7 @@ def stroke_ellipse(canvas: Canvas, cx: int, cy: int, rx: int, ry: int, color: in
             d2 = d2 + dx - dy + (rx * rx)
 
 
-def fill_ellipse(canvas: Canvas, cx: int, cy: int, rx: int, ry: int, color: int | tuple[int, int, int]) -> None:
+def fill_ellipse(canvas: Canvas, cx: int, cy: int, rx: int, ry: int, color: int) -> None:
     """
     Draws a filled ellipse on the canvas centered at (cx, cy).
 
@@ -307,7 +307,7 @@ def fill_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> None
     fill_ellipse(canvas, x, y, radius, radius, color)
 
 
-def stroke_polyline(canvas: Canvas, points: list[tuple[int, int]], color: int | tuple[int, int, int]) -> None:
+def stroke_polyline(canvas: Canvas, points: list[tuple[int, int]], color: int) -> None:
     """
     Colors a sequence of lines, making a path.
 

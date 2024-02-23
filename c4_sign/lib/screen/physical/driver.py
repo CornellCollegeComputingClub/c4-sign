@@ -3,7 +3,7 @@
 # Provided for public use under the GNU General Public License
 #
 
-import i2c_lib
+from . import i2c_lib
 from time import *
 
 # commands

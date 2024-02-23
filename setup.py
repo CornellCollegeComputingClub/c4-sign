@@ -15,7 +15,7 @@ setup(
                       'numpy'
                       ],
     extras_require={
-        'physical': ['rpi_ws281x', 'adafruit-circuitpython-neopixel'],
+        'physical': ['rpi_ws281x', 'adafruit-circuitpython-neopixel', 'smbus'],
         'simulator': ['flask', 'flask-socketio'],
     },
     classifiers=[
