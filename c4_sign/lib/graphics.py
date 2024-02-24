@@ -459,8 +459,8 @@ def draw_text(canvas: Canvas, font: Font, x: int, y: int, color: Union[int, tupl
     Draws the desired text on the screen at the appropriate x and y coordinates.
     :param canvas: The canvas to draw the text on.
     :param font: The font to use for the text.
-    :param x: The x-coordinate of the top left corner of the text.
-    :param y: The y-coordinate of the top-left corner of the text.
+    :param x: The x-coordinate of the bottom left corner of the text.
+    :param y: The y-coordinate of the bottom left corner of the text.
     :param color: The color of the text.
     :param text: The text to draw on the canvas.
     :return: None.

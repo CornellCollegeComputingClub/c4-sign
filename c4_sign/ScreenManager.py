@@ -29,6 +29,10 @@ class ScreenManager:
                 if t.__class__.__name__ == task:
                     task = t
                     break
+            else:
+                # task not found!
+                print(f"Task {task} not found!")
+                return
         if self.current_task:
             self.current_task.teardown(True)
         self.current_task = task
