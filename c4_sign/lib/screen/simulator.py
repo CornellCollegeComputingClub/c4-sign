@@ -14,13 +14,13 @@ class SimulatorScreen(ScreenBase):
         self.text = text
 
     def update_display(self, canvas):
-        return
         try:
             print("\033[0G", end="")  # Move cursor to 0,0
             print("\033[0d", end="")
             print("\033[2J", end="")  # Clear screen
             print("\033[?25l", end="")  # Hide cursor
-            print(self.text)
+            print("|" + self.text[:16] + "|")
+            print("|" + self.text[16:] + "|")
             canvas.debug()
             sleep(1 / 24)
         except KeyboardInterrupt:  # Should relocate this...

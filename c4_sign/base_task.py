@@ -3,6 +3,7 @@ from datetime import timedelta
 import arrow
 
 from c4_sign.consts import COLOR_GRAY, COLOR_PURPLE, FONT_4x6
+from c4_sign.lib.canvas import Canvas
 
 
 class RepeatingTask:
@@ -67,6 +68,8 @@ class OneTimeTask:
 
 class ScreenTask:
     ignore = False
+    title = "Unknown"
+    artist = "Unknown"
 
     def __init__(
         self,
@@ -113,7 +116,7 @@ class ScreenTask:
         # do any cleanup here!
         pass
 
-    def draw(self, canvas, delta_time):
+    def draw(self, canvas: Canvas, delta_time: timedelta):
         # override draw_frame!
         # returns True if we're done updating!
         self.elapsed_time += delta_time
@@ -142,7 +145,7 @@ class ScreenTask:
     If this method returns True, the task will be stopped soon after!
     """
 
-    def draw_frame(self, canvas, delta_time) -> bool:
+    def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
         # override this method to run code when the screen is updated!
         # return True if you're done updating!
         raise NotImplementedError
@@ -155,4 +158,12 @@ class ScreenTask:
 
     def get_lcd_text(self) -> str:
         # override this method to return text for the LCD screen!
-        return " " * 32
+        # by default, we're gonna return something like:
+        # "Title"
+        # "By: Artist"
+        # but since this is a 16x2 screen, we have to truncate (if needed)
+        # and pad with spaces!
+        title = self.title.center(16)
+        artist = "By: " + self.artist
+        artist = artist.center(16)
+        return title + artist
