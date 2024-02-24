@@ -16,19 +16,31 @@ class ErrorScreenTask(ScreenTask):
 
     def draw_frame(self, canvas, delta_time):
         graphics.draw_text(canvas, FONT_4x6, 1, 7, COLOR_RED, "Error :(")
-        graphics.draw_text(canvas, FONT_4x6, 1, 14, COLOR_RED, type(self.error).__name__)
-        msg = str(self.error) + " " * 10
-        width = sum([FONT_4x6.character_width(ord(c)) or FONT_4x6.character_width(ord("a")) for c in msg])
+        error_name = type(self.error).__name__ + " " * 5
+        error_name_width = sum([FONT_4x6.character_width(ord(c)) or FONT_4x6.character_width(ord("a")) for c in error_name])
         # marquee!
-        # if width > 32:
-        #     offset = int(self.elapsed_time.total_seconds() * 10) % width
-        #     # speedup at the end so we can pause at the start!
-        #     if offset > width - 32:
-        #         offset = 0
-        #     graphics.draw_text(canvas, FONT_4x6, 1 - offset, 21, COLOR_RED, msg)
-        #     graphics.draw_text(canvas, FONT_4x6, width - offset, 21, COLOR_RED, msg)
-        # else:
-        graphics.draw_text(canvas, FONT_4x6, 1, 21, COLOR_RED, msg)
+        if error_name_width > 32:
+            e_offset = int(self.elapsed_time.total_seconds() * 10) % error_name_width
+            # speedup at the end so we can pause at the start!
+            if e_offset > error_name_width - 32:
+                e_offset = 0
+            graphics.draw_text(canvas, FONT_4x6, 1 - e_offset, 14, COLOR_RED, error_name)
+            graphics.draw_text(canvas, FONT_4x6, error_name_width - e_offset, 14, COLOR_RED, error_name)
+        else:
+            graphics.draw_text(canvas, FONT_4x6, 1, 14, COLOR_RED, error_name)
+        msg = str(self.error) + " " * 5
+        msg_width = sum([FONT_4x6.character_width(ord(c)) or FONT_4x6.character_width(ord("a")) for c in msg])
+        # marquee!
+        if msg_width > 32:
+            offset = int(self.elapsed_time.total_seconds() * 10) % msg_width
+            # speedup at the end so we can pause at the start!
+            if offset > msg_width - 32:
+                offset = 0
+            graphics.draw_text(canvas, FONT_4x6, 1 - offset, 21, COLOR_RED, msg)
+            graphics.draw_text(canvas, FONT_4x6, msg_width - offset, 21, COLOR_RED, msg)
+        else:
+            graphics.draw_text(canvas, FONT_4x6, 1, 21, COLOR_RED, msg)
+        return offset == 0 and e_offset == 0
 
     def get_lcd_text(self) -> str:
-        return self.error
+        return str(self.error).ljust(32)
