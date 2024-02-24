@@ -1,25 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <style>
+        canvas {
+            width: 512px;
+            height: 512px;
+            image-rendering: pixelated;
+        }
+        .lcd {
+            font-size: 16px;
+            font-family: monospace;
+            background-color: blue;
+            color: white;
+        }
+    </style>
+    <title>super awesome simulator</title>
 </head>
+
 <body>
-    <div id="display"></div>
-    <div id="lcd"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <canvas id="display" width="512" height="512"></canvas>
+    <div class="lcd">
+        <span id="lcd-1">:3</span><br>
+        <span id="lcd-2"></span>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
-        var socket = io();
-        socket.on('update', function(data){
+        let socket = io();
+        let canvas = document.getElementById('display');
+        let ctx = canvas.getContext('2d');
+
+        let lcd_1 = document.getElementById('lcd-1');
+        let lcd_2 = document.getElementById('lcd-2');
+
+        socket.on('update', function (data) {
             if (data.type == 'display') {
-                document.getElementById('display').innerHTML = JSON.stringify(data.canvas);
+                // data.canvas = [[r, g, b], [r, g, b], ...]
+                for (let y = 0; y < data.canvas.length; y++) {
+                    for (let x = 0; x < data.canvas[y].length; x++) {
+                        let color = data.canvas[y][x];
+                        ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                        ctx.fillRect(x * 16, y * 16, 16, 16);
+                    }
+                }
             } else if (data.type == 'lcd') {
-                document.getElementById('lcd').innerText = data.text;
+                // data.text = 32 chara string
+                lcd_1.innerHTML = data.text.substr(0, 16);
+                lcd_2.innerHTML = data.text.substr(16, 16);
             } else {
                 console.log(data);
             }
         });
     </script>
 </body>
+
 </html>
