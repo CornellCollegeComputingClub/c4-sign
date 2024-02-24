@@ -110,9 +110,3 @@ def __download_video(videoURL):
     # save to cache
     __write_cache(videoURL, image_folder)
     return image_folder
-
-
-if __name__ == "__main__":
-    print(video_to_images("https://www.youtube.com/watch?v=FtutLA63Cp8"))
-    print(image_from_url("https://cdn.modrinth.com/data/ZzjhlDgM/images/3051e2357a1a5d7c911ded25ebde75bac4f7ee6f.png"))
-    print(cache_path())
