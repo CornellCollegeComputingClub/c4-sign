@@ -1,6 +1,7 @@
-from c4_sign.lib.screen.base import ScreenBase
-from time import sleep
 import sys
+from time import sleep
+
+from c4_sign.lib.screen.base import ScreenBase
 
 
 class SimulatorScreen(ScreenBase):
@@ -8,10 +9,10 @@ class SimulatorScreen(ScreenBase):
         super().__init__()
         self.text = ""
         print("\033[?1049h", end="")  # Enable alternate buffer
-    
+
     def update_lcd(self, text):
         self.text = text
-    
+
     def update_display(self, canvas):
         return
         try:
@@ -21,7 +22,7 @@ class SimulatorScreen(ScreenBase):
             print("\033[?25l", end="")  # Hide cursor
             print(self.text)
             canvas.debug()
-            sleep(1/24)
+            sleep(1 / 24)
         except KeyboardInterrupt:  # Should relocate this...
             print("\033[?1049l", end="")  # Disable alternate buffer
             print("\033[?25h", end="")  # Show cursor

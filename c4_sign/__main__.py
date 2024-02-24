@@ -1,10 +1,12 @@
 import argparse
+
 from c4_sign.screen import init_matrix, update_screen
 from c4_sign.tasks import TaskManager
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--simulator', action='store_true')
+    parser.add_argument("--simulator", action="store_true")
     args = parser.parse_args()
     init_matrix(args.simulator)
     tm = TaskManager()
@@ -13,7 +15,7 @@ def main():
     to_profile = 10
 
     # print('Finishing up...')
-    
+
     while True:
         tm.check_and_run_tasks()
         update_screen()
@@ -21,6 +23,7 @@ def main():
         if frame_count >= to_profile:
             break
         print(frame_count)
+
 
 if __name__ == "__main__":
     from pyinstrument import Profiler
@@ -31,6 +34,6 @@ if __name__ == "__main__":
             main()
         except KeyboardInterrupt:
             pass
-    print('Writing profile...')
-    with open('profile.speedscope.json', 'w') as f:
+    print("Writing profile...")
+    with open("profile.speedscope.json", "w") as f:
         f.write(profiler.output(renderer=SpeedscopeRenderer(show_all=True)))

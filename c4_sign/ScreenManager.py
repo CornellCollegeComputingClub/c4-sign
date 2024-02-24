@@ -2,6 +2,7 @@ import importlib
 
 from c4_sign.base_task import ScreenTask
 
+
 class ScreenManager:
     def __init__(self):
         self.tasks = []
@@ -47,11 +48,9 @@ class ScreenManager:
             self.index += 1
             return True
         return False
-    
+
     def get_lcd_text(self):
         if self.current_task:
             return self.current_task.get_lcd_text()
         else:
             return " " * 32
-        
-        

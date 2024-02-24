@@ -1,28 +1,31 @@
-import numpy
 import curses
+from typing import Union
+
+import numpy
+
 
 class Canvas:
     def __init__(self):
         self.width = 32
         self.height = 32
         self.data = numpy.zeros((self.height, self.width, 3), dtype=numpy.uint8)
-    
+
     def get_pixel(self, x: int, y: int):
         return self.data[y][x]
-    
-    def set_pixel(self, x: int, y: int, color: tuple):
+
+    def set_pixel(self, x: int, y: int, color: Union[int, tuple[int, int, int]]):
         if x < 0 or x >= self.width or y < 0 or y >= self.height:
-            return # Just ignore mistakes
+            return  # Just ignore mistakes
 
         if isinstance(color, tuple):
             self.data[y][x] = color
         else:
             # 0xabcdef
-            r = (color >> 16) & 0xff
-            g = (color >> 8) & 0xff
-            b = color & 0xff
+            r = (color >> 16) & 0xFF
+            g = (color >> 8) & 0xFF
+            b = color & 0xFF
             self.data[y][x] = (r, g, b)
-    
+
     def clear(self):
         self.data.fill(0)
 
@@ -34,7 +37,7 @@ class Canvas:
         y, x = (key // self.width, key % self.width)
         r, g, b = self.data[y][x]
         return int((r << 16) | (g << 8) | b)
-    
+
     def tobytes(self):
         return self.data.tobytes()
 
@@ -48,15 +51,10 @@ class Canvas:
                 top_r, top_g, top_b = self.data[y][x]
                 print(f"\033[48;2;{top_r};{top_g};{top_b}m", end="")
                 # Prepare bottom pixel (foreground)
-                bottom_r, bottom_g, bottom_b = self.data[y+1][x]
+                bottom_r, bottom_g, bottom_b = self.data[y + 1][x]
                 print(f"\033[38;2;{bottom_r};{bottom_g};{bottom_b}m", end="")
 
                 # Print the actual pixels.
                 print("▄", end="")
 
             print("\033[0m")  # Reset colors
-
-if __name__ == "__main__":
-    c = Canvas()
-    c.set_pixel(0, 0, (255, 0, 0))
-    print(c.tolist())

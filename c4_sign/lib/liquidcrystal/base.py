@@ -6,11 +6,12 @@ from abc import ABC, abstractmethod
 # https://github.com/johnrickman/LiquidCrystal_I2C/tree/master
 # TODO: more pythonic! but that can happen way later.
 
+
 class LiquidCrystalBase(ABC):
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-    
+
     @abstractmethod
     def begin(self, cols, rows):
         pass

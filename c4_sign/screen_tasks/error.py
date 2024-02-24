@@ -1,14 +1,17 @@
 from datetime import timedelta
+
 from c4_sign.base_task import ScreenTask
 from c4_sign.consts import COLOR_RED, FONT_4x6
+
 
 # meta, i know!
 class ErrorScreenTask(ScreenTask):
     ignore = True
+
     def __init__(self, error: Exception):
         super().__init__(timedelta(seconds=10), timedelta(minutes=1))
         self.error = error
-    
+
     def draw_frame(self, canvas, delta_time):
         return
         graphics.DrawText(canvas, FONT_4x6, 1, 7, COLOR_RED, "Error :(")
@@ -28,4 +31,4 @@ class ErrorScreenTask(ScreenTask):
 
     @classmethod
     def construct_from_config(cls, config):
-        return cls(config['error'])
+        return cls(config["error"])

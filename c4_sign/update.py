@@ -1,5 +1,6 @@
 import subprocess
 
+
 def check_for_updates():
     # check if the git repo has any updates
     proc = subprocess.run(["git", "fetch", "origin", "main"])
