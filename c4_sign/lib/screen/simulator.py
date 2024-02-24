@@ -19,4 +19,14 @@ class SimulatorScreen(ScreenBase):
 
     def update_display(self, canvas: Canvas):
         self._to_web.put({"type": "display", "canvas": canvas.serialize()})
-        sleep(1 / 24)  # 24 fps
+        sleep(1 / 28)  # 24 fps
+
+    def debug_info(self, **kwargs):
+        self._to_web.put({"type": "debug_info", "data": kwargs})
+
+    def debug_override(self, screen_manager):
+        if self._from_web.empty():
+            return
+        data = self._from_web.get()
+        if data["type"] == "override":
+            screen_manager.override_current_task(data["task"])

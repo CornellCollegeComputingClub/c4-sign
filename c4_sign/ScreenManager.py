@@ -23,6 +23,12 @@ class ScreenManager:
                     self.tasks.append(obj())
 
     def override_current_task(self, task):
+        # if task is a string, find the task by name
+        if isinstance(task, str):
+            for t in self.tasks:
+                if t.__class__.__name__ == task:
+                    task = t
+                    break
         if self.current_task:
             self.current_task.teardown(True)
         self.current_task = task

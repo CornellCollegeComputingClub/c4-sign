@@ -26,6 +26,13 @@
         <span id="lcd-1">:3</span><br>
         <span id="lcd-2"></span>
     </div>
+    <div id="debug"></div>
+    <!-- override task -->
+    <input type="text" id="task" value="">
+    <button onclick="socket.emit('update', {
+            type: 'override',
+            task: document.getElementById('task').value
+        })">send</button>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
         integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
         crossorigin="anonymous"></script>
@@ -36,6 +43,8 @@
 
         let lcd_1 = document.getElementById('lcd-1');
         let lcd_2 = document.getElementById('lcd-2');
+
+        let debug = document.getElementById('debug');
 
         socket.on('update', function (data) {
             if (data.type == 'display') {
@@ -51,6 +60,8 @@
                 // data.text = 32 chara string
                 lcd_1.innerHTML = data.text.substr(0, 16);
                 lcd_2.innerHTML = data.text.substr(16, 16);
+            } else if (data.type == 'debug_info') {
+                debug.innerHTML = JSON.stringify(data, null, 2);
             } else {
                 console.log(data);
             }

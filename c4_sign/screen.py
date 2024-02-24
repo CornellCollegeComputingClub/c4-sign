@@ -63,3 +63,13 @@ def update_screen():
         _screen_manager.override_current_task(ErrorScreenTask(e))
 
     _screen.update_display(canvas)
+    _screen.debug_info(
+        fps=1 / delta_t.total_seconds(),
+        brightness=_screen.brightness,
+        current_task=_screen_manager.current_task.__class__.__name__,
+        tasks=[t.__class__.__name__ for t in _screen_manager.tasks],
+        task_time_elapsed=_screen_manager.current_task.elapsed_time.total_seconds(),
+        task_suggested_run_time=_screen_manager.current_task.suggested_run_time.total_seconds(),
+        task_max_run_time=_screen_manager.current_task.max_run_time.total_seconds(),
+    )
+    _screen.debug_override(_screen_manager)

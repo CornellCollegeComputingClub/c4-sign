@@ -14,3 +14,9 @@ class ScreenBase(ABC):
     @abstractmethod
     def update_display(self, canvas: Canvas):
         pass
+
+    def debug_info(self, **kwargs):
+        pass
+
+    def debug_override(self, screen_manager):
+        pass
