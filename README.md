@@ -15,3 +15,16 @@ The simulator is a simple program that simulates the sign. It's not perfect, but
 python3 -m pip install -e '.[simulator]'
 python3 -m c4_sign --simulator
 ```
+
+## Real Sign
+
+[To be written]
+
+```bash
+python3 -m pip install -e '.[physical]'
+python3 -m c4_sign
+```
+
+## KRNL Sign Compatibility
+
+Because of *unforseen circumstances*, it is possible for code written for the C4 sign to be compatible with the KRNL sign. More information will be provided in the future.
