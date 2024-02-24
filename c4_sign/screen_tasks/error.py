@@ -17,7 +17,9 @@ class ErrorScreenTask(ScreenTask):
     def draw_frame(self, canvas, delta_time):
         graphics.draw_text(canvas, FONT_4x6, 1, 7, COLOR_RED, "Error :(")
         error_name = type(self.error).__name__ + " " * 5
-        error_name_width = sum([FONT_4x6.character_width(ord(c)) or FONT_4x6.character_width(ord("a")) for c in error_name])
+        error_name_width = sum(
+            [FONT_4x6.character_width(ord(c)) or FONT_4x6.character_width(ord("a")) for c in error_name]
+        )
         # marquee!
         if error_name_width > 32:
             e_offset = int(self.elapsed_time.total_seconds() * 10) % error_name_width
