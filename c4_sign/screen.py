@@ -68,8 +68,14 @@ def update_screen():
         brightness=_screen.brightness,
         current_task=_screen_manager.current_task.__class__.__name__,
         tasks=[t.__class__.__name__ for t in _screen_manager.tasks],
-        task_time_elapsed=_screen_manager.current_task.elapsed_time.total_seconds(),
-        task_suggested_run_time=_screen_manager.current_task.suggested_run_time.total_seconds(),
-        task_max_run_time=_screen_manager.current_task.max_run_time.total_seconds(),
+        task_time_elapsed=(
+            _screen_manager.current_task.elapsed_time.total_seconds() if _screen_manager.current_task else None
+        ),
+        task_suggested_run_time=(
+            _screen_manager.current_task.suggested_run_time.total_seconds() if _screen_manager.current_task else None
+        ),
+        task_max_run_time=(
+            _screen_manager.current_task.max_run_time.total_seconds() if _screen_manager.current_task else None
+        ),
     )
     _screen.debug_override(_screen_manager)
