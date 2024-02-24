@@ -33,6 +33,9 @@ class Canvas:
         # [0xRRGGBB, 0xRRGGBB, ...]
         pass
 
+    def serialize(self):
+        return self.data.tolist()
+
     def __getitem__(self, key):
         y, x = (key // self.width, key % self.width)
         r, g, b = self.data[y][x]
@@ -42,9 +45,6 @@ class Canvas:
         return self.data.tobytes()
 
     def debug(self) -> None:
-        # print("\033[0G", end="")  # Move cursor to 0,0
-        # print("\033[0d", end="")
-        # print("\033[2J", end="")  # Clear screen
         for y in range(0, self.height, 2):
             for x in range(self.width):
                 # Prepare top pixel (background)

@@ -1,14 +1,16 @@
 from abc import ABC, abstractmethod
 
+from c4_sign.lib.canvas import Canvas
+
 
 class ScreenBase(ABC):
     def __init__(self):
         self.brightness = 100
 
     @abstractmethod
-    def update_lcd(self, text):
+    def update_lcd(self, text: str):
         pass
 
     @abstractmethod
-    def update_display(self, canvas):
+    def update_display(self, canvas: Canvas):
         pass

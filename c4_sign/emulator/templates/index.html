@@ -6,12 +6,19 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <div id="display"></div>
+    <div id="lcd"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
         var socket = io();
-        socket.on('screen_data', function(data){
-            console.log(data);
+        socket.on('update', function(data){
+            if (data.type == 'display') {
+                document.getElementById('display').innerHTML = JSON.stringify(data.canvas);
+            } else if (data.type == 'lcd') {
+                document.getElementById('lcd').innerText = data.text;
+            } else {
+                console.log(data);
+            }
         });
     </script>
 </body>
