@@ -1,8 +1,8 @@
 import random
 from datetime import timedelta
 
-import c4_sign.lib.graphics.graphics as graphics
 from c4_sign.base_task import ScreenTask
+from c4_sign.lib import graphics
 
 
 class KRNLNowPlaying(ScreenTask):

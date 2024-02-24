@@ -1,3 +1,7 @@
+from pkg_resources import resource_filename
+
+from c4_sign.lib import graphics
+
 DEV_MODE = False
 COLOR_WHITE = (255, 255, 255)
 COLOR_RED = (255, 69, 58)
@@ -13,12 +17,6 @@ COLOR_PURPLE = (191, 90, 242)
 COLOR_PINK = (255, 55, 95)
 COLOR_BROWN = (172, 142, 104)
 COLOR_GRAY = (152, 152, 157)
-FONT_4x6 = None
-FONT_5x7 = None
-FONT_9x15 = None
-# FONT_4x6 = graphics.Font()
-# FONT_4x6.LoadFont(resource_filename(__name__, "fonts/4x6.bdf"))
-# FONT_5x7 = graphics.Font()
-# FONT_5x7.LoadFont(resource_filename(__name__, "fonts/5x7.bdf"))
-# FONT_9x15 = graphics.Font()
-# FONT_9x15.LoadFont(resource_filename(__name__, "fonts/9x15.bdf"))
+FONT_4x6 = graphics.Font(resource_filename(__name__, "fonts/4x6.bdf"))
+FONT_5x7 = graphics.Font(resource_filename(__name__, "fonts/5x7.bdf"))
+FONT_9x15 = graphics.Font(resource_filename(__name__, "fonts/9x15.bdf"))

@@ -1,8 +1,9 @@
 from typing import Union
 
+import bdfparser
 import numpy
 
-from ..canvas import Canvas
+from .canvas import Canvas
 
 
 def fill_screen(canvas: Canvas, color: Union[int, tuple[int, int, int]]) -> None:
@@ -394,19 +395,6 @@ def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> N
     pass
 
 
-def draw_text(canvas: Canvas, text: str, x: int, y: int, color: int) -> None:
-    """
-    Draws the desired text on the screen at the appropriate x and y coordinates.
-    :param canvas: The canvas to draw the text on.
-    :param text: The text to draw on the canvas.
-    :param x: The x-coordinate of the top left corner of the text.
-    :param y: The y-coordinate of the top-left corner of the text.
-    :param color: The color of the text.
-    :return: None.
-    """
-    pass
-
-
 def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.ndarray) -> None:
     """
     Draws an image on the canvas. Useful for "sprites", photos, and other graphics!
@@ -438,17 +426,95 @@ def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.nd
             canvas.data[y][x] = (r, g, b)
 
 
+class Font:
+    def __init__(self, path):
+        self.bdf_font = bdfparser.Font(path)
+        self.headers = self.bdf_font.headers
+        self.props = self.bdf_font.props
+        self.default_char = self.bdf_font.glyphbycp(0xFFFD)
+
+    def character_width(self, char: int):
+        # Missing glyphs return 0 width in rpi-rgb-led-matrix
+        # since i want things to be consistent, i'll do the same
+        if not self.bdf_font.glyphbycp(char):
+            return 0
+
+        return self.bdf_font.glyphbycp(char).meta["dwx0"]
+
+    @property
+    def height(self):
+        return self.headers["fbby"]
+
+    @property
+    def width(self):
+        return self.headers["fbax"]
+
+    @property
+    def baseline(self):
+        return self.headers["fbby"] + self.headers["fbbyoff"]
+
+
+def draw_text(canvas: Canvas, font: Font, x: int, y: int, color: int, text: str) -> None:
+    """
+    Draws the desired text on the screen at the appropriate x and y coordinates.
+    :param canvas: The canvas to draw the text on.
+    :param font: The font to use for the text.
+    :param x: The x-coordinate of the top left corner of the text.
+    :param y: The y-coordinate of the top-left corner of the text.
+    :param color: The color of the text.
+    :param text: The text to draw on the canvas.
+    :return: None.
+    """
+    if len(text) == 0:
+        return  # nothing to draw!
+
+    # Support multiple spacings based on device width
+    character_widths = [__actual_char_width(font, letter) for letter in text]
+    first_char_width = character_widths[0]
+    max_char_width = max(character_widths)
+    total_width = sum(character_widths)
+
+    # Offscreen to the left, adjust by first character width
+    if x < 0:
+        adjustment = abs(x + first_char_width) // first_char_width
+        text = text[adjustment:]
+        if adjustment:
+            x += first_char_width * adjustment
+
+    # Offscreen to the right, rough adjustment by max width
+    if (total_width + x) > canvas.width:
+        text = text[: ((canvas.width + 1) // max_char_width) + 2]
+
+    # Draw the text!
+    if len(text) != 0:
+        # Ensure text doesn't get drawn as multiple lines
+        linelimit = len(text) * (font.headers["fbbx"] + 1)
+
+        text_map = font.bdf_font.draw(text, linelimit, missing=font.default_char).todata(2)
+        font_y_offset = -(font.headers["fbby"] + font.headers["fbbyoff"])
+
+        for y2, row in enumerate(text_map):
+            for x2, value in enumerate(row):
+                if value == 1:
+                    canvas.set_pixel(x + x2, y + y2 + font_y_offset, color)
+
+    return total_width
+
+
+def __actual_char_width(font: Font, char: str) -> int:
+    width = font.character_width(ord(char))
+
+    if width > 0:
+        return width
+
+    return font.character_width(font.default_char.cp())
+
+
 if __name__ == "__main__":
     c = Canvas()
 
-    fill_screen(c, (32, 0, 64))
+    from c4_sign.consts import FONT_4x6 as f
 
-    import numpy
-    from PIL import Image
-
-    card = numpy.asarray(Image.open("/home/mac/Downloads/MinecraftIconSmall.png").convert("RGBA"))
-
-    # draw_image(c, 0, 0, bad_apple)
-    draw_image(c, 24, -5, card)
+    draw_text(c, f, 0, 10, (255, 255, 255), "hello :3")
 
     c.debug()
