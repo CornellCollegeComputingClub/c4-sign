@@ -454,7 +454,7 @@ class Font:
         return self.headers["fbby"] + self.headers["fbbyoff"]
 
 
-def draw_text(canvas: Canvas, font: Font, x: int, y: int, color: int, text: str) -> None:
+def draw_text(canvas: Canvas, font: Font, x: int, y: int, color: Union[int, tuple[int, int, int]], text: str) -> None:
     """
     Draws the desired text on the screen at the appropriate x and y coordinates.
     :param canvas: The canvas to draw the text on.
