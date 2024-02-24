@@ -1,4 +1,5 @@
 import logging
+import webbrowser
 from multiprocessing import Queue
 from threading import Thread
 
@@ -32,7 +33,8 @@ def start_server(to_web: Queue, from_web: Queue):
         from_web.put(data)
 
     print("Starting server on port 5000")
-    print("Open http://localhost:5000 in your browser")
+    print("Opening http://localhost:5000 in your browser...")
+    webbrowser.open("http://localhost:5000")
 
     socketio.run(app, allow_unsafe_werkzeug=True, log_output=False)
 
