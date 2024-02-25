@@ -174,7 +174,7 @@ def fill_rect(
     y1: int,
     x2: int,
     y2: int,
-    color: Union[int, tuple[int, int, int]],
+    color: Union[int, tuple[int, int, int], tuple[int, int, int, int]],
 ) -> None:
     """
     Colors the inside of a rectangle whose corners are defined by two points.
