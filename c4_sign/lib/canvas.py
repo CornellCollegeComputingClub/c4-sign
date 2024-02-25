@@ -13,12 +13,20 @@ class Canvas:
     def get_pixel(self, x: int, y: int):
         return self.data[y][x]
 
-    def set_pixel(self, x: int, y: int, color: Union[int, tuple[int, int, int]]):
+    def set_pixel(self, x: int, y: int, color: Union[int, tuple[int, int, int], tuple[int, int, int, int]]):
         if x < 0 or x >= self.width or y < 0 or y >= self.height:
             return  # Just ignore mistakes
 
         if isinstance(color, tuple):
-            self.data[y][x] = color
+            if len(color) == 3:
+                self.data[y][x] = color
+            else:
+                br, bg, bb = self.data[y][x]
+                a = color[3] / 255
+                r = int(color[0] * (1 - a) + br * a)
+                g = int(color[1] * (1 - a) + bg * a)
+                b = int(color[2] * (1 - a) + bb * a)
+                self.data[y][x] = (r, g, b)
         else:
             # 0xabcdef
             r = (color >> 16) & 0xFF
