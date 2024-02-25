@@ -9,11 +9,22 @@
             width: 512px;
             height: 512px;
             image-rendering: pixelated;
+            /* rounded border on outside only */
+            border: 10px solid #2e2e2e;
+            border-radius: 10px;
         }
 
         #lcd {
             width: 400px;
             height: 200px;
+        }
+        
+        .lcd {
+            width: 400px;
+            height: 85px;
+            overflow: hidden;
+            border: 10px solid #000;
+            border-radius: 10px;
         }
     </style>
     <script src="https://visrealm.github.io/vrEmuLcd/src/vrEmuLcd.js"></script>
@@ -24,7 +35,9 @@
 <body>
     <canvas id="display" width="512" height="512"></canvas>
     <br>
-    <canvas id="lcd" width="800" height="400"></canvas>
+    <div class="lcd">
+        <canvas id="lcd" width="800" height="400"></canvas>
+    </div>
     <div id="debug"></div>
     <!-- override task -->
     <input type="text" id="task" value="">
@@ -83,9 +96,6 @@
             lcd.sendCommand(LCD_CMD_DISPLAY | LCD_CMD_DISPLAY_ON);
             lcd.writeString(":3");
             lcd.render(lcd_ctx, 0, 0, 800, 400);
-            setInterval(() => {
-                lcd.render(lcd_ctx, 0, 0, 800, 400);
-            }, 1000 / 30);
         });
     </script>
 </body>
