@@ -43,6 +43,8 @@ class Pong(ScreenTask):
         self.ball_vel_x, self.ball_vel_y = 20 * math.cos(angle), 20 * math.sin(angle)
 
         self.last_points = []
+        self.last_left_paddle = []
+        self.last_right_paddle = []
 
         return super().prepare()
 
@@ -87,6 +89,40 @@ class Pong(ScreenTask):
                     last_colored = (int(f[0]), int(f[1]))
 
         canvas.set_pixel(int(self.ball_x), int(self.ball_y), 0xffffff)
+
+        last_left = int(self.left_paddle_y)
+        color_index = 0
+        for i, point in enumerate(self.last_left_paddle):
+            if int(point) == last_left:
+                continue
+            c = self.epic_colors[color_index%len(self.epic_colors)]
+            r = c >> 16
+            g = (c >> 8) & 0xff
+            b = c & 0xff
+            fill_rect(canvas,
+                      2, int(point + self.paddle_height / 2),
+                      2, int(point - self.paddle_height / 2),
+                      (r, g, b, min(255, int(255 * (len(self.epic_colors) - i)/len(self.epic_colors))))
+                      )
+            last_left = int(point)
+            color_index += 1
+
+        last_right = int(self.right_paddle_y)
+        color_index = 0
+        for i, point in enumerate(self.last_right_paddle):
+            if int(point) == last_right:
+                continue
+            c = self.epic_colors[color_index % len(self.epic_colors)]
+            r = c >> 16
+            g = (c >> 8) & 0xff
+            b = c & 0xff
+            fill_rect(canvas,
+                      29, int(point + self.paddle_height / 2),
+                      29, int(point - self.paddle_height / 2),
+                      (r, g, b, min(255, int(255 * (len(self.epic_colors) - i) / len(self.epic_colors))))
+                      )
+            last_right = int(point)
+            color_index += 1
 
         fill_rect(canvas,
                   2, int(self.left_paddle_y + self.paddle_height/2),
@@ -134,5 +170,14 @@ class Pong(ScreenTask):
             self.ball_vel_y *= -1
 
         self.last_points.append((self.ball_x, self.ball_y))
+
+        if len(self.last_left_paddle) > len(self.epic_colors):
+            self.last_left_paddle.pop(0)
+
+        if len(self.last_right_paddle) > len(self.epic_colors):
+            self.last_right_paddle.pop(0)
+
+        self.last_left_paddle.append(self.left_paddle_y)
+        self.last_right_paddle.append(self.right_paddle_y)
 
         return False
