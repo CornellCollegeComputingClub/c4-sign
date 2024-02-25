@@ -5,8 +5,10 @@ import numpy
 
 from .canvas import Canvas
 
+Color = Union[int, tuple[int, int, int], tuple[int, int, int, int]]
 
-def fill_screen(canvas: Canvas, color: Union[int, tuple[int, int, int]]) -> None:
+
+def fill_screen(canvas: Canvas, color: Color) -> None:
     """
     Sets the entire screen to the same color.
 
@@ -41,7 +43,7 @@ def stroke_line(
     y1: int,
     x2: int,
     y2: int,
-    color: Union[int, tuple[int, int, int]],
+    color: Color,
 ) -> None:
     """
     Colors a line of pixels between one point and another.
@@ -74,7 +76,7 @@ def __stroke_line_low(
     y1: int,
     x2: int,
     y2: int,
-    color: Union[int, tuple[int, int, int]],
+    color: Color,
 ) -> None:
     dx = x2 - x1
     dy = y2 - y1
@@ -100,7 +102,7 @@ def __stroke_line_high(
     y1: int,
     x2: int,
     y2: int,
-    color: Union[int, tuple[int, int, int]],
+    color: Color,
 ) -> None:
     dx = x2 - x1
     dy = y2 - y1
@@ -120,7 +122,7 @@ def __stroke_line_high(
             D = D + 2 * dx
 
 
-def __stroke_horizontal_line(canvas: Canvas, x1: int, x2: int, y: int, color: Union[int, tuple[int, int, int]]) -> None:
+def __stroke_horizontal_line(canvas: Canvas, x1: int, x2: int, y: int, color: Color) -> None:
     a = min(x1, x2)
     b = max(x1, x2)
 
@@ -134,7 +136,7 @@ def stroke_rect(
     y1: int,
     x2: int,
     y2: int,
-    color: Union[int, tuple[int, int, int]],
+    color: Color,
 ) -> None:
     """
     Colors the edges of a rectangle whose corners are defined by two points.
@@ -174,7 +176,7 @@ def fill_rect(
     y1: int,
     x2: int,
     y2: int,
-    color: Union[int, tuple[int, int, int], tuple[int, int, int, int]],
+    color: Color,
 ) -> None:
     """
     Colors the inside of a rectangle whose corners are defined by two points.
@@ -208,7 +210,7 @@ def stroke_ellipse(
     cy: int,
     rx: int,
     ry: int,
-    color: Union[int, tuple[int, int, int]],
+    color: Color,
 ) -> None:
     """
     Draws the outline of an ellipse on the canvas centered at (cx, cy).
@@ -274,7 +276,7 @@ def fill_ellipse(
     cy: int,
     rx: int,
     ry: int,
-    color: Union[int, tuple[int, int, int]],
+    color: Color,
 ) -> None:
     """
     Draws a filled ellipse on the canvas centered at (cx, cy).
@@ -365,7 +367,7 @@ def fill_circle(canvas: Canvas, x: int, y: int, radius: int, color: int) -> None
 def stroke_polyline(
     canvas: Canvas,
     points: list[tuple[int, int]],
-    color: Union[int, tuple[int, int, int]],
+    color: Color,
 ) -> None:
     """
     Colors a sequence of lines, making a path.
@@ -454,7 +456,23 @@ class Font:
         return self.headers["fbby"] + self.headers["fbbyoff"]
 
 
-def draw_text(canvas: Canvas, font: Font, x: int, y: int, color: Union[int, tuple[int, int, int]], text: str) -> None:
+def draw_centered_text(canvas: Canvas, font: Font, y: int, color: Color, text: str) -> None:
+    """
+    Draws the desired text on the screen at the appropriate x and y coordinates.
+
+    :param canvas: The canvas to draw the text on.
+    :param font: The font to use for the text.
+    :param y: The y-coordinate of the center of the text.
+    :param color: The color of the text.
+    :param text: The text to draw on the canvas.
+    :return: None.
+    """
+    width = draw_text(canvas, font, 0, 0, color, text)
+    x = (canvas.width - width) // 2
+    draw_text(canvas, font, x, y, color, text)
+
+
+def draw_text(canvas: Canvas, font: Font, x: int, y: int, color: Color, text: str) -> None:
     """
     Draws the desired text on the screen at the appropriate x and y coordinates.
     :param canvas: The canvas to draw the text on.

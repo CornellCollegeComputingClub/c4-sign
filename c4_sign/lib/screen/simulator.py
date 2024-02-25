@@ -24,7 +24,7 @@ class SimulatorScreen(ScreenBase):
         self._to_web.put({"type": "display", "canvas": canvas.serialize()})
         now = arrow.now()
         # sleep so we fill a 1/24th of a second
-        sleep(max(0, 1 / 24 - (now - self._last_update).total_seconds()))
+        sleep(max(0, (1 / 24) - (now - self._last_update).total_seconds()))
         self._last_update = arrow.now()
 
     def debug_info(self, **kwargs):
