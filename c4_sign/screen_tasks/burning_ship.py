@@ -43,8 +43,8 @@ class Complex:
         return self.real ** 2 + self.imag ** 2
 
 
-class Mandelbrot(ScreenTask):
-    title = "Mandelbrot Set"
+class BurningShip(ScreenTask):
+    title = "Burning Ship"
     artist = "Mac Coleman"
 
     def prepare(self):
@@ -72,16 +72,11 @@ class Mandelbrot(ScreenTask):
             0xFF0060,
         ]
         self.epic_points = [
-            Complex(-1.7692505972726005, 0.05691909790039061),
-            Complex(-1.9426247732979907, 0),
-            Complex(-0.10539082118443051, -0.9248651776994978),
-            Complex(-1.0200429643903455, 0.36748341151646224),
-            Complex(-0.7464179992675776, 0.18429674421037967),
-            Complex(0.42451275246484, 0.2075301834515165),
-            Complex(-1.2840499877929685, 0.427382332938058),
-            Complex(0.3577270507812499, -0.11002349853515625),
-            Complex(-1.985455104282924, 0),
-            Complex(-1.2517939976283483, 0.0411834716796875)
+            # Complex(-(1.7721983880271375 + 1.7722187032801162)/2, -(0.04251487432886503 + 0.04254394619090975)/2),
+            # Complex(-(-0.8379819119999999 + -0.83577771)/2, -(1.4488082728234664 + 1.4510926572533736)/2),
+            # Complex(-(1.8613924060088474 + 1.861552262730194)/2, -(0.0019904228838272166 + 0.002072016456434031)/2),
+            # Complex(-(0.8194765540832001 + 0.8196362197226658)/2, -(0.9403571999704258 + 0.9405396096087764)/2),
+            Complex(-(1.7730901168969844 + 1.7730901168969884)/2, -(0.0657946834733513 + 0.06579468347335482)/2)
         ]
         self.chosen_point = None
         return super().prepare()
@@ -120,29 +115,21 @@ class Mandelbrot(ScreenTask):
                 z = Complex(0, 0)
                 c = Complex(u, v)
 
-                # 2-bulb check
-                if (c + 1).mag_squared() <= 0.0625:
-                    continue  # Don't do anything if inside two-bulb
-
-                # Cardioid check
-                q = (u - 1/4) * (u - 1/4) + v * v
-
-                if q * (q + (u - 1/4)) <= 1/4 * v**2:
-                    continue  # Don't do any tests if inside cardioid
-
                 count = 0
                 while z.mag_squared() < 4.0 and count < self.iterations:
-                    # z = z^2 + c
-                    z = z * z
+                    # z = (|Re(z)| + i|Im(z)|)^2 + c
+                    r = abs(z.real)
+                    i = abs(z.imag)
+                    z = Complex(r, i) * Complex(r, i)
                     z = z + c
                     count += 1
 
                 if count != self.iterations:
                     # Continuous coloring... https://www.paridebroggi.com/blogpost/2015/05/06/fractal-continuous-coloring/
                     continuous_index = count + 1 - (math.log(2) / math.sqrt(z.mag_squared())) / math.log(2)
-                    r = int(math.sin(0.1 * continuous_index + 1) * 127.5 + 127.5)
-                    g = int(math.sin(0.13 * continuous_index + 2) * 127.5 + 127.5)
-                    b = int(math.sin(0.16 * continuous_index + 4) * 127.5 + 127.5)
+                    r = int(math.sin(0.01 * continuous_index + 1) * 127.5 + 127.5)
+                    g = int(math.sin(0.013 * continuous_index + 2) * 127.5 + 127.5)
+                    b = int(math.sin(0.016 * continuous_index + 4) * 127.5 + 127.5)
 
                     canvas.set_pixel(x, y, (r, g, b))
 
@@ -152,10 +139,7 @@ class Mandelbrot(ScreenTask):
             self.iterations += 1
 
         if self.frame > self.intro_time and self.chosen_point is None:
-            # Choose whether to flip imaginary axis (feels more varied that way)
-            sign = random.choice([1, -1])
             self.chosen_point = random.choice(self.epic_points)
-            self.chosen_point.imag *= sign
 
         if self.frame > self.intro_time:
             self.scale *= 0.995
