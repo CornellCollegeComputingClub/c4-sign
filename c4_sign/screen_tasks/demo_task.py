@@ -5,7 +5,7 @@ from c4_sign.base_task import ScreenTask
 from c4_sign.lib import graphics
 
 
-class KRNLNowPlaying(ScreenTask):
+class Demo(ScreenTask):
     title = "Demo"
     artist = "Mac Coleman"
 
@@ -17,3 +17,8 @@ class KRNLNowPlaying(ScreenTask):
         r, g, b = self.frame, 0, 255 - self.frame
         graphics.fill_screen(canvas, (r, g, b))
         self.frame = (self.frame + 4) % 255
+
+        if self.elapsed_time > self.suggested_run_time:
+            return True
+        else:
+            return False
