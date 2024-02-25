@@ -54,28 +54,11 @@ class BurningShip(ScreenTask):
         self.iterations = 1
         self.max_iterations = 150
         self.intro_time = 140
-        self.epic_colors = [
-            0xFF0000,
-            0xFF6000,
-            0xFFBF00,
-            0xB5FF00,
-            0x80FF00,
-            0x20FF00,
-            0x00FF40,
-            0x00FFFF,
-            0x009FFF,
-            0x0040FF,
-            0x2000FF,
-            0x7F00FF,
-            0xDF00FF,
-            0xFF00BF,
-            0xFF0060,
-        ]
         self.epic_points = [
-            # Complex(-(1.7721983880271375 + 1.7722187032801162)/2, -(0.04251487432886503 + 0.04254394619090975)/2),
-            # Complex(-(-0.8379819119999999 + -0.83577771)/2, -(1.4488082728234664 + 1.4510926572533736)/2),
-            # Complex(-(1.8613924060088474 + 1.861552262730194)/2, -(0.0019904228838272166 + 0.002072016456434031)/2),
-            # Complex(-(0.8194765540832001 + 0.8196362197226658)/2, -(0.9403571999704258 + 0.9405396096087764)/2),
+            Complex(-(1.7721983880271375 + 1.7722187032801162)/2, -(0.04251487432886503 + 0.04254394619090975)/2),
+            Complex(-(-0.8379819119999999 + -0.83577771)/2, -(1.4488082728234664 + 1.4510926572533736)/2),
+            Complex(-(1.8613924060088474 + 1.861552262730194)/2, -(0.0019904228838272166 + 0.002072016456434031)/2),
+            Complex(-(0.8194765540832001 + 0.8196362197226658)/2, -(0.9403571999704258 + 0.9405396096087764)/2),
             Complex(-(1.7730901168969844 + 1.7730901168969884)/2, -(0.0657946834733513 + 0.06579468347335482)/2)
         ]
         self.chosen_point = None
@@ -88,11 +71,11 @@ class BurningShip(ScreenTask):
             return super().get_lcd_text()
 
         if 20 < et < 40:
-            return "in the land of".center(16) + "the imaginary!".center(16)
+            return "very free".center(16) + "and easy".center(16)
         elif 40 <= et:
             return f"a = {self.chosen_point.real:12.8f}".center(16) + f" + {self.chosen_point.imag:12.8f}i".center(16)
         else:
-            return "Come with me on".center(16) + "a journey...".center(16)
+            return "Burning ship".center(16) + "on the water...".center(16)
 
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
 
@@ -127,9 +110,9 @@ class BurningShip(ScreenTask):
                 if count != self.iterations:
                     # Continuous coloring... https://www.paridebroggi.com/blogpost/2015/05/06/fractal-continuous-coloring/
                     continuous_index = count + 1 - (math.log(2) / math.sqrt(z.mag_squared())) / math.log(2)
-                    r = int(math.sin(0.01 * continuous_index + 1) * 127.5 + 127.5)
-                    g = int(math.sin(0.013 * continuous_index + 2) * 127.5 + 127.5)
-                    b = int(math.sin(0.016 * continuous_index + 4) * 127.5 + 127.5)
+                    r = int(math.sin(0.1 * continuous_index + 1) * 127.5 + 127.5)
+                    g = int(math.sin(0.13 * continuous_index + 2) * 30 + 30)
+                    b = int(math.sin(0.16 * continuous_index + 4) * 127.5 + 127.5)
 
                     canvas.set_pixel(x, y, (r, g, b))
 
