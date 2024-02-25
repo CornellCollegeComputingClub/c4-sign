@@ -46,3 +46,8 @@ socketio = SocketIO(app)
 @app.route("/")
 def index():
     return flask.render_template("index.html")
+
+
+@app.route("/static/<path:path>")
+def send_static(path):
+    return flask.send_from_directory("static", path)

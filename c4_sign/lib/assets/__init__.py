@@ -38,7 +38,15 @@ def image_from_url(url):
     if cached_value:
         return cached_value
     else:
-        return __download_image(url)
+        return __download_file(url)
+
+
+def file_from_url(url):
+    cached_value = __check_cache(url)
+    if cached_value:
+        return cached_value
+    else:
+        return __download_file(url)
 
 
 def purge_cache():
@@ -46,7 +54,7 @@ def purge_cache():
     shutil.rmtree(cache)
 
 
-def __download_image(url):
+def __download_file(url):
     cache = cache_path()
     image = requests.get(url, stream=True)
     filename = Path(url.split("/")[-1])

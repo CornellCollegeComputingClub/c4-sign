@@ -9,7 +9,7 @@ setup(
     author_email="totallynotmark6@gmail.com",
     license="none",
     packages=["c4_sign"],
-    install_requires=["requests", "arrow", "segno", "numpy", "bdfparser"],
+    install_requires=["requests", "arrow", "segno", "numpy", "bdfparser", "srt", "Pillow"],
     extras_require={
         "physical": ["rpi_ws281x", "adafruit-circuitpython-neopixel", "smbus"],
         "simulator": ["flask", "flask-socketio"],

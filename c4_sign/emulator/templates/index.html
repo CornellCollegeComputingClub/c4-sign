@@ -5,27 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        canvas {
+        #display {
             width: 512px;
             height: 512px;
             image-rendering: pixelated;
         }
-        .lcd {
-            font-size: 16px;
-            font-family: monospace;
-            background-color: blue;
-            color: white;
+
+        #lcd {
+            width: 400px;
+            height: 200px;
         }
     </style>
+    <script src="https://visrealm.github.io/vrEmuLcd/src/vrEmuLcd.js"></script>
+    <script src="https://visrealm.github.io/vrEmuLcd/bin/vrEmuLcdWasm.js"></script>
     <title>super awesome simulator</title>
 </head>
 
 <body>
     <canvas id="display" width="512" height="512"></canvas>
-    <div class="lcd">
-        <span id="lcd-1">:3</span><br>
-        <span id="lcd-2"></span>
-    </div>
+    <br>
+    <canvas id="lcd" width="800" height="400"></canvas>
     <div id="debug"></div>
     <!-- override task -->
     <input type="text" id="task" value="">
@@ -41,8 +40,9 @@
         let canvas = document.getElementById('display');
         let ctx = canvas.getContext('2d');
 
-        let lcd_1 = document.getElementById('lcd-1');
-        let lcd_2 = document.getElementById('lcd-2');
+        let lcd;
+        let lcd_canvas = document.getElementById('lcd');
+        let lcd_ctx = lcd_canvas.getContext('2d');
 
         let debug = document.getElementById('debug');
 
@@ -58,13 +58,34 @@
                 }
             } else if (data.type == 'lcd') {
                 // data.text = 32 chara string
-                lcd_1.innerHTML = data.text.substr(0, 16);
-                lcd_2.innerHTML = data.text.substr(16, 16);
+                if (lcd) {
+                    // lcd.clear();
+                    lcd.sendCommand(LCD_CMD_CLEAR);
+                    lcd.sendCommand(LCD_CMD_HOME);
+                    // lcd.writeString(data.text);
+                    lcd.writeString(data.text.substring(0, 16)); // 1st line
+                    // move to 2nd line
+                    for (var i = 0; i < 40-16; ++i) {
+                        lcd.sendCommand(LCD_CMD_SHIFT | LCD_CMD_SHIFT_RIGHT | LCD_CMD_SHIFT_CURSOR);
+                    }
+                    lcd.writeString(data.text.substring(16, 32)); // 2nd line
+                    lcd.render(lcd_ctx, 0, 0, 800, 400);
+                }
             } else if (data.type == 'debug_info') {
                 debug.innerHTML = JSON.stringify(data, null, 2);
             } else {
                 console.log(data);
             }
+        });
+
+        vrEmuLcd.setLoadedCallback(function () {
+            lcd = vrEmuLcd.newLCD(16, 2, vrEmuLcd.CharacterRom.Eurpoean);
+            lcd.sendCommand(LCD_CMD_DISPLAY | LCD_CMD_DISPLAY_ON);
+            lcd.writeString(":3");
+            lcd.render(lcd_ctx, 0, 0, 800, 400);
+            setInterval(() => {
+                lcd.render(lcd_ctx, 0, 0, 800, 400);
+            }, 1000 / 30);
         });
     </script>
 </body>
