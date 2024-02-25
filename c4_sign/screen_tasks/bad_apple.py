@@ -40,7 +40,7 @@ class BadApple(ScreenTask):
 
     def prepare(self):
         # weighted random choice, we want a 2% chance of the full video
-        if random.random() < 0.02 or True:
+        if random.random() < 0.02:
             self.section = range(1, 5259)
             print("full video!")
         else:
@@ -63,7 +63,6 @@ class BadApple(ScreenTask):
     def draw_frame(self, canvas, delta_time):
         # we need to load the image
         image = Image.open(self.image_folder_path / f"{self.frame}.png")
-        image = image.resize((32, 32))
         graphics.draw_image(canvas, 0, 0, numpy.array(image))
         self.frame += 1
         if self.frame > 5258:

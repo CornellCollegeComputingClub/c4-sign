@@ -5,9 +5,16 @@ import subprocess
 from pathlib import Path
 
 import requests
+from PIL import Image
 
 
 def cache_path() -> Path:
+    """
+    Returns the path to the cache folder
+
+    Returns:
+        Path: The path to the cache folder
+    """
     system = platform.system()
     if system == "Windows":
         p = Path.home() / "AppData" / "Local" / "c4_sign" / "cache"
@@ -25,23 +32,77 @@ def get_ffmpeg():
     return "ffmpeg"
 
 
-def video_to_images(videoURL):
+def video_to_images(videoURL, resize=True):
+    """
+    Downloads a video from a URL and converts it to images
+
+    Args:
+        videoURL (str): The URL of the video
+        resize (bool, optional): Whether to resize the images to 32x32. Defaults to True.
+
+    Returns:
+        Path: The path to the folder containing the images
+    """
     cached_value = __check_cache(videoURL)
     if cached_value:
         return cached_value
     else:
-        return __download_video(videoURL)
+        folder = __download_video(videoURL)
+        if resize:
+            for image in folder.iterdir():
+                resize_image(image, (32, 32))
+        return folder
 
 
-def image_from_url(url):
+def image_from_url(url, resize=True):
+    """
+    Retrieves an image from the given URL and optionally resizes it.
+
+    Args:
+        url (str): The URL of the image.
+        resize (bool, optional): Whether to resize the image. Defaults to True.
+
+    Returns:
+        PIL.Image.Image: The retrieved image.
+
+    """
     cached_value = __check_cache(url)
     if cached_value:
         return cached_value
     else:
-        return __download_file(url)
+        image = file_from_url(url)
+        if resize:
+            resize_image(image, (32, 32))
+        return image
+
+
+def resize_image(image: Path, size: tuple[int, int]):
+    """
+    Resize the given image to the specified size.
+
+    Args:
+        image (Path): The path to the image file.
+        size (tuple[int, int]): The desired size of the image (width, height).
+
+    Returns:
+        None
+    """
+    with Image.open(image) as img:
+        img = img.resize(size)
+        img.save(image)
 
 
 def file_from_url(url):
+    """
+    Downloads a file from the given URL if it is not already cached, and returns the file path.
+
+    Args:
+        url (str): The URL of the file to download.
+
+    Returns:
+        str: The file path of the downloaded file.
+
+    """
     cached_value = __check_cache(url)
     if cached_value:
         return cached_value
@@ -50,6 +111,9 @@ def file_from_url(url):
 
 
 def purge_cache():
+    """
+    Purges the cache directory.
+    """
     cache = cache_path()
     shutil.rmtree(cache)
 
