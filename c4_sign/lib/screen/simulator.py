@@ -1,6 +1,8 @@
 import multiprocessing
 from time import sleep
 
+import arrow
+
 from c4_sign.emulator.__main__ import start_server
 from c4_sign.lib.canvas import Canvas
 from c4_sign.lib.screen.base import ScreenBase
@@ -13,13 +15,17 @@ class SimulatorScreen(ScreenBase):
         self._from_web = multiprocessing.Queue()
         self._process = multiprocessing.Process(target=start_server, args=(self._to_web, self._from_web))
         self._process.start()
+        self._last_update = arrow.now()
 
     def update_lcd(self, text):
         self._to_web.put({"type": "lcd", "text": text})
 
     def update_display(self, canvas: Canvas):
         self._to_web.put({"type": "display", "canvas": canvas.serialize()})
-        sleep(1 / 28)  # 24 fps
+        now = arrow.now()
+        # sleep so we fill a 1/24th of a second
+        sleep(max(0, 1 / 24 - (now - self._last_update).total_seconds()))
+        self._last_update = arrow.now()
 
     def debug_info(self, **kwargs):
         self._to_web.put({"type": "debug_info", "data": kwargs})
