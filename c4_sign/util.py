@@ -23,6 +23,32 @@ def ttl_cache(ttl_seconds):
     return decorator
 
 
+def lerp(a, b, t):
+    """
+    Linear interpolation between a and b by t.
+
+    :param a: start value
+    :param b: end value
+    :param t: interpolation factor
+    :return: a value between a and b
+    """
+    return a + (b - a) * t
+
+
+def map_value(value, in_min, in_max, out_min, out_max):
+    """
+    Map a value from one range to another.
+
+    :param value: the value to map
+    :param in_min: the minimum value of the input range
+    :param in_max: the maximum value of the input range
+    :param out_min: the minimum value of the output range
+    :param out_max: the maximum value of the output range
+    :return: the value mapped to the output range
+    """
+    return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
+
 def internet_is_available():
     try:
         requests.get("https://google.com", timeout=1)
