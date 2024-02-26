@@ -1,11 +1,10 @@
+import math
+import random
+from dataclasses import dataclass
 from datetime import timedelta
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib.canvas import Canvas
-
-from dataclasses import dataclass
-import random
-import math
 
 
 @dataclass
@@ -40,7 +39,7 @@ class Complex:
             raise TypeError("Expected float or Complex.")
 
     def mag_squared(self):
-        return self.real ** 2 + self.imag ** 2
+        return self.real**2 + self.imag**2
 
 
 class Mandelbrot(ScreenTask):
@@ -48,7 +47,7 @@ class Mandelbrot(ScreenTask):
     artist = "Mac Coleman"
 
     def prepare(self):
-        self.center = Complex(0,0)
+        self.center = Complex(0, 0)
         self.scale = 4
         self.frame = 0
         self.iterations = 1
@@ -81,7 +80,7 @@ class Mandelbrot(ScreenTask):
             Complex(-1.2840499877929685, 0.427382332938058),
             Complex(0.3577270507812499, -0.11002349853515625),
             Complex(-1.985455104282924, 0),
-            Complex(-1.2517939976283483, 0.0411834716796875)
+            Complex(-1.2517939976283483, 0.0411834716796875),
         ]
         self.chosen_point = None
         return super().prepare()
@@ -101,7 +100,6 @@ class Mandelbrot(ScreenTask):
 
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
 
-
         x_min = 0
         x_max = 31
         y_min = 0
@@ -114,8 +112,8 @@ class Mandelbrot(ScreenTask):
 
         for x in range(0, 32):
             for y in range(0, 32):
-                u = u_min + (u_max - u_min) * (x - x_min)/(x_max - x_min)
-                v = v_min + (v_max - v_min) * (y - y_min)/(y_max - y_min)
+                u = u_min + (u_max - u_min) * (x - x_min) / (x_max - x_min)
+                v = v_min + (v_max - v_min) * (y - y_min) / (y_max - y_min)
 
                 z = Complex(0, 0)
                 c = Complex(u, v)
@@ -125,9 +123,9 @@ class Mandelbrot(ScreenTask):
                     continue  # Don't do anything if inside two-bulb
 
                 # Cardioid check
-                q = (u - 1/4) * (u - 1/4) + v * v
+                q = (u - 1 / 4) * (u - 1 / 4) + v * v
 
-                if q * (q + (u - 1/4)) <= 1/4 * v**2:
+                if q * (q + (u - 1 / 4)) <= 1 / 4 * v**2:
                     continue  # Don't do any tests if inside cardioid
 
                 count = 0

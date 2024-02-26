@@ -1,11 +1,10 @@
+import math
+import random
+from dataclasses import dataclass
 from datetime import timedelta
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib.canvas import Canvas
-
-from dataclasses import dataclass
-import random
-import math
 
 
 @dataclass
@@ -40,7 +39,7 @@ class Complex:
             raise TypeError("Expected float or Complex.")
 
     def mag_squared(self):
-        return self.real ** 2 + self.imag ** 2
+        return self.real**2 + self.imag**2
 
 
 class BurningShip(ScreenTask):
@@ -48,18 +47,18 @@ class BurningShip(ScreenTask):
     artist = "Mac Coleman"
 
     def prepare(self):
-        self.center = Complex(0,0)
+        self.center = Complex(0, 0)
         self.scale = 4
         self.frame = 0
         self.iterations = 1
         self.max_iterations = 150
         self.intro_time = 140
         self.epic_points = [
-            Complex(-(1.7721983880271375 + 1.7722187032801162)/2, -(0.04251487432886503 + 0.04254394619090975)/2),
-            Complex(-(-0.8379819119999999 + -0.83577771)/2, -(1.4488082728234664 + 1.4510926572533736)/2),
-            Complex(-(1.8613924060088474 + 1.861552262730194)/2, -(0.0019904228838272166 + 0.002072016456434031)/2),
-            Complex(-(0.8194765540832001 + 0.8196362197226658)/2, -(0.9403571999704258 + 0.9405396096087764)/2),
-            Complex(-(1.7730901168969844 + 1.7730901168969884)/2, -(0.0657946834733513 + 0.06579468347335482)/2)
+            Complex(-(1.7721983880271375 + 1.7722187032801162) / 2, -(0.04251487432886503 + 0.04254394619090975) / 2),
+            Complex(-(-0.8379819119999999 + -0.83577771) / 2, -(1.4488082728234664 + 1.4510926572533736) / 2),
+            Complex(-(1.8613924060088474 + 1.861552262730194) / 2, -(0.0019904228838272166 + 0.002072016456434031) / 2),
+            Complex(-(0.8194765540832001 + 0.8196362197226658) / 2, -(0.9403571999704258 + 0.9405396096087764) / 2),
+            Complex(-(1.7730901168969844 + 1.7730901168969884) / 2, -(0.0657946834733513 + 0.06579468347335482) / 2),
         ]
         self.chosen_point = None
         return super().prepare()
@@ -79,7 +78,6 @@ class BurningShip(ScreenTask):
 
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
 
-
         x_min = 0
         x_max = 31
         y_min = 0
@@ -92,8 +90,8 @@ class BurningShip(ScreenTask):
 
         for x in range(0, 32):
             for y in range(0, 32):
-                u = u_min + (u_max - u_min) * (x - x_min)/(x_max - x_min)
-                v = v_min + (v_max - v_min) * (y - y_min)/(y_max - y_min)
+                u = u_min + (u_max - u_min) * (x - x_min) / (x_max - x_min)
+                v = v_min + (v_max - v_min) * (y - y_min) / (y_max - y_min)
 
                 z = Complex(0, 0)
                 c = Complex(u, v)

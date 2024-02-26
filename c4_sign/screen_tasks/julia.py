@@ -1,11 +1,9 @@
+import math
+from dataclasses import dataclass
 from datetime import timedelta
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib.canvas import Canvas
-
-from dataclasses import dataclass
-import random
-import math
 
 
 @dataclass
@@ -40,7 +38,7 @@ class Complex:
             raise TypeError("Expected float or Complex.")
 
     def mag_squared(self):
-        return self.real ** 2 + self.imag ** 2
+        return self.real**2 + self.imag**2
 
 
 class JuliaSet(ScreenTask):
@@ -49,7 +47,7 @@ class JuliaSet(ScreenTask):
 
     def prepare(self):
         self.angle = 0
-        self.angular_velocity = math.pi/(128)
+        self.angular_velocity = math.pi / (128)
         self.center = Complex(0, 0)
         self.c = Complex(0.751, 0)
         self.scale = 4
@@ -77,7 +75,6 @@ class JuliaSet(ScreenTask):
 
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
 
-
         x_min = 0
         x_max = 31
         y_min = 0
@@ -90,8 +87,8 @@ class JuliaSet(ScreenTask):
 
         for x in range(0, 32):
             for y in range(0, 32):
-                u = u_min + (u_max - u_min) * (x - x_min)/(x_max - x_min)
-                v = v_min + (v_max - v_min) * (y - y_min)/(y_max - y_min)
+                u = u_min + (u_max - u_min) * (x - x_min) / (x_max - x_min)
+                v = v_min + (v_max - v_min) * (y - y_min) / (y_max - y_min)
 
                 z = Complex(u, v)
 
@@ -109,7 +106,6 @@ class JuliaSet(ScreenTask):
 
         if self.iterations < self.max_iterations:
             self.iterations += 1
-
 
         # Sweep seed point around outside of main cardioid
         self.angle += self.angular_velocity

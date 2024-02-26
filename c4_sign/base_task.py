@@ -2,7 +2,6 @@ from datetime import timedelta
 
 import arrow
 
-from c4_sign.consts import COLOR_GRAY, COLOR_PURPLE, FONT_4x6
 from c4_sign.lib.canvas import Canvas
 
 

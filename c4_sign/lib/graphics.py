@@ -201,8 +201,6 @@ def fill_rect(
         for j in range(dy + 1):
             canvas.set_pixel(x + i, y + j, color)
 
-    pass
-
 
 def stroke_ellipse(
     canvas: Canvas,
@@ -394,7 +392,6 @@ def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> N
     :param color: The color to fill the polygon with.
     :return: None.
     """
-    pass
 
 
 def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.ndarray) -> None:

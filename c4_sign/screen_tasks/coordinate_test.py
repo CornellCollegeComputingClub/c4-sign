@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from c4_sign.base_task import ScreenTask
-from c4_sign.lib import graphics
 from c4_sign.lib.canvas import Canvas
 
 

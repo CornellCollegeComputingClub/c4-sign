@@ -1,6 +1,3 @@
-import random
-from datetime import timedelta
-
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib import graphics
 

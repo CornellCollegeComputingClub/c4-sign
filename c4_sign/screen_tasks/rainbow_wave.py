@@ -3,7 +3,6 @@ from datetime import timedelta
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib.canvas import Canvas
-from c4_sign.lib.graphics import fill_screen
 
 
 class RainbowWave(ScreenTask):
