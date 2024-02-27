@@ -28,5 +28,7 @@ class MatrixScreen(ScreenBase):
         # self.__lcd.lcd_clear()
         # self.__lcd.lcd_display_string(text[:16], 1)
         # self.__lcd.lcd_display_string(text[16:], 2)
+        with open('/tmp/lcd.txt', 'w') as f:
+            f.write(text)
         self.__cached_text = text
         # return super().update_lcd(text)

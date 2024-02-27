@@ -50,6 +50,7 @@ class ScreenManager:
                 self.current_task = None
                 self.index += 1
                 if self.index >= len(self.current_tasks):
+                    raise Exception("No tasks to run!")
                     self.index = 0
                 return self.draw(canvas, delta_time)
         if self.current_task.draw(canvas, delta_time):

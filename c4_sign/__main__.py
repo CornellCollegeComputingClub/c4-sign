@@ -19,4 +19,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    from pyinstrument import Profiler
+    from pyinstrument.renderers import SpeedscopeRenderer
+
+    with Profiler() as profiler:
+        try:
+            main()
+        except Exception:
+            pass
+    print("Writing profile...")
+    with open("/tmp/profile.speedscope.json", "w") as f:
+        f.write(profiler.output(renderer=SpeedscopeRenderer(show_all=True)))
