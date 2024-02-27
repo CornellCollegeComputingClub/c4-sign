@@ -9,10 +9,10 @@ from c4_sign.lib.screen.physical.driver import lcd
 class MatrixScreen(ScreenBase):
     def __init__(self):
         self.__pixels = neopixel.NeoPixel(board.D18, 32 * 32, brightness=0.05, auto_write=False)
-        self.__lcd = lcd()
+        # self.__lcd = lcd()
         self.__cached_text = " " * 32
-        self.__lcd.lcd_clear()
-        self.__lcd.lcd_display_string("Now loading!", 1)
+        # self.__lcd.lcd_clear()
+        # self.__lcd.lcd_display_string("Now loading!", 1)
         self.__pixels.show()
 
     def update_display(self, canvas: Canvas):
@@ -25,8 +25,8 @@ class MatrixScreen(ScreenBase):
     def update_lcd(self, text):
         if text == self.__cached_text:
             return
-        self.__lcd.lcd_clear()
-        self.__lcd.lcd_display_string(text[:16], 1)
-        self.__lcd.lcd_display_string(text[16:], 2)
+        # self.__lcd.lcd_clear()
+        # self.__lcd.lcd_display_string(text[:16], 1)
+        # self.__lcd.lcd_display_string(text[16:], 2)
         self.__cached_text = text
         # return super().update_lcd(text)
