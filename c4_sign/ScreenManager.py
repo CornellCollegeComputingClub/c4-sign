@@ -1,6 +1,9 @@
 import importlib
+from datetime import timedelta
+from typing import Union
 
 from c4_sign.base_task import ScreenTask
+from c4_sign.lib.canvas import Canvas
 
 
 class ScreenManager:
@@ -10,7 +13,7 @@ class ScreenManager:
         self.index = 0
 
     @property
-    def current_tasks(self):
+    def current_tasks(self) -> list[ScreenTask]:
         return self.tasks
 
     def update_tasks(self):
@@ -22,7 +25,7 @@ class ScreenManager:
                 if isinstance(obj, type) and issubclass(obj, ScreenTask) and obj != ScreenTask and obj.ignore is False:
                     self.tasks.append(obj())
 
-    def override_current_task(self, task):
+    def override_current_task(self, task: Union[str, ScreenTask]):
         # if task is a string, find the task by name
         if isinstance(task, str):
             for t in self.tasks:
@@ -39,7 +42,7 @@ class ScreenManager:
         self.current_task.prepare()
         self.index = -1
 
-    def draw(self, canvas, delta_time):
+    def draw(self, canvas: Canvas, delta_time: timedelta):
         if not self.current_task:
             if self.index >= len(self.current_tasks):
                 self.index = 0
@@ -50,7 +53,6 @@ class ScreenManager:
                 self.current_task = None
                 self.index += 1
                 if self.index >= len(self.current_tasks):
-                    raise Exception("No tasks to run!")
                     self.index = 0
                 return self.draw(canvas, delta_time)
         if self.current_task.draw(canvas, delta_time):

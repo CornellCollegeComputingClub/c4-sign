@@ -13,6 +13,7 @@ setup(
     extras_require={
         "physical": ["rpi_ws281x", "adafruit-circuitpython-neopixel", "smbus"],
         "simulator": ["flask", "flask-socketio"],
+        "misc": ["black", "autoflake", "isort", "pyinstrument"],
     },
     classifiers=[
         "Development Status :: 1 - Planning",
