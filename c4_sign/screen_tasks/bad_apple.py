@@ -23,7 +23,7 @@ class BadApple(ScreenTask):
     ]
 
     def __init__(self):
-        super().__init__(timedelta(seconds=1), timedelta(seconds=30))  # :)
+        super().__init__(timedelta(seconds=1), timedelta(hours=1))  # :)
         self.prepare_bad_apple()
 
     def prepare_bad_apple(self):
