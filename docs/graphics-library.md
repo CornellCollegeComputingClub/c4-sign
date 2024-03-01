@@ -9,7 +9,7 @@ This guide will go into detail on each of the operations available for `Canvas` 
 **To use any of the functions in this library, you must import the graphics library in your task**, like so:
 
 ```python
-from c4_sign.lib.graphics import *
+from c4_sign.lib import graphics
 ```
 
 # Table of Contents

@@ -4,6 +4,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
+import gdown
 import requests
 from PIL import Image
 
@@ -108,6 +109,32 @@ def file_from_url(url):
         return cached_value
     else:
         return __download_file(url)
+
+
+def file_from_google_drive(path):
+    # first, check if we have the file locally
+    # google drive files are stored in the cache/google_drive folder
+    cache = cache_path()
+    file = cache / "google_drive" / path
+    if file.exists():
+        return file
+    # if we don't have the file, redownload the folder from google drive
+    # and return the file
+    else:
+        return __download_google_drive_file(path)
+
+
+def __download_google_drive_file(path):
+    # download the folder from google drive
+    folder = cache_path() / "google_drive"
+    url = "https://drive.google.com/drive/folders/1PweM5UME7iaHHXBA2m3Fbw3vI0Xlk5Fn"
+    gdown.download_folder(url, output=str(folder), quiet=False)
+    # return the file
+    file = folder / path
+    if file.exists():
+        return file
+    else:
+        raise FileNotFoundError(f"File {path} not found in google drive folder!")
 
 
 def purge_cache():
