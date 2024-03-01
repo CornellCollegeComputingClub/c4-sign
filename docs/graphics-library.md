@@ -71,7 +71,7 @@ canvas.set_pixel(31, 31, (255, 255, 255))
 
 The output of the following code is illustrated below:
 
-TODO PLACE IMAGE
+![Canvas Example](./images/canvas_example.jpg)
 ### Color <a name="color"></a>
 The color datatype is a type alias used to construct colors within your display programs.
 

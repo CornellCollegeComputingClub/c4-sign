@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Union
 
 import numpy
@@ -50,6 +51,13 @@ class Canvas:
 
     def tobytes(self):
         return self.data.tobytes()
+
+    def to_jpg(self, path: Union[str, Path], size_multiplier=8.0) -> None:
+        from PIL import Image
+
+        img = Image.fromarray(self.data, "RGB")
+        img = img.resize((int(self.width * size_multiplier), int(self.height * size_multiplier)), Image.NEAREST)
+        img.save(path)
 
     def debug(self) -> None:
         for y in range(0, self.height, 2):
