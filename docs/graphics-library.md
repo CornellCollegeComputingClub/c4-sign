@@ -9,12 +9,11 @@ This guide will go into detail on each of the operations available for `Canvas` 
 # Table of Contents
 
 1. Datatypes
-   1. [Canvas](#Canvas)
+   1. [Canvas](#canvas)
       1. set_pixel
-   1. [Color](#Color)
-
-   3. Font
-2. Graphics Library
+   1. [Color](#color)
+   1. [Font](#font)
+2. [Graphics Library](#graphlib)
    1. fill_screen
    2. clear_screen
    3. stroke_line
@@ -31,13 +30,43 @@ This guide will go into detail on each of the operations available for `Canvas` 
 
 ## Datatypes
 
-
-### Canvas <a name="Canvas"></a>
+### Canvas <a name="canvas"></a>
 The `Canvas` class is what you use to draw images on the LED screen!
+As mentioned in the screen task tutorial, an empty canvas is given to the screen task to begin drawing the frame on.
 
-TODO: Fill this out
+The canvas is a direct representation of the LED screen: it is an interface for a 32 by 32 grid of cells in which colors can be stored.
+The canvas has exactly one method that can be used to change how it displays:
 
-### Color <a name="Colors"></a>
+#### Canvas.set_pixel(x, y, color)
+Changes the color of the pixel at the specified x,y position.
+
+| Argument | Datatype  | Description                    |
+|----------|-----------|--------------------------------|
+| x        | `int`     | X-position of pixel to color   |
+| y        | `int`     | Y-position of pixel to color   |
+| color    | `Color`   | The color to set the pixel to. |
+
+It should be noted that the pixel at x=0 and y=0 is the top-left corner of the screen.
+This is standard for many graphics applications.
+Also, note that because (0,0) is the top left, and the screen is 32x32 pixels, the highest x or y value you can use is 31.
+If you call set_pixel with an x or y that falls outside of the range 0-31, no error will be produced, but also nothing will happen on the screen.
+
+#### Examples
+```python
+# Set the pixel in the top left corner to red.
+canvas.set_pixel(0,0, (255, 0, 0))
+
+# Set the pixel in the top right corner to blue.
+canvas.set_pixel(31,0, (0, 0, 255))
+
+# Set the pixel in the bottom right corner to white.
+canvas.set_pixel(31, 31, (255, 255, 255))
+```
+
+The output of the following code is illustrated below:
+
+TODO PLACE IMAGE
+### Color <a name="color"></a>
 The color datatype is a type alias used to construct colors within your display programs.
 
 ```python
@@ -83,3 +112,63 @@ graphics.fill_rect(canvas, 10, 10, 31, 31, transparent_cyan)
 ```
 The above code will produce an image like this in the canvas:
 TODO: ADD IMAGE HERE
+
+### Font <a name="font"></a>
+
+## Graphics Library <a name="graphlib"></a>
+The graphics library contains methods to help you draw images on your screen!
+It includes helper functions that can, for example, color the entire screen one color, draw lines or circles, and much more.
+
+### `fill_screen(canvas, color)`
+
+Fills the canvas with the specified color.
+
+### `clear_screen(canvas)`
+
+Sets the entire canvas to black.
+
+### `stroke_line(canvas, x1, y1, x2, y2, color)`
+
+Draws a line between the points (x1, y1) and (x2, y2) with the specified color.
+
+### `stroke_rect(canvas, x1, y1, x2, y2, color)`
+
+Draws the edges of a rectangle between the points (x1, y1) and (x2, y2) with the specified color.
+
+### `fill_rect(canvas, x1, y1, x2, y2, color)`
+
+Draws and fills a rectangle between the points (x1, y1) and (x2, y2) with the specified color.
+
+### `stroke_ellipse(canvas, cx, cy, rx, ry, color)`
+
+Draws an ellipse centered at (cx, cy) with horizontal radius rx and vertical radius ry with the specified color.
+
+### `fill_ellipse(canvas, cx, cy, rx, ry, color)`
+
+Draws and fills an ellipse centered at (cx, cy) with horizontal radius rx and vertical radius ry with the specified color.
+
+### `stroke_circle(canvas, x, y, radius, color)`
+
+Draws a circle of radius r at the point (x,y) with the specified color.
+
+### `fill_circle(canvas, x, y, radius, color)`
+
+Draws and fills a circle of radius r at the point (x, y) with the specified color.
+
+### `stroke_polyline(canvas, points, color)`
+
+Draws lines between all the points in a list with the specified color.
+
+### `fill_polygon(canvas, points, color)`
+
+### `draw_image(canvas, top_left_x, top_left_y, image)`
+
+Draws the specified image with its top-left corner placed at (top_left_x, top_left_y).
+
+### `draw_text(canvas, font, x, y, color, text)`
+
+Draws text with the specified font with the (x, y) coordinate in the bottom left.
+
+### `draw_centered_text(canvas, font, y, color, text)`
+
+Draws text horizontally centered on the screen at the specified y level.
