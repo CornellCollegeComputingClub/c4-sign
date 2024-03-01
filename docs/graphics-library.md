@@ -8,27 +8,27 @@ This guide will go into detail on each of the operations available for `Canvas` 
 
 # Table of Contents
 
-1. Datatypes
+1. [Datatypes](#datatypes)
    1. [Canvas](#canvas)
-      1. set_pixel
+      1. [set_pixel](#set_pixel)
    1. [Color](#color)
    1. [Font](#font)
 2. [Graphics Library](#graphlib)
-   1. fill_screen
-   2. clear_screen
-   3. stroke_line
-   4. stroke_rect
-   5. fill_rect
-   6. stroke_ellipse
-   7. fill_ellipse
-   8. stroke_circle
-   9. fill_circle
-   10. stroke_polyline
-   11. fill_polygon
-   12. draw_image
-   13. draw_text
+   1. [fill_screen](#fill_screen)
+   2. [clear_screen](#clear_screen)
+   3. [stroke_line](#stroke_line)
+   4. [stroke_rect](#stroke_rect)
+   5. [fill_rect](#fill_rect)
+   6. [stroke_ellipse](#stroke_ellipse)
+   7. [fill_ellipse](#fill_ellipse)
+   8. [stroke_circle](#stroke_circle)
+   9. [fill_circle](#fill_circle)
+   10. [stroke_polyline](#stroke_polyline)
+   11. [fill_polygon](#fill_polygon)
+   12. [draw_image](#draw_image)
+   13. [draw_text](#draw_text)
 
-## Datatypes
+## Datatypes <a name="datatypes"></a>
 
 ### Canvas <a name="canvas"></a>
 The `Canvas` class is what you use to draw images on the LED screen!
@@ -37,7 +37,7 @@ As mentioned in the screen task tutorial, an empty canvas is given to the screen
 The canvas is a direct representation of the LED screen: it is an interface for a 32 by 32 grid of cells in which colors can be stored.
 The canvas has exactly one method that can be used to change how it displays:
 
-#### Canvas.set_pixel(x, y, color)
+#### Canvas.set_pixel(x, y, color) <a name="set_pixel"></a>
 Changes the color of the pixel at the specified x,y position.
 
 | Argument | Datatype  | Description                    |
@@ -119,56 +119,56 @@ TODO: ADD IMAGE HERE
 The graphics library contains methods to help you draw images on your screen!
 It includes helper functions that can, for example, color the entire screen one color, draw lines or circles, and much more.
 
-### `fill_screen(canvas, color)`
+### `fill_screen(canvas, color)` <a name="fill_screen"></a>
 
 Fills the canvas with the specified color.
 
-### `clear_screen(canvas)`
+### `clear_screen(canvas)` <a name="clear_screen"></a>
 
 Sets the entire canvas to black.
 
-### `stroke_line(canvas, x1, y1, x2, y2, color)`
+### `stroke_line(canvas, x1, y1, x2, y2, color)` <a name="stroke_line"></a>
 
 Draws a line between the points (x1, y1) and (x2, y2) with the specified color.
 
-### `stroke_rect(canvas, x1, y1, x2, y2, color)`
+### `stroke_rect(canvas, x1, y1, x2, y2, color)` <a name="stroke_rect"></a>
 
 Draws the edges of a rectangle between the points (x1, y1) and (x2, y2) with the specified color.
 
-### `fill_rect(canvas, x1, y1, x2, y2, color)`
+### `fill_rect(canvas, x1, y1, x2, y2, color)` <a name="fill_rect"></a>
 
 Draws and fills a rectangle between the points (x1, y1) and (x2, y2) with the specified color.
 
-### `stroke_ellipse(canvas, cx, cy, rx, ry, color)`
+### `stroke_ellipse(canvas, cx, cy, rx, ry, color)` <a name="stroke_ellipse"></a>
 
 Draws an ellipse centered at (cx, cy) with horizontal radius rx and vertical radius ry with the specified color.
 
-### `fill_ellipse(canvas, cx, cy, rx, ry, color)`
+### `fill_ellipse(canvas, cx, cy, rx, ry, color)` <a name="fill_ellipse"></a>
 
 Draws and fills an ellipse centered at (cx, cy) with horizontal radius rx and vertical radius ry with the specified color.
 
-### `stroke_circle(canvas, x, y, radius, color)`
+### `stroke_circle(canvas, x, y, radius, color)` <a name="stroke_circle"></a>
 
 Draws a circle of radius r at the point (x,y) with the specified color.
 
-### `fill_circle(canvas, x, y, radius, color)`
+### `fill_circle(canvas, x, y, radius, color)` <a name="fill_circle"></a>
 
 Draws and fills a circle of radius r at the point (x, y) with the specified color.
 
-### `stroke_polyline(canvas, points, color)`
+### `stroke_polyline(canvas, points, color)` <a name="stroke_polyline"></a>
 
 Draws lines between all the points in a list with the specified color.
 
-### `fill_polygon(canvas, points, color)`
+### `fill_polygon(canvas, points, color)` <a name="fill_polygon"></a>
 
-### `draw_image(canvas, top_left_x, top_left_y, image)`
+### `draw_image(canvas, top_left_x, top_left_y, image)` <a name="draw_image"></a>
 
 Draws the specified image with its top-left corner placed at (top_left_x, top_left_y).
 
-### `draw_text(canvas, font, x, y, color, text)`
+### `draw_text(canvas, font, x, y, color, text)` <a name="draw_text"></a>
 
 Draws text with the specified font with the (x, y) coordinate in the bottom left.
 
-### `draw_centered_text(canvas, font, y, color, text)`
+### `draw_centered_text(canvas, font, y, color, text)` <a name="draw_centered_text"></a>
 
 Draws text horizontally centered on the screen at the specified y level.
