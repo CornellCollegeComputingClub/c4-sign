@@ -6,6 +6,12 @@ Each display program must produce "frames" for the screen to display.
 These frames are represented by `Canvas` objects that abstract the operations done on the screen.
 This guide will go into detail on each of the operations available for `Canvas` objects to draw your display.
 
+**To use any of the functions in this library, you must import the graphics library in your task**, like so:
+
+```python
+from c4_sign.lib.graphics import *
+```
+
 # Table of Contents
 
 1. [Datatypes](#datatypes)
@@ -123,52 +129,158 @@ It includes helper functions that can, for example, color the entire screen one 
 
 Fills the canvas with the specified color.
 
+| Argument | Datatype | Description                     |
+|----------|----------|---------------------------------|
+| canvas   | `Canvas` | The canvas to fill with color.  |
+| color    | `Color`  | The color to set the canvas to. |
+
 ### `clear_screen(canvas)` <a name="clear_screen"></a>
 
 Sets the entire canvas to black.
+
+| Argument | Datatype | Description          |
+|----------|----------|----------------------|
+| canvas   | `Canvas` | The canvas to clear. |
 
 ### `stroke_line(canvas, x1, y1, x2, y2, color)` <a name="stroke_line"></a>
 
 Draws a line between the points (x1, y1) and (x2, y2) with the specified color.
 
+| Argument | Datatype | Description                                    |
+|----------|----------|------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the line on.                |
+| x1       | `int`    | The x-coordinate of one end of the line.       |
+| y1       | `int`    | The y-coordinate of one end of the line.       |
+| x2       | `int`    | The x-coordinate of the other end of the line. |
+| y2       | `int`    | The y-coordinate of the other of the line.     |
+| color    | `Color`  | The color of the line.                         |
+
 ### `stroke_rect(canvas, x1, y1, x2, y2, color)` <a name="stroke_rect"></a>
 
 Draws the edges of a rectangle between the points (x1, y1) and (x2, y2) with the specified color.
+
+| Argument | Datatype | Description                                            |
+|----------|----------|--------------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the rectangle on.                   |
+| x1       | `int`    | The x-coordinate of one corner of the rectangle.       |
+| y1       | `int`    | The y-coordinate of one corner of the rectangle.       |
+| x2       | `int`    | The x-coordinate of the other corner of the rectangle. |
+| y2       | `int`    | The y-coordinate of the other corner of the rectangle. |
+| color    | `Color`  | The color of the rectangle.                            |
 
 ### `fill_rect(canvas, x1, y1, x2, y2, color)` <a name="fill_rect"></a>
 
 Draws and fills a rectangle between the points (x1, y1) and (x2, y2) with the specified color.
 
+| Argument | Datatype | Description                                            |
+|----------|----------|--------------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the rectangle on.                   |
+| x1       | `int`    | The x-coordinate of one corner of the rectangle.       |
+| y1       | `int`    | The y-coordinate of one corner of the rectangle.       |
+| x2       | `int`    | The x-coordinate of the other corner of the rectangle. |
+| y2       | `int`    | The y-coordinate of the other corner of the rectangle. |
+| color    | `Color`  | The color of the rectangle.                            |
+
 ### `stroke_ellipse(canvas, cx, cy, rx, ry, color)` <a name="stroke_ellipse"></a>
 
 Draws an ellipse centered at (cx, cy) with horizontal radius rx and vertical radius ry with the specified color.
+
+| Argument | Datatype | Description                                    |
+|----------|----------|------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the ellipse on.             |
+| cx       | `int`    | The x-coordinate of the center of the ellipse  |
+| cy       | `int`    | The y-coordinate of the center of the ellipse. |
+| rx       | `int`    | The horizontal radius of the ellipse.          |
+| ry       | `int`    | The vertical radius of the ellipse..           |
+| color    | `Color`  | The color of the ellipse.                      |
 
 ### `fill_ellipse(canvas, cx, cy, rx, ry, color)` <a name="fill_ellipse"></a>
 
 Draws and fills an ellipse centered at (cx, cy) with horizontal radius rx and vertical radius ry with the specified color.
 
+| Argument | Datatype | Description                                    |
+|----------|----------|------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the ellipse on.             |
+| cx       | `int`    | The x-coordinate of the center of the ellipse  |
+| cy       | `int`    | The y-coordinate of the center of the ellipse. |
+| rx       | `int`    | The horizontal radius of the ellipse.          |
+| ry       | `int`    | The vertical radius of the ellipse..           |
+| color    | `Color`  | The color of the ellipse.                      |
+
 ### `stroke_circle(canvas, x, y, radius, color)` <a name="stroke_circle"></a>
 
 Draws a circle of radius r at the point (x,y) with the specified color.
+
+| Argument | Datatype | Description                                   |
+|----------|----------|-----------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the circle on.             |
+| x        | `int`    | The x-coordinate of the center of the circle  |
+| y        | `int`    | The y-coordinate of the center of the circle. |
+| radius   | `int`    | The radius of the circle.                     |
+| color    | `Color`  | The color of the circle.                      |
 
 ### `fill_circle(canvas, x, y, radius, color)` <a name="fill_circle"></a>
 
 Draws and fills a circle of radius r at the point (x, y) with the specified color.
 
+| Argument | Datatype | Description                                   |
+|----------|----------|-----------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the circle on.             |
+| x        | `int`    | The x-coordinate of the center of the circle  |
+| y        | `int`    | The y-coordinate of the center of the circle. |
+| radius   | `int`    | The radius of the circle.                     |
+| color    | `Color`  | The color of the circle.                      |
+
 ### `stroke_polyline(canvas, points, color)` <a name="stroke_polyline"></a>
 
 Draws lines between all the points in a list with the specified color.
 
+| Argument | Datatype | Description                                                                                                                |
+|----------|----------|----------------------------------------------------------------------------------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the polyline on.                                                                                        |
+| points | `list[tuple[int,int]]` | The points the line is drawn between, expressed as a `list` of `tuples` containing the x- and y- coordinate of each point. |
+| color | `Color` | The color to make the polyline.                                                                                            |
+
 ### `fill_polygon(canvas, points, color)` <a name="fill_polygon"></a>
+| Argument | Datatype | Description                                                                                                                   |
+|----------|----------|-------------------------------------------------------------------------------------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the polygon on.                                                                                            |
+| points | `list[tuple[int,int]]` | The points the polygon is drawn between, expressed as a `list` of `tuples` containing the x- and y- coordinate of each point. |
+| color | `Color` | The color to make the polygon.                                                                                                |
 
 ### `draw_image(canvas, top_left_x, top_left_y, image)` <a name="draw_image"></a>
 
 Draws the specified image with its top-left corner placed at (top_left_x, top_left_y).
 
+| Argument | Datatype | Description                                                                                                                |
+|----------|----------|----------------------------------------------------------------------------------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the image on.                                                                                           |
+| top_left_x | `int` | The x-coordinate of the top-left corner of the image on the canvas.                                                        |
+| top_left_y | `int` | The y-coordinate of the top-left corner of the image on the canvas.                                                        |
+| image | `numpy.ndarray` | The image to draw, expressed as a numpy `ndarray` with RGBA values for every pixel. See below for image-loading functions. |
+
+
 ### `draw_text(canvas, font, x, y, color, text)` <a name="draw_text"></a>
 
 Draws text with the specified font with the (x, y) coordinate in the bottom left.
 
+| Argument | Datatype | Description                                                    |
+|----------|----------|----------------------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the text on.                                |
+| font     | `Font`   | The font size to draw the text with.                           |
+| x        | `int`    | The x-coordinate of the bottom-left of the text on the canvas. |
+| y        | `int`    | The y-coordinate of the bottom-left of the text on the canvas. |
+| color    | `Color`  | The color to draw the text with.                               |
+| text     | `str`    | The text to draw.                                              |
+
 ### `draw_centered_text(canvas, font, y, color, text)` <a name="draw_centered_text"></a>
 
 Draws text horizontally centered on the screen at the specified y level.
+
+| Argument | Datatype | Description                                               |
+|----------|----------|-----------------------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the text on.                           |
+| font     | `Font`   | The font size to draw the text with.                      |
+| y        | `int`    | The y-coordinate of the bottom of the text on the canvas. |
+| color    | `Color`  | The color to draw the text with.                          |
+| text     | `str`    | The text to draw.                                         |
