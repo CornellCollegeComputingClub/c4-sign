@@ -51,7 +51,7 @@ class BurningShip(ScreenTask):
         self.scale = 4
         self.frame = 0
         self.iterations = 1
-        self.max_iterations = 150
+        self.max_iterations = 30
         self.intro_time = 140
         self.epic_points = [
             Complex(-(1.7721983880271375 + 1.7722187032801162) / 2, -(0.04251487432886503 + 0.04254394619090975) / 2),
