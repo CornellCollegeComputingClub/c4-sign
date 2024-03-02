@@ -7,10 +7,18 @@ from c4_sign.tasks import TaskManager
 
 def run_gif():
     from datetime import timedelta
+    from pathlib import Path
 
     from PIL import Image, ImageDraw, ImageFont
 
     from c4_sign.lib.canvas import Canvas
+
+    try:
+        from rich.progress import track
+    except ImportError:
+
+        def track(iter, description=""):
+            yield from iter
 
     screen_manager = ScreenManager()
     screen_manager.update_tasks()
@@ -18,8 +26,19 @@ def run_gif():
     canvas = Canvas()
     tasks = screen_manager.current_tasks
     font = ImageFont.truetype("Arial", 16)
-    for task in tasks:
+    with open("docs/screen_tasks.md", "w") as f:
+        f.write("# Screen Tasks\n\n")
+        for task in sorted(tasks, key=lambda x: x.__class__.__name__):
+            f.write(f"## {task.__class__.__name__}\n")
+            f.write(f"**Title**: {task.title}\n\n")
+            f.write(f"**Artist**: {task.artist}\n\n")
+            f.write(f"```python\n{task.__doc__}\n```\n")
+            f.write(f"![{task.__class__.__name__}](images/screen_tasks/{task.__class__.__name__}.gif)\n")
+    source = Path("docs/images/screen_tasks")
+    source.mkdir(parents=True, exist_ok=True)
+    for task in track(tasks, description="Converting!"):
         print(f"Running {task.__class__.__name__}")
+        duration = 0
         images = []
         task.prepare()
         while True:
@@ -36,13 +55,14 @@ def run_gif():
             draw.text((0, 320), text[16:], font=font, fill=(255, 255, 255))
             draw.text((0, 300), text[:16], font=font, fill=(255, 255, 255))
             images.append(img)
-            if result:
+            duration += 1 / 24
+            if result or duration > 30:
                 break
         images[0].save(
-            f"gif/{task.__class__.__name__}.gif",
+            source / f"{task.__class__.__name__}.gif",
             save_all=True,
             append_images=images[1:],
-            duration=100,
+            duration=duration,
             loop=0,
         )
 

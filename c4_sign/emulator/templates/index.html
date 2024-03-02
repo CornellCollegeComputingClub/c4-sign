@@ -39,8 +39,9 @@
         <canvas id="lcd" width="800" height="400"></canvas>
     </div>
     <div id="debug"></div>
-    <!-- override task -->
-    <input type="text" id="task" value="">
+    <!-- override task dropdown -->
+    <select id="task">
+    </select>
     <button onclick="socket.emit('update', {
             type: 'override',
             task: document.getElementById('task').value
@@ -52,6 +53,8 @@
         let socket = io();
         let canvas = document.getElementById('display');
         let ctx = canvas.getContext('2d');
+
+        let tasks = [];
 
         let lcd;
         let lcd_canvas = document.getElementById('lcd');
@@ -86,6 +89,17 @@
                 }
             } else if (data.type == 'debug_info') {
                 debug.innerHTML = JSON.stringify(data, null, 2);
+                if (JSON.stringify(data.data.tasks) != JSON.stringify(tasks)) {
+                    tasks = data.data.tasks;
+                    let task_select = document.getElementById('task');
+                    task_select.innerHTML = '';
+                    for (let i = 0; i < tasks.length; i++) {
+                        let option = document.createElement('option');
+                        option.value = tasks[i];
+                        option.innerHTML = tasks[i];
+                        task_select.appendChild(option);
+                    }
+                }
             } else {
                 console.log(data);
             }
