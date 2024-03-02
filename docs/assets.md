@@ -20,7 +20,8 @@ import c4_sign.lib.assets
 
 ## Table of Contents
 
-1. [Asset Functions](#assets)
+1. [Asset Locations and Google Drive](#locations)
+2. [Asset Functions](#assets)
    1. [cache_path](#cache_path)
    2. [get_ffmpeg](#get_ffmpeg)
    3. [video_to_images](#video_to_images)
@@ -28,7 +29,16 @@ import c4_sign.lib.assets
    5. [resize_image](#resize_image)
    6. [file_from_url](#file_from_url)
    7. [file_from_google_drive](#google_drive)
-2. [A note on debugging](#debugging)
+3. [A note on debugging](#debugging)
+4. [Examples](#examples)
+
+# Asset Locations and Google Drive <a name="Locations"></a>
+
+You can download files from any URL so long as it is available on the internet.
+We recognize however that you might want to make your own files/resources to use in the sign!
+For example, if you took your own picture or made a drawing you want to display, we need a way to get it on the sign without just trying to download it over the internet.
+We've made a [Google Drive Folder](https://drive.google.com/drive/folders/1PweM5UME7iaHHXBA2m3Fbw3vI0Xlk5Fn) for this purpose.
+If you need a file in your project that you can't just download from a URL, let us know and we'll add it to the Google drive folder!
 
 # Asset Functions <a name="assets"></a>
 
