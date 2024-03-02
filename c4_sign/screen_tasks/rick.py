@@ -18,7 +18,6 @@ LYRICS = base64.b64decode(
 class RickRoll(ScreenTask):
     title = "Rick Roll"
     artist = "Luna"
-    ignore = True
 
     def __init__(self):
         super().__init__(timedelta(seconds=1), timedelta(hours=1))  # :)
