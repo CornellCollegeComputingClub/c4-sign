@@ -121,6 +121,9 @@ An example of using code with alpha is shown below:
 ```python
 transparent_magenta = (255, 0, 255, 128)
 transparent_cyan = (0, 255, 255, 128)
+white = (255, 255, 255)
+
+graphics.fill_screen(canvas, white)
 graphics.fill_rect(canvas, 0, 0, 21, 21, transparent_magenta)
 graphics.fill_rect(canvas, 10, 10, 31, 31, transparent_cyan)
 ```
