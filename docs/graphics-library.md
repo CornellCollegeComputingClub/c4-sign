@@ -23,6 +23,9 @@ from c4_sign import consts
       1. [set_pixel](#set_pixel)
    1. [Color](#color)
    1. [Font](#font)
+      1. [FONT_4x6](#font_4x6)
+      2. [FONT_4x7](#font_5x7)
+      3. [FONT_9x15](#font_9x15)
 2. [Graphics Library](#graphlib)
    1. [fill_screen](#fill_screen)
    2. [clear_screen](#clear_screen)
@@ -126,6 +129,44 @@ The above code will produce an image like this in the canvas:
 ![Transparency Example](./images/transparency.jpg)
 
 ### Font <a name="font"></a>
+
+Font is a class used to assist you in drawing text on the screen (see [draw_text](#draw_text) to learn more) and you don't have to really worry about the font class itself.
+All you have to know is that whenever you draw text, you need a font to specify the size and form of the text.
+There are three base fonts you can use while drawing text: a 4x6 font, a 5x7 font, and a 9x15 font.
+They are illustrated below for demonstration purposes.
+
+#### FONT_4x6 <a name="font_4x6"></a>
+The smallest font available. Useful if you need a lot of text at once.
+```python
+from c4_sign.consts import FONT_4x6 as f
+from c4_sign.lib.graphics import draw_text
+
+draw_text(c, f, 0, 16, (255, 255, 255), "abcdefghijklmnopqrstuvwxyz")
+draw_text(c, f, 0, 31, (255, 255, 255), "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+```
+![Font 4x6 example](./images/font_4x6_example.jpg)
+
+#### FONT_5x7 <a name="font_5x7"></a>
+A medium-sized text.
+```python
+from c4_sign.consts import FONT_5x7 as f
+from c4_sign.lib.graphics import draw_text
+
+draw_text(c, f, 0, 16, (255, 255, 255), "abcdefghijklmnopqrstuvwxyz")
+draw_text(c, f, 0, 31, (255, 255, 255), "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+```
+![Font 4x6 example](./images/font_5x7_example.jpg)
+
+#### FONT_9x15 <a name="font_9x15"></a>
+A very large font. Good for big messages.
+```python
+from c4_sign.consts import FONT_9x15 as f
+from c4_sign.lib.graphics import draw_text
+
+draw_text(c, f, 0, 16, (255, 255, 255), "abcdefghijklmnopqrstuvwxyz")
+draw_text(c, f, 0, 31, (255, 255, 255), "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+```
+![Font 4x6 example](./images/font_9x15_example.jpg)
 
 ## Graphics Library <a name="graphlib"></a>
 The graphics library contains methods to help you draw images on your screen!
