@@ -33,6 +33,7 @@ from c4_sign.lib import graphics
    11. [fill_polygon](#fill_polygon)
    12. [draw_image](#draw_image)
    13. [draw_text](#draw_text)
+   14. [draw_centered_text](#draw_centered_text)
 
 ## Datatypes <a name="datatypes"></a>
 
@@ -60,10 +61,10 @@ If you call set_pixel with an x or y that falls outside of the range 0-31, no er
 #### Examples
 ```python
 # Set the pixel in the top left corner to red.
-canvas.set_pixel(0,0, (255, 0, 0))
+canvas.set_pixel(0, 0, (255, 0, 0))
 
 # Set the pixel in the top right corner to blue.
-canvas.set_pixel(31,0, (0, 0, 255))
+canvas.set_pixel(31, 0, (0, 0, 255))
 
 # Set the pixel in the bottom right corner to white.
 canvas.set_pixel(31, 31, (255, 255, 255))
@@ -188,24 +189,24 @@ Draws an ellipse centered at (cx, cy) with horizontal radius rx and vertical rad
 | Argument | Datatype | Description                                    |
 |----------|----------|------------------------------------------------|
 | canvas   | `Canvas` | The canvas to draw the ellipse on.             |
-| cx       | `int`    | The x-coordinate of the center of the ellipse  |
+| cx       | `int`    | The x-coordinate of the center of the ellipse. |
 | cy       | `int`    | The y-coordinate of the center of the ellipse. |
 | rx       | `int`    | The horizontal radius of the ellipse.          |
-| ry       | `int`    | The vertical radius of the ellipse..           |
+| ry       | `int`    | The vertical radius of the ellipse.            |
 | color    | `Color`  | The color of the ellipse.                      |
 
 ### `fill_ellipse(canvas, cx, cy, rx, ry, color)` <a name="fill_ellipse"></a>
 
 Draws and fills an ellipse centered at (cx, cy) with horizontal radius rx and vertical radius ry with the specified color.
 
-| Argument | Datatype | Description                                    |
-|----------|----------|------------------------------------------------|
-| canvas   | `Canvas` | The canvas to draw the ellipse on.             |
-| cx       | `int`    | The x-coordinate of the center of the ellipse  |
+| Argument | Datatype | Description                                   |
+|----------|----------|-----------------------------------------------|
+| canvas   | `Canvas` | The canvas to draw the ellipse on.            |
+| cx       | `int`    | The x-coordinate of the center of the ellipse. |
 | cy       | `int`    | The y-coordinate of the center of the ellipse. |
-| rx       | `int`    | The horizontal radius of the ellipse.          |
-| ry       | `int`    | The vertical radius of the ellipse..           |
-| color    | `Color`  | The color of the ellipse.                      |
+| rx       | `int`    | The horizontal radius of the ellipse.         |
+| ry       | `int`    | The vertical radius of the ellipse.           |
+| color    | `Color`  | The color of the ellipse.                     |
 
 ### `stroke_circle(canvas, x, y, radius, color)` <a name="stroke_circle"></a>
 
@@ -214,7 +215,7 @@ Draws a circle of radius r at the point (x,y) with the specified color.
 | Argument | Datatype | Description                                   |
 |----------|----------|-----------------------------------------------|
 | canvas   | `Canvas` | The canvas to draw the circle on.             |
-| x        | `int`    | The x-coordinate of the center of the circle  |
+| x        | `int`    | The x-coordinate of the center of the circle. |
 | y        | `int`    | The y-coordinate of the center of the circle. |
 | radius   | `int`    | The radius of the circle.                     |
 | color    | `Color`  | The color of the circle.                      |
@@ -226,7 +227,7 @@ Draws and fills a circle of radius r at the point (x, y) with the specified colo
 | Argument | Datatype | Description                                   |
 |----------|----------|-----------------------------------------------|
 | canvas   | `Canvas` | The canvas to draw the circle on.             |
-| x        | `int`    | The x-coordinate of the center of the circle  |
+| x        | `int`    | The x-coordinate of the center of the circle. |
 | y        | `int`    | The y-coordinate of the center of the circle. |
 | radius   | `int`    | The radius of the circle.                     |
 | color    | `Color`  | The color of the circle.                      |
