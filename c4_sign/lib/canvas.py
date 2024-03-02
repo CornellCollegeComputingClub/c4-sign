@@ -28,18 +28,28 @@ class Canvas:
                 b = int(color[2] * (1 - a) + bb * a)
                 self.data[y][x] = (r, g, b)
         else:
-            # 0xabcdef
+            # note: we cannot pass a 0xRRGGBBAA color directly. if there is no red, the GBA will be interpreted as RGB.
+            # so, i'm making alpha be the first bit, and then the rest is the color. (0xAARRGGBB)
+            a = (color >> 24) & 0xFF
+            if a == 0:
+                # we can only assume that if the alpha is 0, it's in the format 0xRRGGBB
+                # and, therefore, it should be fully opaque.
+                # if this is not the case, the user should use the tuple format.
+                # (or, better yet, not call this because it's fully transparent and it's a waste of time.)
+                a = 255
             r = (color >> 16) & 0xFF
             g = (color >> 8) & 0xFF
             b = color & 0xFF
+            # handle alpha
+            br, bg, bb = self.data[y][x]
+            a /= 255
+            r = int(r * a + br * (1 - a))
+            g = int(g * a + bg * (1 - a))
+            b = int(b * a + bb * (1 - a))
             self.data[y][x] = (r, g, b)
 
     def clear(self):
         self.data.fill(0)
-
-    def tolist(self):
-        # [0xRRGGBB, 0xRRGGBB, ...]
-        pass
 
     def serialize(self):
         return self.data.tolist()

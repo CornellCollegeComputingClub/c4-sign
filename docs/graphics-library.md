@@ -89,8 +89,8 @@ This means that color can either be represented as an `int` or as a `tuple` of t
 `tuple`s of three `int`s are treated as Red-Green-Blue color vectors, with each component in the range 0 to 255.
 `tuple`s of four `int`s are treated as Red-Green-Blue-Alpha color vectors, with the extra alpha component representing
 the "opacity" of the new color.
-`int`s are again treated as Red-Green-Blue-Alpha color vectors. To represent a color as an int, write its components
-in hexadecimal in the RGBA order. This format is common with HTML color pickers.
+`int`s are treated as (Alpha-)Red-Green-Blue color vectors. To represent a color as an int, write its components
+in hexadecimal in the (A)RGB order. The RGB format is common with HTML color pickers.
 
 Any function that deals with `Color` as the input type can take any of these forms and display it correctly.
 
@@ -107,7 +107,7 @@ transparent_dark_blue = (0, 30, 128, 30)
 
 # Colors as Integers
 solid_white = 0xffffff
-transparent_yellow = 0xff9000aa
+transparent_yellow = 0xaaff9000
 ```
 
 #### A note on Alpha
