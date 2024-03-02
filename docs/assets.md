@@ -136,5 +136,9 @@ or by completely emptying them.
 | Linux     | `/home/{username}/.cache/c4_sign/`                |
 | Mac OS    | `/home/{username}/Library/Caches/c4_sign`         |
 
-Please note that it will take some time to restart if you delete the cache, because the resources have to be redownloaded and stored in the cache again.
+Please note that it will take some time to restart if you delete the cache, because the resources have to be re-downloaded and stored in the cache again.
 
+Alternatively, running the simulator like so will delete your cache files:
+```sh
+python3 -m c4_sign --simulator --purge-cache
+```

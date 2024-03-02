@@ -12,7 +12,7 @@ This guide will go into detail on each of the operations available for `Canvas` 
 from c4_sign.lib import graphics
 
 # additionally, importing the constants module is recommended
-# this inculudes some pre-defined colors and fonts
+# this includes some pre-defined colors and fonts
 from c4_sign import consts
 ```
 
