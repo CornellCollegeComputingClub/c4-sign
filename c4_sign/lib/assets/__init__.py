@@ -4,6 +4,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
+import ffmpeg_downloader as ffdl
 import gdown
 import requests
 from PIL import Image
@@ -30,7 +31,27 @@ def cache_path() -> Path:
 
 
 def get_ffmpeg():
-    return "ffmpeg"
+    if not ffdl.installed():
+        from argparse import Namespace
+
+        from ffmpeg_downloader.__main__ import install as ffdl_install
+
+        n = Namespace()
+        n.proxy = None
+        n.retries = 5
+        n.timeout = 15
+        n.no_cache_dir = False
+        n.upgrade = True
+        n.y = True
+        n.add_path = False
+        n.no_simlinks = True
+        n.set_env = None
+        n.reset_env = False
+        n.presets = None
+        n.version = None
+        n.force = False
+        ffdl_install(n)
+    return ffdl.ffmpeg_path
 
 
 def video_to_images(videoURL, resize=True):

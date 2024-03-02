@@ -50,6 +50,11 @@ def run_gif():
 
 
 def main(args=None):
+    if args.purge_cache:
+        from c4_sign.lib.assets import purge_cache
+
+        purge_cache()
+        print("Cache purged!")
     if args.gif:
         print("GIF mode!")
         return run_gif()
@@ -68,6 +73,7 @@ if __name__ == "__main__":
     parser.add_argument("--simulator", action="store_true")
     parser.add_argument("--gif", action="store_true")
     parser.add_argument("--profile", action="store_true")
+    parser.add_argument("--purge-cache", action="store_true")
     args = parser.parse_args()
     if args.profile:
         try:

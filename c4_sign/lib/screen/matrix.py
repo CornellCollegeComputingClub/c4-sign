@@ -11,9 +11,7 @@ class MatrixScreen(ScreenBase):
         self.__pixels = neopixel.NeoPixel(board.D18, 32 * 32, brightness=0.05, auto_write=False)
         self.__lcd = lcd()
         self.__cached_text = " " * 32
-        self.__lcd.lcd_clear()
-        self.__lcd.lcd_display_string("Now loading!", 1)
-        self.__pixels.show()
+        self.loading_screen()
 
     def update_display(self, canvas: Canvas):
         # for i in range(32*32):
