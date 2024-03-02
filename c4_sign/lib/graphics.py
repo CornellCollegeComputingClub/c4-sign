@@ -392,6 +392,29 @@ def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> N
     :param color: The color to fill the polygon with.
     :return: None.
     """
+    # Implementation of scanline polygon fill algorithm: https://en.wikipedia.org/wiki/Scanline_fill_algorithm
+    # See this stackoverflow link for discussion:
+    # https://stackoverflow.com/questions/2448939/the-scanline-algorithm-for-polygon-fill
+    min_y = min(points, key=lambda p: p[1])[1]
+    max_y = max(points, key=lambda p: p[1])[1]
+
+    for y in range(min_y, max_y + 1):
+        intersections = []
+        for i in range(len(points)):
+            x1, y1 = points[i]
+            x2, y2 = points[(i + 1) % len(points)]
+            if y1 == y2:
+                continue
+            if y1 > y2:
+                x1, y1, x2, y2 = x2, y2, x1, y1
+            if y1 <= y <= y2:
+                x = x1 + (x2 - x1) * (y - y1) / (y2 - y1)
+                intersections.append(x)
+        intersections.sort()
+        for i in range(0, len(intersections), 2):
+            x1 = int(intersections[i])
+            x2 = int(intersections[i + 1])
+            __stroke_horizontal_line(canvas, x1, x2, y, color)
 
 
 def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.ndarray) -> None:

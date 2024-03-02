@@ -334,12 +334,44 @@ Draws lines between all the points in a list with the specified color.
 | points | `list[tuple[int,int]]` | The points the line is drawn between, expressed as a `list` of `tuples` containing the x- and y- coordinate of each point. |
 | color | `Color` | The color to make the polyline.                                                                                            |
 
+```python
+# Draw a triangle with vertices at (0,0), (31,0), and (16,31)
+
+# Define the points of the triangle
+points = [(0, 0), (31, 0), (16, 31)]
+
+# Draw the triangle
+graphics.stroke_polyline(canvas, points, consts.COLOR_WHITE)
+
+# note that the last point is not connected to the first point!
+```
+
+The output of the following code is illustrated below:
+
+![Polyline Example](./images/polyline_example.jpg)
+
 ### `fill_polygon(canvas, points, color)` <a name="fill_polygon"></a>
 | Argument | Datatype | Description                                                                                                                   |
 |----------|----------|-------------------------------------------------------------------------------------------------------------------------------|
 | canvas   | `Canvas` | The canvas to draw the polygon on.                                                                                            |
 | points | `list[tuple[int,int]]` | The points the polygon is drawn between, expressed as a `list` of `tuples` containing the x- and y- coordinate of each point. |
 | color | `Color` | The color to make the polygon.                                                                                                |
+
+```python
+# Draw a triangle with vertices at (0,0), (31,0), and (16,31)
+
+# Define the points of the triangle
+points = [(0, 0), (31, 0), (16, 31)]
+
+# Draw the triangle
+graphics.fill_polygon(canvas, points, consts.COLOR_WHITE)
+
+# note that the last point is connected to the first point!
+```
+
+The output of the following code is illustrated below:
+
+![Polygon Example](./images/polygon_example.jpg)
 
 ### `draw_image(canvas, top_left_x, top_left_y, image)` <a name="draw_image"></a>
 
