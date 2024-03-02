@@ -92,7 +92,7 @@
         });
 
         vrEmuLcd.setLoadedCallback(function () {
-            lcd = vrEmuLcd.newLCD(16, 2, vrEmuLcd.CharacterRom.Eurpoean);
+            lcd = vrEmuLcd.newLCD(16, 2, vrEmuLcd.CharacterRom.European);
             lcd.sendCommand(LCD_CMD_DISPLAY | LCD_CMD_DISPLAY_ON);
             lcd.writeString(":3");
             lcd.render(lcd_ctx, 0, 0, 800, 400);

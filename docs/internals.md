@@ -29,7 +29,7 @@ Each of these stages is described in detail below.
 
 The initialization stage is the first stage, and its sole purpose is to create the task within the system, by calling `__init__`. This stage is ran only once, and is ran while the screen is still being created. This stage may be called well in advance of any other task, and may be the only stage that is called in some cases.
 
-Typically, no action is needed to be taken during this stage. However, if the task requires any heavy proessing before hand, like downloading a video and preparing it for playback, this is the stage to do it in. (See `bad_apple.py` for an example of this.)
+Typically, no action is needed to be taken during this stage. However, if the task requires any heavy processing before hand, like downloading a video and preparing it for playback, this is the stage to do it in. (See `bad_apple.py` for an example of this.)
 
 ### Preparation
 
@@ -78,7 +78,7 @@ def get_lcd_text(self) -> str:
 
 The cleanup stage is the final stage, and its purpose is to clean up any resources that were used during the task's execution. This stage will be called after the task is done, and is a good chance to free any resources that were allocated during the task's execution.
 
-The `forced` parameter is called with `True` if the task is being forced to end (like being overriden, or running out of time), and `False` if the task is ending naturally (returning `True` from `draw_frame`). This is useful for tasks that need to clean up resources in a specific way.
+The `forced` parameter is called with `True` if the task is being forced to end (like being overridden, or running out of time), and `False` if the task is ending naturally (returning `True` from `draw_frame`). This is useful for tasks that need to clean up resources in a specific way.
 
 ```python
 def teardown(self, forced: bool = False):
