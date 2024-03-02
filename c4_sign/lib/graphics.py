@@ -386,15 +386,12 @@ def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> N
     """
     Fills the interior of a polygon with the desired color.
 
-    To fill a path, see fill_polygon.
+    To draw the edges of a polygon, see stroke_polyline.
     :param canvas: The canvas to draw the polygon on.
     :param points: A list of points, represented by tuples whose elements are the x- and y-coordinates of each point.
     :param color: The color to fill the polygon with.
     :return: None.
     """
-    # Implementation of scanline polygon fill algorithm: https://en.wikipedia.org/wiki/Scanline_fill_algorithm
-    # See this stackoverflow link for discussion:
-    # https://stackoverflow.com/questions/2448939/the-scanline-algorithm-for-polygon-fill
     min_y = min(points, key=lambda p: p[1])[1]
     max_y = max(points, key=lambda p: p[1])[1]
 

@@ -1,5 +1,6 @@
 import random
 from datetime import timedelta
+from time import sleep
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib import graphics
@@ -23,34 +24,50 @@ def insertion_sort(arr):
         yield arr
 
 
-def merge_sort(arr):
-    if len(arr) > 1:
-        mid = len(arr) // 2
-        L = arr[:mid]
-        R = arr[mid:]
-        yield from merge_sort(L)
-        yield from merge_sort(R)
-        i = j = k = 0
-        while i < len(L) and j < len(R):
-            if L[i] < R[j]:
-                arr[k] = L[i]
-                i += 1
-            else:
-                arr[k] = R[j]
-                j += 1
-            k += 1
-            yield arr
-        while i < len(L):
+def merge_sort_in_place(arr, l, m, r):
+    n1 = m - l + 1
+    n2 = r - m
+    L = [0] * n1
+    R = [0] * n2
+    for i in range(0, n1):
+        L[i] = arr[l + i]
+    for i in range(0, n2):
+        R[i] = arr[m + 1 + i]
+    i = j = 0
+    k = l
+    while i < n1 and j < n2:
+        if L[i] <= R[j]:
             arr[k] = L[i]
             i += 1
-            k += 1
-            yield arr
-        while j < len(R):
+        else:
             arr[k] = R[j]
             j += 1
-            k += 1
-            yield arr
+        k += 1
         yield arr
+    while i < n1:
+        arr[k] = L[i]
+        i += 1
+        k += 1
+        yield arr
+    while j < n2:
+        arr[k] = R[j]
+        j += 1
+        k += 1
+        yield arr
+
+
+def merge_sort(arr):
+    current_size = 1
+    while current_size < len(arr) - 1:
+        left = 0
+        while left < len(arr) - 1:
+            mid = min((left + current_size - 1), (len(arr) - 1))
+            right = (2 * current_size + left - 1, len(arr) - 1)[2 * current_size + left - 1 > len(arr) - 1]
+            yield from merge_sort_in_place(arr, left, mid, right)
+            left += current_size * 2
+        current_size = 2 * current_size
+        yield arr
+    yield arr
 
 
 def qs_partition(arr, low, high):
@@ -132,6 +149,7 @@ class SortingAlgorithms(ScreenTask):
             graphics.stroke_line(canvas, i, 32, i, 32 - x, 0xFFFFFF)
         try:
             next(self.sorting_algorithm)
+            sleep(0.05)
             return False
         except StopIteration:
             return True
