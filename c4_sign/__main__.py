@@ -25,17 +25,21 @@ def run_gif():
     delta_t = timedelta(seconds=1 / 24)
     canvas = Canvas()
     tasks = screen_manager.current_tasks
-    font = ImageFont.truetype("Arial", 16)
+    font = ImageFont.truetype("Courier", 16)
     with open("docs/screen_tasks.md", "w") as f:
         f.write("# Screen Tasks\n\n")
+        f.write("Note: GIFs are faster than the actual speed of the sign\n\n")
         for task in sorted(tasks, key=lambda x: x.__class__.__name__):
             f.write(f"## {task.__class__.__name__}\n")
             f.write(f"**Title**: {task.title}\n\n")
             f.write(f"**Artist**: {task.artist}\n\n")
-            f.write(f"```python\n{task.__doc__}\n```\n")
+            if task.__doc__:
+                f.write(f"Description:\n```python\n{task.__doc__}\n```\n")
             f.write(f"![{task.__class__.__name__}](images/screen_tasks/{task.__class__.__name__}.gif)\n")
     source = Path("docs/images/screen_tasks")
     source.mkdir(parents=True, exist_ok=True)
+    existing = [x.stem for x in source.glob("*.gif")]
+    tasks = [task for task in tasks if task.__class__.__name__ not in existing]
     for task in track(tasks, description="Converting!"):
         print(f"Running {task.__class__.__name__}")
         duration = 0
@@ -62,7 +66,7 @@ def run_gif():
             source / f"{task.__class__.__name__}.gif",
             save_all=True,
             append_images=images[1:],
-            duration=duration,
+            duration=(1 / 24) * 1000,
             loop=0,
         )
 
@@ -77,6 +81,13 @@ def main(args=None):
         print("Cache purged!")
     if args.gif:
         print("GIF mode!")
+        if args.purge_cache:
+            # we're also gonna clear the gif folder, just so we're forced to regenerate them
+            from pathlib import Path
+            from shutil import rmtree
+
+            source = Path("docs/images/screen_tasks")
+            rmtree(source, ignore_errors=True)
         return run_gif()
     init_matrix(args.simulator)
     tm = TaskManager()
