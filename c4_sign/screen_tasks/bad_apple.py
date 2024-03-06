@@ -47,6 +47,7 @@ class BadApple(ScreenTask):
             self.section = random.choice(self.sections)
         self.frame = self.section.start
         self.stop = False
+        super().prepare()
         return True
 
     def get_lcd_text(self) -> str:

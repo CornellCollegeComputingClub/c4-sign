@@ -484,7 +484,8 @@ def draw_centered_text(canvas: Canvas, font: Font, y: int, color: Color, text: s
     :param text: The text to draw on the canvas.
     :return: None.
     """
-    width = draw_text(canvas, font, 0, 0, color, text)
+    character_widths = [__actual_char_width(font, letter) for letter in text]
+    width = sum(character_widths)
     x = (canvas.width - width) // 2
     draw_text(canvas, font, x, y, color, text)
 

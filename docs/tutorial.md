@@ -104,7 +104,10 @@ Running the simulator is quite simple, we just need to run:
 $ python3 -m c4_sign --simulator
 ```
 
-Which will open up your web browser with a simulation of the physical display! Once we the sign gets to our program (TODO: add how to override things), we'll see the screen turn a lovely shade of purple.
+Which will open up your web browser with a simulation of the physical display! Once the sign gets to our program, we'll see the screen turn a lovely shade of purple.
+
+> [!TIP]
+> Impatient? Select the class name from the dropdown at the bottom and hit `send`! It'll immedately start your program!
 
 ...hm. It's pretty, but... it's quite lacking. Although I love this shade of purple, staring at it for 60 seconds is not ideal.
 

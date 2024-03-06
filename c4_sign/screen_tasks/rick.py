@@ -33,6 +33,7 @@ class RickRoll(ScreenTask):
         # weighted random choice, we want a 2% chance of the full video
         self.stop = False
         self.frame = 1
+        super().prepare()
         return random.random() < 0.02
 
     def get_lcd_text(self) -> str:
