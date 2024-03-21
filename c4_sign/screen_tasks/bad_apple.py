@@ -7,7 +7,7 @@ from PIL import Image
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib import graphics
-from c4_sign.lib.assets import file_from_url, video_to_images
+from c4_sign.lib.assets import file_from_google_drive, video_to_images
 
 
 class BadApple(ScreenTask):
@@ -34,7 +34,7 @@ class BadApple(ScreenTask):
         image_folder_path = video_to_images("https://www.youtube.com/watch?v=FtutLA63Cp8")
         # image_folder_path = video_to_images("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
         self.image_folder_path = image_folder_path
-        subs = file_from_url("https://archive.org/download/bad-apple-resources/subs/bad_apple_ja-rom.srt")
+        subs = file_from_google_drive("bad_apple_ja-rom.srt")
         with subs.open() as f:
             self.subtitles = list(srt.parse(f.read()))
 
@@ -47,6 +47,7 @@ class BadApple(ScreenTask):
             self.section = random.choice(self.sections)
         self.frame = self.section.start
         self.stop = False
+        super().prepare()
         return True
 
     def get_lcd_text(self) -> str:

@@ -1,5 +1,6 @@
 import random
 from datetime import timedelta
+from time import sleep
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib import graphics
@@ -23,34 +24,50 @@ def insertion_sort(arr):
         yield arr
 
 
-def merge_sort(arr):
-    if len(arr) > 1:
-        mid = len(arr) // 2
-        L = arr[:mid]
-        R = arr[mid:]
-        yield from merge_sort(L)
-        yield from merge_sort(R)
-        i = j = k = 0
-        while i < len(L) and j < len(R):
-            if L[i] < R[j]:
-                arr[k] = L[i]
-                i += 1
-            else:
-                arr[k] = R[j]
-                j += 1
-            k += 1
-            yield arr
-        while i < len(L):
+def merge_sort_in_place(arr, l, m, r):
+    n1 = m - l + 1
+    n2 = r - m
+    L = [0] * n1
+    R = [0] * n2
+    for i in range(0, n1):
+        L[i] = arr[l + i]
+    for i in range(0, n2):
+        R[i] = arr[m + 1 + i]
+    i = j = 0
+    k = l
+    while i < n1 and j < n2:
+        if L[i] <= R[j]:
             arr[k] = L[i]
             i += 1
-            k += 1
-            yield arr
-        while j < len(R):
+        else:
             arr[k] = R[j]
             j += 1
-            k += 1
-            yield arr
+        k += 1
         yield arr
+    while i < n1:
+        arr[k] = L[i]
+        i += 1
+        k += 1
+        yield arr
+    while j < n2:
+        arr[k] = R[j]
+        j += 1
+        k += 1
+        yield arr
+
+
+def merge_sort(arr):
+    current_size = 1
+    while current_size < len(arr) - 1:
+        left = 0
+        while left < len(arr) - 1:
+            mid = min((left + current_size - 1), (len(arr) - 1))
+            right = (2 * current_size + left - 1, len(arr) - 1)[2 * current_size + left - 1 > len(arr) - 1]
+            yield from merge_sort_in_place(arr, left, mid, right)
+            left += current_size * 2
+        current_size = 2 * current_size
+        yield arr
+    yield arr
 
 
 def qs_partition(arr, low, high):
@@ -103,6 +120,44 @@ def heap_sort(arr):
     yield arr
 
 
+# 32 colors, sorted by hue
+# all should be bright
+COLORS = [
+    0xFF0000,
+    0xFF7F00,
+    0xFFFF00,
+    0x7FFF00,
+    0x00FF00,
+    0x00FF7F,
+    0x00FFFF,
+    0x007FFF,
+    0x0000FF,
+    0x7F00FF,
+    0xFF00FF,
+    0xFF007F,
+    0xFF5555,
+    0xFFA755,
+    0xFFFF55,
+    0xA7FF55,
+    0x55FF55,
+    0x55FFA7,
+    0x55FFFF,
+    0x55A7FF,
+    0x5555FF,
+    0xA755FF,
+    0xFF55FF,
+    0xFF55A7,
+    0xFFAAAA,
+    0xFFD4AA,
+    0xFFFFAA,
+    0xD4FFAA,
+    0xAAFFAA,
+    0xAAFFD4,
+    0xAAFFFF,
+    0xAAD4FF,
+]
+
+
 class SortingAlgorithms(ScreenTask):
     name = "Sorting Algorithms"
     artist = "Luna"
@@ -124,14 +179,16 @@ class SortingAlgorithms(ScreenTask):
         self.arr = list(range(1, 33))
         random.shuffle(self.arr)
         self.sorting_algorithm = self.sorting_algorithms[self.sorting_algorithm_name](self.arr)
-        return True
+        return super().prepare()
 
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
         # draw array
         for i, x in enumerate(self.arr):
-            graphics.stroke_line(canvas, i, 32, i, 32 - x, 0xFFFFFF)
+            color = COLORS[x - 1]
+            graphics.stroke_line(canvas, i, 32, i, 32 - x, color)
         try:
             next(self.sorting_algorithm)
+            sleep(0.05)
             return False
         except StopIteration:
             return True

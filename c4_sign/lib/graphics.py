@@ -386,12 +386,32 @@ def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> N
     """
     Fills the interior of a polygon with the desired color.
 
-    To fill a path, see fill_polygon.
+    To draw the edges of a polygon, see stroke_polyline.
     :param canvas: The canvas to draw the polygon on.
     :param points: A list of points, represented by tuples whose elements are the x- and y-coordinates of each point.
     :param color: The color to fill the polygon with.
     :return: None.
     """
+    min_y = min(points, key=lambda p: p[1])[1]
+    max_y = max(points, key=lambda p: p[1])[1]
+
+    for y in range(min_y, max_y + 1):
+        intersections = []
+        for i in range(len(points)):
+            x1, y1 = points[i]
+            x2, y2 = points[(i + 1) % len(points)]
+            if y1 == y2:
+                continue
+            if y1 > y2:
+                x1, y1, x2, y2 = x2, y2, x1, y1
+            if y1 <= y <= y2:
+                x = x1 + (x2 - x1) * (y - y1) / (y2 - y1)
+                intersections.append(x)
+        intersections.sort()
+        for i in range(0, len(intersections), 2):
+            x1 = int(intersections[i])
+            x2 = int(intersections[i + 1])
+            __stroke_horizontal_line(canvas, x1, x2, y, color)
 
 
 def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.ndarray) -> None:
@@ -464,7 +484,8 @@ def draw_centered_text(canvas: Canvas, font: Font, y: int, color: Color, text: s
     :param text: The text to draw on the canvas.
     :return: None.
     """
-    width = draw_text(canvas, font, 0, 0, color, text)
+    character_widths = [__actual_char_width(font, letter) for letter in text]
+    width = sum(character_widths)
     x = (canvas.width - width) // 2
     draw_text(canvas, font, x, y, color, text)
 

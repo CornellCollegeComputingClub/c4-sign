@@ -27,4 +27,4 @@ python3 -m c4_sign
 
 ## KRNL Sign Compatibility
 
-Because of *unforseen circumstances*, it is possible for code written for the C4 sign to be compatible with the KRNL sign. More information will be provided in the future.
+Because of *unforeseen circumstances*, it is possible for code written for the C4 sign to be compatible with the KRNL sign. More information will be provided in the future.

@@ -7,6 +7,40 @@ from c4_sign.consts import COLOR_GRAY, COLOR_RED, COLOR_WHITE, FONT_4x6
 from c4_sign.lib import graphics
 from c4_sign.util import internet_is_available, lerp, map_value, requests_get_1hr_cache
 
+WEATHER_CODES = {
+    0: "Clear",
+    1: "PtlyCldy",
+    2: "Cloudy",
+    3: "Overcast",
+    10: "LtShwrs",
+    11: "Showers",
+    12: "HvShwrs",
+    20: "LtSnow",
+    21: "Snow",
+    22: "HvSnow",
+    30: "LtTStrm",
+    31: "TStrm",
+    32: "HvTStrm",
+    40: "LtSleet",
+    41: "Sleet",
+    42: "HvSleet",
+    50: "LtFrzRn",
+    51: "FrzRain",
+    52: "HvFrzRn",
+    60: "LtHail",
+    61: "Hail",
+    62: "HvHail",
+    70: "LtFog",
+    71: "Fog",
+    72: "HvFog",
+    80: "LtMist",
+    81: "Dust",
+    82: "HvMist",
+    90: "LtSand",
+    91: "Sandstrm",
+    92: "HvSandst",
+}
+
 
 class Weather(ScreenTask):
     title = "Weather"
@@ -64,7 +98,11 @@ class Weather(ScreenTask):
         graphics.draw_centered_text(canvas, FONT_4x6, 31, COLOR_WHITE, str(round(temp, 1)) + "F")
         graphics.stroke_line(canvas, 0, 31, round(map_value(temp, min_temp, max_temp, 1, 32)), 31, COLOR_RED)
         graphics.draw_centered_text(
-            canvas, FONT_4x6, 13, COLOR_WHITE, weather_code_to_string(self.report["hourly"]["weather_code"][i // 24])
+            canvas,
+            FONT_4x6,
+            13,
+            COLOR_WHITE,
+            WEATHER_CODES.get(self.report["hourly"]["weather_code"][i // 24], "Unknown"),
         )
 
     def draw_forecast_today(self, canvas, i):
@@ -103,7 +141,7 @@ class Weather(ScreenTask):
         graphics.draw_centered_text(canvas, FONT_4x6, 31, COLOR_WHITE, str(round(temp, 1)) + "F")
         graphics.stroke_line(canvas, 0, 31, round(map_value(temp, min_temp, max_temp, 1, 32)), 31, COLOR_RED)
         graphics.draw_centered_text(
-            canvas, FONT_4x6, 13, COLOR_WHITE, weather_code_to_string(self.report["hourly"]["weather_code"][j])
+            canvas, FONT_4x6, 13, COLOR_WHITE, WEATHER_CODES.get(self.report["hourly"]["weather_code"][j], "Unknown")
         )
 
     def draw_forecast_daily_future(self, canvas, i):
@@ -123,72 +161,5 @@ class Weather(ScreenTask):
 
         # draw the weather code
         graphics.draw_centered_text(
-            canvas, FONT_4x6, 13, COLOR_WHITE, weather_code_to_string(self.report["daily"]["weather_code"][j])
+            canvas, FONT_4x6, 13, COLOR_WHITE, WEATHER_CODES.get(self.report["daily"]["weather_code"][j], "Unknown")
         )
-
-
-def weather_code_to_string(weather_code):
-    if weather_code == 0:
-        return "Clear"
-    elif weather_code == 1:
-        return "PtlyCldy"
-    elif weather_code == 2:
-        return "Cloudy"
-    elif weather_code == 3:
-        return "Overcast"
-    elif weather_code == 10:
-        return "LtShwrs"
-    elif weather_code == 11:
-        return "Showers"
-    elif weather_code == 12:
-        return "HvShwrs"
-    elif weather_code == 20:
-        return "LtSnow"
-    elif weather_code == 21:
-        return "Snow"
-    elif weather_code == 22:
-        return "HvSnow"
-    elif weather_code == 30:
-        return "LtTStrm"
-    elif weather_code == 31:
-        return "TStrm"
-    elif weather_code == 32:
-        return "HvTStrm"
-    elif weather_code == 40:
-        return "LtSleet"
-    elif weather_code == 41:
-        return "Sleet"
-    elif weather_code == 42:
-        return "HvSleet"
-    elif weather_code == 50:
-        return "LtFrzRn"
-    elif weather_code == 51:
-        return "FrzRain"
-    elif weather_code == 52:
-        return "HvFrzRn"
-    elif weather_code == 60:
-        return "LtHail"
-    elif weather_code == 61:
-        return "Hail"
-    elif weather_code == 62:
-        return "HvHail"
-    elif weather_code == 70:
-        return "LtFog"
-    elif weather_code == 71:
-        return "Fog"
-    elif weather_code == 72:
-        return "HvFog"
-    elif weather_code == 80:
-        return "LtMist"
-    elif weather_code == 81:
-        return "Dust"
-    elif weather_code == 82:
-        return "HvMist"
-    elif weather_code == 90:
-        return "LtSand"
-    elif weather_code == 91:
-        return "Sandstrm"
-    elif weather_code == 92:
-        return "HvSandst"
-    else:
-        return "Unknown"

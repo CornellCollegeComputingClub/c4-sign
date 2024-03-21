@@ -3,6 +3,7 @@ import traceback
 import arrow
 
 from c4_sign.lib.canvas import Canvas
+from c4_sign.loading_manager import LoadingManager
 from c4_sign.screen_tasks.error import ErrorScreenTask
 from c4_sign.ScreenManager import ScreenManager
 
@@ -22,7 +23,8 @@ def init_matrix(simulator):
         from c4_sign.lib.screen.matrix import MatrixScreen
 
         _screen = MatrixScreen()
-    _screen_manager.update_tasks()
+    lm = LoadingManager(_screen)
+    _screen_manager.update_tasks(lm)
 
 
 def screen_active():

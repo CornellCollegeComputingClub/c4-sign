@@ -4,6 +4,7 @@ from typing import Union
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib.canvas import Canvas
+from c4_sign.loading_manager import LoadingManager
 
 
 class ScreenManager:
@@ -16,14 +17,18 @@ class ScreenManager:
     def current_tasks(self) -> list[ScreenTask]:
         return self.tasks
 
-    def update_tasks(self):
+    def update_tasks(self, loading_manager: Union[None, LoadingManager] = None):
         # import all files in screen_tasks
         mod = importlib.import_module("c4_sign.screen_tasks")
         for obj in mod.__all__:
             obj = importlib.import_module(f"c4_sign.screen_tasks.{obj}")
             for name, obj in obj.__dict__.items():
                 if isinstance(obj, type) and issubclass(obj, ScreenTask) and obj != ScreenTask and obj.ignore is False:
-                    self.tasks.append(obj())
+                    if loading_manager:
+                        with loading_manager(obj.__name__):
+                            self.tasks.append(obj())
+                    else:
+                        self.tasks.append(obj())
 
     def override_current_task(self, task: Union[str, ScreenTask]):
         # if task is a string, find the task by name

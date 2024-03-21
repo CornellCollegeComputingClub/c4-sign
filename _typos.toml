@@ -1,0 +1,3 @@
+[type.bdf]
+extend-glob = ["*.bdf"]
+check-file = false

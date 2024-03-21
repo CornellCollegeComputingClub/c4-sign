@@ -10,6 +10,10 @@ This guide will go into detail on each of the operations available for `Canvas` 
 
 ```python
 from c4_sign.lib import graphics
+
+# additionally, importing the constants module is recommended
+# this includes some pre-defined colors and fonts
+from c4_sign import consts
 ```
 
 # Table of Contents
@@ -19,6 +23,9 @@ from c4_sign.lib import graphics
       1. [set_pixel](#set_pixel)
    1. [Color](#color)
    1. [Font](#font)
+      1. [FONT_4x6](#font_4x6)
+      2. [FONT_4x7](#font_5x7)
+      3. [FONT_9x15](#font_9x15)
 2. [Graphics Library](#graphlib)
    1. [fill_screen](#fill_screen)
    2. [clear_screen](#clear_screen)
@@ -64,10 +71,10 @@ If you call set_pixel with an x or y that falls outside of the range 0-31, no er
 canvas.set_pixel(0, 0, (255, 0, 0))
 
 # Set the pixel in the top right corner to blue.
-canvas.set_pixel(31, 0, (0, 0, 255))
+canvas.set_pixel(31, 0, consts.COLOR_BLUE)
 
 # Set the pixel in the bottom right corner to white.
-canvas.set_pixel(31, 31, (255, 255, 255))
+canvas.set_pixel(31, 31, 0xffffff)
 ```
 
 The output of the following code is illustrated below:
@@ -85,8 +92,8 @@ This means that color can either be represented as an `int` or as a `tuple` of t
 `tuple`s of three `int`s are treated as Red-Green-Blue color vectors, with each component in the range 0 to 255.
 `tuple`s of four `int`s are treated as Red-Green-Blue-Alpha color vectors, with the extra alpha component representing
 the "opacity" of the new color.
-`int`s are again treated as Red-Green-Blue-Alpha color vectors. To represent a color as an int, write its components
-in hexadecimal in the RGBA order. This format is common with HTML color pickers.
+`int`s are treated as (Alpha-)Red-Green-Blue color vectors. To represent a color as an int, write its components
+in hexadecimal in the (A)RGB order. The RGB format is common with HTML color pickers.
 
 Any function that deals with `Color` as the input type can take any of these forms and display it correctly.
 
@@ -102,8 +109,8 @@ transparent_green = (0, 255, 0, 128)
 transparent_dark_blue = (0, 30, 128, 30)
 
 # Colors as Integers
-solid_white = 0xffffff00
-transparent_yellow = 0xff9000aa
+solid_white = 0xffffff
+transparent_yellow = 0xaaff9000
 ```
 
 #### A note on Alpha
@@ -114,13 +121,55 @@ An example of using code with alpha is shown below:
 ```python
 transparent_magenta = (255, 0, 255, 128)
 transparent_cyan = (0, 255, 255, 128)
+white = (255, 255, 255)
+
+graphics.fill_rect(canvas, 0, 0, 31, 15, white)
 graphics.fill_rect(canvas, 0, 0, 21, 21, transparent_magenta)
 graphics.fill_rect(canvas, 10, 10, 31, 31, transparent_cyan)
 ```
 The above code will produce an image like this in the canvas:
-TODO: ADD IMAGE HERE
+
+![Transparency Example](./images/transparency.jpg)
 
 ### Font <a name="font"></a>
+
+Font is a class used to assist you in drawing text on the screen (see [draw_text](#draw_text) to learn more) and you don't have to really worry about the font class itself.
+All you have to know is that whenever you draw text, you need a font to specify the size and form of the text.
+There are three base fonts you can use while drawing text: a 4x6 font, a 5x7 font, and a 9x15 font.
+They are illustrated below for demonstration purposes.
+
+#### FONT_4x6 <a name="font_4x6"></a>
+The smallest font available. Useful if you need a lot of text at once.
+```python
+from c4_sign.consts import FONT_4x6 as f
+from c4_sign.lib.graphics import draw_text
+
+draw_text(c, f, 0, 16, (255, 255, 255), "abcdefghijklmnopqrstuvwxyz")
+draw_text(c, f, 0, 31, (255, 255, 255), "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+```
+![Font 4x6 example](./images/font_4x6_example.jpg)
+
+#### FONT_5x7 <a name="font_5x7"></a>
+A medium-sized text.
+```python
+from c4_sign.consts import FONT_5x7 as f
+from c4_sign.lib.graphics import draw_text
+
+draw_text(c, f, 0, 16, (255, 255, 255), "abcdefghijklmnopqrstuvwxyz")
+draw_text(c, f, 0, 31, (255, 255, 255), "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+```
+![Font 4x6 example](./images/font_5x7_example.jpg)
+
+#### FONT_9x15 <a name="font_9x15"></a>
+A very large font. Good for big messages.
+```python
+from c4_sign.consts import FONT_9x15 as f
+from c4_sign.lib.graphics import draw_text
+
+draw_text(c, f, 0, 16, (255, 255, 255), "abcdefghijklmnopqrstuvwxyz")
+draw_text(c, f, 0, 31, (255, 255, 255), "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+```
+![Font 4x6 example](./images/font_9x15_example.jpg)
 
 ## Graphics Library <a name="graphlib"></a>
 The graphics library contains methods to help you draw images on your screen!
@@ -156,6 +205,21 @@ Draws a line between the points (x1, y1) and (x2, y2) with the specified color.
 | y2       | `int`    | The y-coordinate of the other of the line.     |
 | color    | `Color`  | The color of the line.                         |
 
+```python
+# Draw a line from the top-left to the bottom-right of the screen
+graphics.stroke_line(canvas, 0, 0, 31, 31, consts.COLOR_WHITE)
+
+# Draw a line from the top-right to the bottom-left of the screen
+graphics.stroke_line(canvas, 31, 0, 0, 31, consts.COLOR_RED)
+
+# Draw a line from the center of the screen to the bottom-right
+graphics.stroke_line(canvas, 16, 16, 31, 31, consts.COLOR_GREEN)
+```
+
+The output of the following code is illustrated below:
+
+![Line Example](./images/line_example.jpg)
+
 ### `stroke_rect(canvas, x1, y1, x2, y2, color)` <a name="stroke_rect"></a>
 
 Draws the edges of a rectangle between the points (x1, y1) and (x2, y2) with the specified color.
@@ -168,6 +232,18 @@ Draws the edges of a rectangle between the points (x1, y1) and (x2, y2) with the
 | x2       | `int`    | The x-coordinate of the other corner of the rectangle. |
 | y2       | `int`    | The y-coordinate of the other corner of the rectangle. |
 | color    | `Color`  | The color of the rectangle.                            |
+
+```python
+# Draw a rectangle from (0,0) to (31,31) with a red border
+graphics.stroke_rect(canvas, 0, 0, 31, 31, consts.COLOR_RED)
+
+# Draw a rectangle from (5,5) to (25,25) with a green border
+graphics.stroke_rect(canvas, 5, 5, 25, 25, consts.COLOR_GREEN)
+```
+
+The output of the following code is illustrated below:
+
+![Rectangle Example](./images/rectangle_example_1.jpg)
 
 ### `fill_rect(canvas, x1, y1, x2, y2, color)` <a name="fill_rect"></a>
 
@@ -182,6 +258,18 @@ Draws and fills a rectangle between the points (x1, y1) and (x2, y2) with the sp
 | y2       | `int`    | The y-coordinate of the other corner of the rectangle. |
 | color    | `Color`  | The color of the rectangle.                            |
 
+```python
+# Draw a rectangle from (0,0) to (31,31) with a red border
+graphics.fill_rect(canvas, 0, 0, 31, 31, consts.COLOR_RED)
+
+# Draw a rectangle from (5,5) to (25,25) with a green border
+graphics.fill_rect(canvas, 5, 5, 25, 25, consts.COLOR_GREEN)
+```
+
+The output of the following code is illustrated below:
+
+![Rectangle Example](./images/rectangle_example_2.jpg)
+
 ### `stroke_ellipse(canvas, cx, cy, rx, ry, color)` <a name="stroke_ellipse"></a>
 
 Draws an ellipse centered at (cx, cy) with horizontal radius rx and vertical radius ry with the specified color.
@@ -194,6 +282,18 @@ Draws an ellipse centered at (cx, cy) with horizontal radius rx and vertical rad
 | rx       | `int`    | The horizontal radius of the ellipse.          |
 | ry       | `int`    | The vertical radius of the ellipse.            |
 | color    | `Color`  | The color of the ellipse.                      |
+
+```python
+# Draw an ellipse centered at (16,16) with horizontal radius 10 and vertical radius 5
+graphics.stroke_ellipse(canvas, 16, 16, 10, 5, consts.COLOR_WHITE)
+
+# Draw an ellipse centered at (16,16) with horizontal radius 15 and vertical radius 15
+graphics.stroke_ellipse(canvas, 16, 16, 15, 15, consts.COLOR_RED)
+```
+
+The output of the following code is illustrated below:
+
+![Ellipse Example](./images/ellipse_example_1.jpg)
 
 ### `fill_ellipse(canvas, cx, cy, rx, ry, color)` <a name="fill_ellipse"></a>
 
@@ -208,6 +308,18 @@ Draws and fills an ellipse centered at (cx, cy) with horizontal radius rx and ve
 | ry       | `int`    | The vertical radius of the ellipse.           |
 | color    | `Color`  | The color of the ellipse.                     |
 
+```python
+# Draw an ellipse centered at (16,16) with horizontal radius 15 and vertical radius 15
+graphics.fill_ellipse(canvas, 16, 16, 15, 15, consts.COLOR_RED)
+
+# Draw an ellipse centered at (16,16) with horizontal radius 10 and vertical radius 5
+graphics.fill_ellipse(canvas, 16, 16, 10, 5, consts.COLOR_WHITE)
+```
+
+The output of the following code is illustrated below:
+
+![Ellipse Example](./images/ellipse_example_2.jpg)
+
 ### `stroke_circle(canvas, x, y, radius, color)` <a name="stroke_circle"></a>
 
 Draws a circle of radius r at the point (x,y) with the specified color.
@@ -219,6 +331,18 @@ Draws a circle of radius r at the point (x,y) with the specified color.
 | y        | `int`    | The y-coordinate of the center of the circle. |
 | radius   | `int`    | The radius of the circle.                     |
 | color    | `Color`  | The color of the circle.                      |
+
+```python
+# Draw a circle centered at (16,16) with radius 15
+graphics.stroke_circle(canvas, 16, 16, 15, consts.COLOR_RED)
+
+# Draw a circle centered at (5,5) with radius 5
+graphics.stroke_circle(canvas, 5, 5, 5, consts.COLOR_WHITE)
+```
+
+The output of the following code is illustrated below:
+
+![Circle Example](./images/circle_example_1.jpg)
 
 ### `fill_circle(canvas, x, y, radius, color)` <a name="fill_circle"></a>
 
@@ -232,6 +356,18 @@ Draws and fills a circle of radius r at the point (x, y) with the specified colo
 | radius   | `int`    | The radius of the circle.                     |
 | color    | `Color`  | The color of the circle.                      |
 
+```python
+# Draw a circle centered at (16,16) with radius 15
+graphics.fill_circle(canvas, 16, 16, 15, consts.COLOR_RED)
+
+# Draw a circle centered at (5,5) with radius 5
+graphics.fill_circle(canvas, 5, 5, 5, consts.COLOR_WHITE)
+```
+
+The output of the following code is illustrated below:
+
+![Circle Example](./images/circle_example_2.jpg)
+
 ### `stroke_polyline(canvas, points, color)` <a name="stroke_polyline"></a>
 
 Draws lines between all the points in a list with the specified color.
@@ -242,12 +378,44 @@ Draws lines between all the points in a list with the specified color.
 | points | `list[tuple[int,int]]` | The points the line is drawn between, expressed as a `list` of `tuples` containing the x- and y- coordinate of each point. |
 | color | `Color` | The color to make the polyline.                                                                                            |
 
+```python
+# Draw a triangle with vertices at (0,0), (31,0), and (16,31)
+
+# Define the points of the triangle
+points = [(0, 0), (31, 0), (16, 31)]
+
+# Draw the triangle
+graphics.stroke_polyline(canvas, points, consts.COLOR_WHITE)
+
+# note that the last point is not connected to the first point!
+```
+
+The output of the following code is illustrated below:
+
+![Polyline Example](./images/polyline_example.jpg)
+
 ### `fill_polygon(canvas, points, color)` <a name="fill_polygon"></a>
 | Argument | Datatype | Description                                                                                                                   |
 |----------|----------|-------------------------------------------------------------------------------------------------------------------------------|
 | canvas   | `Canvas` | The canvas to draw the polygon on.                                                                                            |
 | points | `list[tuple[int,int]]` | The points the polygon is drawn between, expressed as a `list` of `tuples` containing the x- and y- coordinate of each point. |
 | color | `Color` | The color to make the polygon.                                                                                                |
+
+```python
+# Draw a triangle with vertices at (0,0), (31,0), and (16,31)
+
+# Define the points of the triangle
+points = [(0, 0), (31, 0), (16, 31)]
+
+# Draw the triangle
+graphics.fill_polygon(canvas, points, consts.COLOR_WHITE)
+
+# note that the last point is connected to the first point!
+```
+
+The output of the following code is illustrated below:
+
+![Polygon Example](./images/polygon_example.jpg)
 
 ### `draw_image(canvas, top_left_x, top_left_y, image)` <a name="draw_image"></a>
 
@@ -259,6 +427,21 @@ Draws the specified image with its top-left corner placed at (top_left_x, top_le
 | top_left_x | `int` | The x-coordinate of the top-left corner of the image on the canvas.                                                        |
 | top_left_y | `int` | The y-coordinate of the top-left corner of the image on the canvas.                                                        |
 | image | `numpy.ndarray` | The image to draw, expressed as a numpy `ndarray` with RGBA values for every pixel. See below for image-loading functions. |
+
+```python
+from PIL import Image
+import numpy as np
+
+# Load an image from a file
+image = Image.open("bad_apple.png")
+
+# Convert the image to a numpy array, and draw it on the canvas
+graphics.draw_image(canvas, 0, 0, np.array(image))
+```
+
+The output of the following code is illustrated below, assuming the image is a 32x32 image:
+
+![Image Example](./images/image_example.jpg)
 
 
 ### `draw_text(canvas, font, x, y, color, text)` <a name="draw_text"></a>
@@ -274,6 +457,17 @@ Draws text with the specified font with the (x, y) coordinate in the bottom left
 | color    | `Color`  | The color to draw the text with.                               |
 | text     | `str`    | The text to draw.                                              |
 
+```python
+# Draw the text "Hello!" at the top-left of the screen
+graphics.draw_text(canvas, consts.FONT_4x6, 0, 6, consts.COLOR_WHITE, "Hello!")
+
+# There's also FONT5x7 and FONT9x15 available
+```
+
+The output of the following code is illustrated below:
+
+![Text Example](./images/text_example.jpg)
+
 ### `draw_centered_text(canvas, font, y, color, text)` <a name="draw_centered_text"></a>
 
 Draws text horizontally centered on the screen at the specified y level.
@@ -285,3 +479,12 @@ Draws text horizontally centered on the screen at the specified y level.
 | y        | `int`    | The y-coordinate of the bottom of the text on the canvas. |
 | color    | `Color`  | The color to draw the text with.                          |
 | text     | `str`    | The text to draw.                                         |
+
+```python
+# Draw the text "Hello!" at the center of the screen
+graphics.draw_centered_text(canvas, consts.FONT_4x6, 16, consts.COLOR_WHITE, "Hello!")
+```
+
+The output of the following code is illustrated below:
+
+![Centered Text Example](./images/centered_text_example.jpg)

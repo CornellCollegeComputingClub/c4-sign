@@ -7,19 +7,42 @@ from c4_sign.tasks import TaskManager
 
 def run_gif():
     from datetime import timedelta
+    from pathlib import Path
 
     from PIL import Image, ImageDraw, ImageFont
 
     from c4_sign.lib.canvas import Canvas
+
+    try:
+        from rich.progress import track
+    except ImportError:
+
+        def track(iter, description=""):
+            yield from iter
 
     screen_manager = ScreenManager()
     screen_manager.update_tasks()
     delta_t = timedelta(seconds=1 / 24)
     canvas = Canvas()
     tasks = screen_manager.current_tasks
-    font = ImageFont.truetype("Arial", 16)
-    for task in tasks:
+    font = ImageFont.truetype("Courier", 16)
+    with open("docs/screen_tasks.md", "w") as f:
+        f.write("# Screen Tasks\n\n")
+        f.write("Note: GIFs are faster than the actual speed of the sign\n\n")
+        for task in sorted(tasks, key=lambda x: x.__class__.__name__):
+            f.write(f"## {task.__class__.__name__}\n")
+            f.write(f"**Title**: {task.title}\n\n")
+            f.write(f"**Artist**: {task.artist}\n\n")
+            if task.__doc__:
+                f.write(f"Description:\n```python\n{task.__doc__}\n```\n")
+            f.write(f"![{task.__class__.__name__}](images/screen_tasks/{task.__class__.__name__}.gif)\n")
+    source = Path("docs/images/screen_tasks")
+    source.mkdir(parents=True, exist_ok=True)
+    existing = [x.stem for x in source.glob("*.gif")]
+    tasks = [task for task in tasks if task.__class__.__name__ not in existing]
+    for task in track(tasks, description="Converting!"):
         print(f"Running {task.__class__.__name__}")
+        duration = 0
         images = []
         task.prepare()
         while True:
@@ -36,13 +59,14 @@ def run_gif():
             draw.text((0, 320), text[16:], font=font, fill=(255, 255, 255))
             draw.text((0, 300), text[:16], font=font, fill=(255, 255, 255))
             images.append(img)
-            if result:
+            duration += 1 / 24
+            if result or duration > 30:
                 break
         images[0].save(
-            f"gif/{task.__class__.__name__}.gif",
+            source / f"{task.__class__.__name__}.gif",
             save_all=True,
             append_images=images[1:],
-            duration=100,
+            duration=(1 / 24) * 1000,
             loop=0,
         )
 
@@ -50,8 +74,20 @@ def run_gif():
 
 
 def main(args=None):
+    if args.purge_cache:
+        from c4_sign.lib.assets import purge_cache
+
+        purge_cache()
+        print("Cache purged!")
     if args.gif:
         print("GIF mode!")
+        if args.purge_cache:
+            # we're also gonna clear the gif folder, just so we're forced to regenerate them
+            from pathlib import Path
+            from shutil import rmtree
+
+            source = Path("docs/images/screen_tasks")
+            rmtree(source, ignore_errors=True)
         return run_gif()
     init_matrix(args.simulator)
     tm = TaskManager()
@@ -68,6 +104,7 @@ if __name__ == "__main__":
     parser.add_argument("--simulator", action="store_true")
     parser.add_argument("--gif", action="store_true")
     parser.add_argument("--profile", action="store_true")
+    parser.add_argument("--purge-cache", action="store_true")
     args = parser.parse_args()
     if args.profile:
         try:

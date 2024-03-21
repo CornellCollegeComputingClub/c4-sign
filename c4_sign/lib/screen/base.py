@@ -20,3 +20,14 @@ class ScreenBase(ABC):
 
     def debug_override(self, screen_manager):
         pass
+
+    def loading_screen(self):
+        from time import sleep
+
+        sleep(1)  # wait for things to finish setting up so we can draw
+        self.update_lcd("Loading...".ljust(32))
+        self.update_display(Canvas())
+
+    def loading_cb(self, text):
+        self.update_lcd("Loading...".ljust(16) + text.ljust(16))
+        self.update_display(Canvas())
