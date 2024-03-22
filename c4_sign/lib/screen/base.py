@@ -27,11 +27,9 @@ class ScreenBase(ABC):
         sleep(1)  # wait for things to finish setting up so we can draw
         self.update_lcd("Loading...".ljust(32))
         c = Canvas()
-        c.fixup()
         self.update_display(c)
 
     def loading_cb(self, text):
         self.update_lcd("Loading...".ljust(16) + text.ljust(16))
         c = Canvas()
-        c.fixup()
         self.update_display(c)
