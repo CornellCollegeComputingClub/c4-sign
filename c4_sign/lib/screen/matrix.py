@@ -1,4 +1,5 @@
 from typing import Sequence, Union
+
 import board
 import digitalio
 from neopixel_write import neopixel_write
@@ -6,6 +7,7 @@ from neopixel_write import neopixel_write
 from c4_sign.lib.canvas import Canvas
 from c4_sign.lib.screen.base import ScreenBase
 from c4_sign.lib.screen.physical.driver import lcd
+
 
 class NeoPixel:
     def __init__(self, pin, num_pixels, brightness=1.0, auto_write=True):
@@ -15,7 +17,7 @@ class NeoPixel:
         self.pin = digitalio.DigitalInOut(pin)
         self.pin.direction = digitalio.Direction.OUTPUT
         self.auto_write = auto_write
-    
+
     def __setitem__(self, index: Union[int, slice], val: Union[tuple[int, int, int], Sequence[tuple[int, int, int]]]):
         if isinstance(index, slice):
             start, stop, step = index.indices(self._nums)
@@ -23,10 +25,10 @@ class NeoPixel:
                 self._set_item(in_val, val)
         else:
             self._set_item(index, val)
-        
+
         if self.auto_write:
             self.show()
-        
+
     def _set_item(self, index, val: tuple[int, int, int]):
         # val = (r, g, b)
         # neopixels use GRB
@@ -35,20 +37,20 @@ class NeoPixel:
         if index >= self._nums or index < 0:
             raise IndexError
         offset = index * 3
-        self.buf[offset] = val[1] # green
-        self.buf[offset + 1] = val[0] # red
-        self.buf[offset + 2] = val[2] # blue
+        self.buf[offset] = val[1]  # green
+        self.buf[offset + 1] = val[0]  # red
+        self.buf[offset + 2] = val[2]  # blue
 
     def __getitem__(self, index):
         if isinstance(index, slice):
             return [self._get_item(i) for i in range(*index.indices(self._nums))]
         else:
             return self._get_item(index)
-    
+
     def _get_item(self, index):
         offset = index * 3
-        return self.buf[offset + 1], self.buf[offset], self.buf[offset + 2] # GRB -> RGB
-    
+        return self.buf[offset + 1], self.buf[offset], self.buf[offset + 2]  # GRB -> RGB
+
     def show(self):
         if self.brighness < 1.0:
             # apply brightness
@@ -58,7 +60,7 @@ class NeoPixel:
             self._transmit(buf)
         else:
             self._transmit(self.buf)
-    
+
     def _transmit(self, buf):
         neopixel_write(self.pin, buf)
 

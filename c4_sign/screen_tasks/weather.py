@@ -3,7 +3,7 @@ from datetime import timedelta
 import arrow
 
 from c4_sign.base_task import ScreenTask
-from c4_sign.consts import COLOR_GRAY, COLOR_RED, COLOR_WHITE, FONT_4x6
+from c4_sign.consts import COLOR_GRAY, COLOR_RED, COLOR_WHITE, FONT_PICO
 from c4_sign.lib import graphics
 from c4_sign.util import internet_is_available, lerp, map_value, requests_get_1hr_cache
 
@@ -72,7 +72,7 @@ class Weather(ScreenTask):
             self.draw_forecast_daily_future(canvas, (self.elapsed_time.total_seconds() - 40) // 10)
 
     def draw_current_weather(self, canvas):
-        graphics.draw_centered_text(canvas, FONT_4x6, 6, COLOR_GRAY, "Current")
+        graphics.draw_centered_text(canvas, FONT_PICO, 6, COLOR_GRAY, "Current")
         # find current temperature.
         # if we're between two hours, interpolate the temperature.
         for i, time in enumerate(self.report["hourly"]["time"]):
@@ -95,11 +95,11 @@ class Weather(ScreenTask):
         max_temp = self.report["daily"]["temperature_2m_max"][i // 24]
         min_temp = self.report["daily"]["temperature_2m_min"][i // 24]
 
-        graphics.draw_centered_text(canvas, FONT_4x6, 31, COLOR_WHITE, str(round(temp, 1)) + "F")
+        graphics.draw_centered_text(canvas, FONT_PICO, 31, COLOR_WHITE, str(round(temp, 1)) + "F")
         graphics.stroke_line(canvas, 0, 31, round(map_value(temp, min_temp, max_temp, 1, 32)), 31, COLOR_RED)
         graphics.draw_centered_text(
             canvas,
-            FONT_4x6,
+            FONT_PICO,
             13,
             COLOR_WHITE,
             WEATHER_CODES.get(self.report["hourly"]["weather_code"][i // 24], "Unknown"),
@@ -137,11 +137,11 @@ class Weather(ScreenTask):
             )
         max_temp = self.report["daily"]["temperature_2m_max"][j // 24]
         min_temp = self.report["daily"]["temperature_2m_min"][j // 24]
-        graphics.draw_centered_text(canvas, FONT_4x6, 6, COLOR_GRAY, target_times[i].format("h:mm A"))
-        graphics.draw_centered_text(canvas, FONT_4x6, 31, COLOR_WHITE, str(round(temp, 1)) + "F")
+        graphics.draw_centered_text(canvas, FONT_PICO, 6, COLOR_GRAY, target_times[i].format("h:mm A"))
+        graphics.draw_centered_text(canvas, FONT_PICO, 31, COLOR_WHITE, str(round(temp, 1)) + "F")
         graphics.stroke_line(canvas, 0, 31, round(map_value(temp, min_temp, max_temp, 1, 32)), 31, COLOR_RED)
         graphics.draw_centered_text(
-            canvas, FONT_4x6, 13, COLOR_WHITE, WEATHER_CODES.get(self.report["hourly"]["weather_code"][j], "Unknown")
+            canvas, FONT_PICO, 13, COLOR_WHITE, WEATHER_CODES.get(self.report["hourly"]["weather_code"][j], "Unknown")
         )
 
     def draw_forecast_daily_future(self, canvas, i):
@@ -155,11 +155,11 @@ class Weather(ScreenTask):
             raise ValueError("No time found!")
         max_temp = self.report["daily"]["temperature_2m_max"][j]
         min_temp = self.report["daily"]["temperature_2m_min"][j]
-        graphics.draw_centered_text(canvas, FONT_4x6, 6, COLOR_GRAY, target.format("dddd"))
-        graphics.draw_centered_text(canvas, FONT_4x6, 20, COLOR_WHITE, str(round(max_temp, 1)) + "F")
-        graphics.draw_centered_text(canvas, FONT_4x6, 31, COLOR_WHITE, str(round(min_temp, 1)) + "F")
+        graphics.draw_centered_text(canvas, FONT_PICO, 6, COLOR_GRAY, target.format("dddd"))
+        graphics.draw_centered_text(canvas, FONT_PICO, 20, COLOR_WHITE, str(round(max_temp, 1)) + "F")
+        graphics.draw_centered_text(canvas, FONT_PICO, 31, COLOR_WHITE, str(round(min_temp, 1)) + "F")
 
         # draw the weather code
         graphics.draw_centered_text(
-            canvas, FONT_4x6, 13, COLOR_WHITE, WEATHER_CODES.get(self.report["daily"]["weather_code"][j], "Unknown")
+            canvas, FONT_PICO, 13, COLOR_WHITE, WEATHER_CODES.get(self.report["daily"]["weather_code"][j], "Unknown")
         )
