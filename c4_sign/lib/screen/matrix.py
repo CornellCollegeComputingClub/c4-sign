@@ -39,6 +39,8 @@ class NeoPixel:
         if index >= self._nums or index < 0:
             raise IndexError
         offset = index * 3
+        if isinstance(val, int):
+            val = (val >> 16, val >> 8, val)
         self.buf[offset] = val[1]  # green
         self.buf[offset + 1] = val[0]  # red
         self.buf[offset + 2] = val[2]  # blue
@@ -147,7 +149,6 @@ class MatrixScreen(ScreenBase):
     def update_display(self, canvas: Canvas):
         # for i in range(32*32):
         #     self.__pixels[i] = canvas[i]
-        canvas.fixup()
         self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
         self.__pixels.show()
 
