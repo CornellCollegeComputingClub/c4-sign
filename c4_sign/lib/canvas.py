@@ -62,6 +62,8 @@ class Canvas:
                     if len(self.data[y][x]) == 1:
                         print(f"Warning: Pixel at ({x}, {y}) was not a tuple of (r, g, b). ")
                     self.data[y][x] = tuple(self.data[y][x])
+                    if len(self.data[y][x]) != 3:
+                        raise ValueError(f"Pixel at ({x}, {y}) was not a tuple of (r, g, b). ")
 
 
     def __getitem__(self, key):
