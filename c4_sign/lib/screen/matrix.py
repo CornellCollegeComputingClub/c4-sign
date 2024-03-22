@@ -32,7 +32,7 @@ class NeoPixel:
         # neopixels use GRB
         if index < 0:
             index += len(self)
-        if index >= self._pixels or index < 0:
+        if index >= self._nums or index < 0:
             raise IndexError
         offset = index * 3
         self.buf[offset] = val[1] # green
