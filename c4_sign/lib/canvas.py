@@ -57,7 +57,7 @@ class Canvas:
     def __getitem__(self, key):
         y, x = (key // self.width, key % self.width)
         r, g, b = self.data[y][x]
-        return int((r << 16) | (g << 8) | b)
+        return r, g, b
 
     def tobytes(self):
         return self.data.tobytes()
