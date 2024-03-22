@@ -59,7 +59,8 @@ class Canvas:
         for y in range(self.height):
             for x in range(self.width):
                 if not isinstance(self.data[y][x], tuple):
-                    # print(f"Fixing up pixel at {x}, {y}", self.data[y][x])
+                    if len(self.data[y][x]) == 1:
+                        print(f"Warning: Pixel at ({x}, {y}) was not a tuple of (r, g, b). ")
                     self.data[y][x] = tuple(self.data[y][x])
 
 

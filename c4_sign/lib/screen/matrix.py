@@ -22,8 +22,8 @@ class NeoPixel:
     def __setitem__(self, index: Union[int, slice], val: Union[tuple[int, int, int], Sequence[tuple[int, int, int]]]):
         if isinstance(index, slice):
             start, stop, step = index.indices(self._nums)
-            for val, in_val in enumerate(range(start, stop, step)):
-                self._set_item(in_val, val)
+            for idx, val in enumerate(range(start, stop, step)):
+                self._set_item(idx, val)
         else:
             self._set_item(index, val)
 
