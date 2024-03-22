@@ -4,6 +4,8 @@ from datetime import timedelta
 from c4_sign.base_task import ScreenTask
 from c4_sign.lib.canvas import Canvas
 
+from numba import njit
+
 
 class RainbowWave(ScreenTask):
     title = "Rainbow Wave"
@@ -30,6 +32,7 @@ class RainbowWave(ScreenTask):
         ]
         return super().prepare()
 
+    @njit
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
 
         for x in range(32):
