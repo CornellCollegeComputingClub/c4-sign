@@ -1,8 +1,8 @@
 from typing import Sequence, Union
 
 import board
-import numpy
 import digitalio
+import numpy
 from neopixel_write import neopixel_write
 
 from c4_sign.lib.canvas import Canvas
@@ -14,7 +14,7 @@ class NeoPixel:
     def __init__(self, pin, num_pixels, brightness=1.0, auto_write=True):
         self.buf = bytearray(3 * num_pixels)
         self._nums = num_pixels
-        self.brighness = brightness
+        self.brightness = brightness
         self.pin = digitalio.DigitalInOut(pin)
         self.pin.direction = digitalio.Direction.OUTPUT
         self.auto_write = auto_write
@@ -53,11 +53,11 @@ class NeoPixel:
         return self.buf[offset + 1], self.buf[offset], self.buf[offset + 2]  # GRB -> RGB
 
     def show(self):
-        if self.brighness < 1.0:
+        if self.brightness < 1.0:
             # apply brightness
             buf = bytearray(len(self.buf))
             for i, val in enumerate(self.buf):
-                buf[i] = int(val * self.brighness)
+                buf[i] = int(val * self.brightness)
             self._transmit(buf)
         else:
             self._transmit(self.buf)
@@ -79,16 +79,17 @@ class MatrixScreen(ScreenBase):
         for i in range(0, 8):
             row1, row2 = [], []
             for j in range(15, -1, -1):
-                row1.append(i*32 + j)
+                row1.append(i * 32 + j)
 
             for j in range(0, 16):
-                row2.append((i*32) + 16 + j)
+                row2.append((i * 32) + 16 + j)
 
             quadrant_one.append(row1)
             quadrant_one.append(row2)
 
         # Add constant offset to all four quadrants.
         from copy import deepcopy
+
         top_right = quadrant_one
         top_left = [[y + 256 for y in x] for x in deepcopy(quadrant_one)]
         bot_right = [[y + 512 for y in x] for x in deepcopy(quadrant_one)]
@@ -112,16 +113,17 @@ class MatrixScreen(ScreenBase):
         for i in range(0, 8):
             row1, row2 = [], []
             for j in range(15, -1, -1):
-                row1.append(i*32 + j)
+                row1.append(i * 32 + j)
 
             for j in range(0, 16):
-                row2.append((i*32) + 16 + j)
+                row2.append((i * 32) + 16 + j)
 
             quadrant_one.append(row1)
             quadrant_one.append(row2)
 
         # Add constant offset to all four quadrants.
         from copy import deepcopy
+
         top_right = quadrant_one
         top_left = [[y + 256 for y in x] for x in deepcopy(quadrant_one)]
         bot_right = [[y + 512 for y in x] for x in deepcopy(quadrant_one)]
@@ -144,6 +146,7 @@ class MatrixScreen(ScreenBase):
     def update_display(self, canvas: Canvas):
         # for i in range(32*32):
         #     self.__pixels[i] = canvas[i]
+        canvas.fixup()
         self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
         self.__pixels.show()
 

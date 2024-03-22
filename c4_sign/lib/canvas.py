@@ -53,6 +53,15 @@ class Canvas:
 
     def serialize(self):
         return self.data.tolist()
+    
+    def fixup(self):
+        # ensure that self.data[y][x] is a tuple of (r, g, b)
+        for y in range(self.height):
+            for x in range(self.width):
+                if not isinstance(self.data[y][x], tuple):
+                    # print(f"Fixing up pixel at {x}, {y}", self.data[y][x])
+                    self.data[y][x] = tuple(self.data[y][x])
+
 
     def __getitem__(self, key):
         y, x = (key // self.width, key % self.width)
