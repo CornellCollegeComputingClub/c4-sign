@@ -115,13 +115,13 @@ if __name__ == "__main__":
             print("try pip install -e .[misc]")
             exit(1)
 
-        with Profiler() as profiler:
+        with Profiler(interval=0.01) as profiler:
             try:
                 main(args)
             except BaseException:
                 pass
-        print("Writing profile to /tmp/profile.speedscope.json")
-        with open("/tmp/profile.speedscope.json", "w") as f:
+        print("Writing profile to /tmp/c4_profile/profile.speedscope.json")
+        with open("/tmp/c4_profile/profile.speedscope.json", "w") as f:
             f.write(profiler.output(renderer=SpeedscopeRenderer(show_all=True)))
     else:
         main(args)
