@@ -23,7 +23,8 @@ class NeoPixel:
         if isinstance(index, slice):
             start, stop, step = index.indices(self._nums)
             for idx, val in enumerate(range(start, stop, step)):
-                self._set_item(idx, val)
+                print(idx, val)
+                # self._set_item(idx, val)
         else:
             self._set_item(index, val)
 
