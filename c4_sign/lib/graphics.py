@@ -416,7 +416,7 @@ def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> N
             __stroke_horizontal_line(canvas, x1, x2, y, color)
 
 
-def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: Union[Path, Image, numpy.ndarray]) -> None:
+def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: Union[Path, Image.Image, numpy.ndarray]) -> None:
     """
     Draws an image on the canvas. Useful for "sprites", photos, and other graphics!
 
