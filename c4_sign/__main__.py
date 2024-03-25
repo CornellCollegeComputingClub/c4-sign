@@ -28,17 +28,16 @@ def run_gif():
     font = ImageFont.truetype("Courier", 16)
     with open("docs/screen_tasks.md", "w") as f:
         f.write("# Screen Tasks\n\n")
-        f.write("Note: GIFs are faster than the actual speed of the sign\n\n")
         for task in sorted(tasks, key=lambda x: x.__class__.__name__):
             f.write(f"## {task.__class__.__name__}\n")
             f.write(f"**Title**: {task.title}\n\n")
             f.write(f"**Artist**: {task.artist}\n\n")
             if task.__doc__:
                 f.write(f"Description:\n```python\n{task.__doc__}\n```\n")
-            f.write(f"![{task.__class__.__name__}](images/screen_tasks/{task.__class__.__name__}.gif)\n")
+            f.write(f"![{task.__class__.__name__}](images/screen_tasks/{task.__class__.__name__}.webp)\n")
     source = Path("docs/images/screen_tasks")
     source.mkdir(parents=True, exist_ok=True)
-    existing = [x.stem for x in source.glob("*.gif")]
+    existing = [x.stem for x in source.glob("*.webp")]
     tasks = [task for task in tasks if task.__class__.__name__ not in existing]
     for task in track(tasks, description="Converting!"):
         print(f"Running {task.__class__.__name__}")
@@ -63,7 +62,7 @@ def run_gif():
             if result or duration > 30:
                 break
         images[0].save(
-            source / f"{task.__class__.__name__}.gif",
+            source / f"{task.__class__.__name__}.webp",
             save_all=True,
             append_images=images[1:],
             duration=(1 / 24) * 1000,
