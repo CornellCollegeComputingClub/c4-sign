@@ -1,7 +1,11 @@
+import shutil
 from datetime import timedelta
 
 import arrow
 
+from c4_sign.consts import FONT_PICO
+from c4_sign.lib import graphics
+from c4_sign.lib.assets import cache_path
 from c4_sign.lib.canvas import Canvas
 
 
@@ -166,3 +170,75 @@ class ScreenTask:
         artist = "By: " + self.artist
         artist = artist.center(16)
         return title + artist
+
+
+class OptimScreenTask(ScreenTask):
+    current_frame = 0
+    max_frames = 0
+    cache_path = None
+    is_optim = False
+    being_optimized = False
+    should_optimize = True
+
+    def __init__(
+        self,
+        suggested_run_time=timedelta(seconds=30),
+        max_run_time=timedelta(seconds=60),
+    ):
+        super().__init__(suggested_run_time, max_run_time)
+        self.cache_path = cache_path() / "optim" / self.__class__.__name__
+        self.cache_path.mkdir(parents=True, exist_ok=True)
+        print(self.cache_path)
+        self.optimize()
+
+    def optimize(self):
+        # well, ain't this fun?
+        # let's do some optimization!!
+        if not self.should_optimize:
+            return
+        print(f"Optimizing {self.__class__.__name__}")
+        canvas = Canvas()
+        delta_time = timedelta(seconds=1 / 24)
+        # call child's prepare method
+        self.prepare()
+        self.being_optimized = True
+        if len(list(self.cache_path.glob("*.png"))):
+            self.max_frames = len(list(self.cache_path.glob("*.png")))
+            self.teardown()
+            self.is_optim = True
+            self.being_optimized = False
+            return
+        while True:
+            canvas.clear()
+            result = self.draw(canvas, delta_time)
+            canvas.to_jpg(self.cache_path / f"{self.current_frame:04d}.png", 1)
+            self.current_frame += 1
+            if result or self.elapsed_time > self.suggested_run_time:
+                break
+        self.max_frames = self.current_frame
+        self.teardown()
+        self.is_optim = True
+        self.being_optimized = False
+
+    def unoptimize(self):
+        # remove all files in the cache path.
+        self.max_frames = 0
+        self.is_optim = False
+        shutil.rmtree(self.cache_path)
+
+    def prepare(self):
+        if self.being_optimized:  # don't run if we're optimizing
+            return False
+        self.current_frame = 0
+        return super().prepare()
+
+    def draw(self, canvas: Canvas, delta_time: timedelta):
+        if self.is_optim:
+            # load image from cache path
+            graphics.draw_image(canvas, 0, 0, self.cache_path / f"{self.current_frame:04d}.png")
+            graphics.draw_text(canvas, FONT_PICO, 0, 6, (255, 255, 255, 127), "Optim")
+            self.current_frame += 1
+            if self.current_frame >= self.max_frames:
+                return True
+            return False
+        return super().draw(canvas, delta_time)

@@ -1,11 +1,11 @@
 import math
 from datetime import timedelta
 
-from c4_sign.base_task import ScreenTask
+from c4_sign.base_task import OptimScreenTask
 from c4_sign.lib.canvas import Canvas
 
 
-class RainbowWave(ScreenTask):
+class RainbowWave(OptimScreenTask):
     title = "Rainbow Wave"
     artist = "Mac Coleman"
 

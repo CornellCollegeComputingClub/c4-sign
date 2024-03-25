@@ -2,7 +2,7 @@ import importlib
 from datetime import timedelta
 from typing import Union
 
-from c4_sign.base_task import ScreenTask
+from c4_sign.base_task import OptimScreenTask, ScreenTask
 from c4_sign.lib.canvas import Canvas
 from c4_sign.loading_manager import LoadingManager
 
@@ -23,7 +23,12 @@ class ScreenManager:
         for obj in mod.__all__:
             obj = importlib.import_module(f"c4_sign.screen_tasks.{obj}")
             for name, obj in obj.__dict__.items():
-                if isinstance(obj, type) and issubclass(obj, ScreenTask) and obj != ScreenTask and obj.ignore is False:
+                if (
+                    isinstance(obj, type)
+                    and issubclass(obj, ScreenTask)
+                    and obj not in (ScreenTask, OptimScreenTask)
+                    and obj.ignore is False
+                ):
                     if loading_manager:
                         with loading_manager(obj.__name__):
                             self.tasks.append(obj())
