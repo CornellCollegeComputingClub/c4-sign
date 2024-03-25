@@ -2,6 +2,7 @@ import traceback
 
 import arrow
 
+from c4_sign.consts import DEV_MODE
 from c4_sign.lib.canvas import Canvas
 from c4_sign.loading_manager import LoadingManager
 from c4_sign.screen_tasks.error import ErrorScreenTask
@@ -28,6 +29,8 @@ def init_matrix(simulator):
 
 
 def screen_active():
+    if DEV_MODE:
+        return True
     now = arrow.now()
     # normal hours! between 6 am and midnight.
     return now.hour >= 6 and now.hour < 24
