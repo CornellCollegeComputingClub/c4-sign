@@ -2,6 +2,8 @@ from pkg_resources import resource_filename
 
 from c4_sign.lib import graphics
 
+MOTD_TEXT = "GAME JAM! Make games, win gift cards! Email c4@cornellcollege.edu for more info!"
+
 DEV_MODE = False
 COLOR_WHITE = (255, 255, 255)
 COLOR_RED = (255, 69, 58)
