@@ -432,18 +432,17 @@ def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.nd
     bry = min(32, max(0, top_left_y + height))
     brx = min(32, max(0, top_left_x + width))
 
-    canvas_data = canvas.data[tly:bry, tlx:brx]
-    source_y = numpy.arange(height).reshape(-1, 1) - top_left_y
-    source_x = numpy.arange(width).reshape(1, -1) - top_left_x
+    for y in range(tly, bry):
+        for x in range(tlx, brx):
+            source_y = y - top_left_y
+            source_x = x - top_left_x
+            alpha = 1 if depth == 3 else (image[source_y][source_x][3] / 255)
+            r = int((1 - alpha) * canvas.data[y][x][0] + alpha * image[source_y][source_x][0])
+            g = int((1 - alpha) * canvas.data[y][x][1] + alpha * image[source_y][source_x][1])
+            b = int((1 - alpha) * canvas.data[y][x][2] + alpha * image[source_y][source_x][2])
 
-    alpha = 1 if depth == 3 else (image[..., 3] / 255)
-    r = (1 - alpha) * canvas_data[..., 0] + alpha * image[source_y, source_x, 0]
-    g = (1 - alpha) * canvas_data[..., 1] + alpha * image[source_y, source_x, 1]
-    b = (1 - alpha) * canvas_data[..., 2] + alpha * image[source_y, source_x, 2]
-
-    canvas_data[..., 0] = r.astype(int)
-    canvas_data[..., 1] = g.astype(int)
-    canvas_data[..., 2] = b.astype(int)
+            # Shhhhhhh....
+            canvas.data[y][x] = (r, g, b)
 
 
 class Font:
