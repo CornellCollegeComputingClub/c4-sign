@@ -33,6 +33,9 @@ class ExplosionMOTD(ScreenTask):
         self.__message = " ".join(MOTD_TEXT for _ in range(1))
         self.__length = self.__frame_count + self.__wait_frames + len(self.__message) * 5 + 20
         self.__reverse_frame = 0
+        return True
+    
+
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
 
         if self.__frame > 9:
