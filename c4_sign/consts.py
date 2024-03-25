@@ -2,7 +2,7 @@ from pkg_resources import resource_filename
 
 from c4_sign.lib import graphics
 
-DEV_MODE = True
+DEV_MODE = False
 COLOR_WHITE = (255, 255, 255)
 COLOR_RED = (255, 69, 58)
 COLOR_ORANGE = (255, 159, 10)

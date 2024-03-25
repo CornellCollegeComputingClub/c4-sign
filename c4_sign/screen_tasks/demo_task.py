@@ -5,6 +5,7 @@ from c4_sign.lib import graphics
 class Demo(ScreenTask):
     title = "Demo"
     artist = "Mac Coleman"
+    ignore = True
 
     def prepare(self):
         self.frame = 0

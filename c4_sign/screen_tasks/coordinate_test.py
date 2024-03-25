@@ -7,6 +7,7 @@ from c4_sign.lib.canvas import Canvas
 class CoordinateTest(ScreenTask):
     title = "CoordTest"
     artist = "Mac Coleman"
+    ignore = True
 
     def prepare(self):
         return super().prepare()
