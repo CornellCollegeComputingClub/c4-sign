@@ -82,7 +82,9 @@ class Mandelbrot(ScreenTask):
             Complex(-1.985455104282924, 0),
             Complex(-1.2517939976283483, 0.0411834716796875),
         ]
-        self.chosen_point = None
+        sign = random.choice([1, -1])
+        self.chosen_point = random.choice(self.epic_points)
+        self.chosen_point.imag *= sign
         return super().prepare()
 
     def get_lcd_text(self) -> str:
@@ -148,12 +150,6 @@ class Mandelbrot(ScreenTask):
 
         if self.iterations < self.max_iterations:
             self.iterations += 1
-
-        if self.frame > self.intro_time and self.chosen_point is None:
-            # Choose whether to flip imaginary axis (feels more varied that way)
-            sign = random.choice([1, -1])
-            self.chosen_point = random.choice(self.epic_points)
-            self.chosen_point.imag *= sign
 
         if self.frame > self.intro_time:
             self.scale *= 0.995
