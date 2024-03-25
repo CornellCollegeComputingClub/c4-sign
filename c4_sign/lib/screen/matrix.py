@@ -1,6 +1,9 @@
 import board
 import numpy
 
+import threading
+from neopixel_write import neopixel_write
+
 from c4_sign.lib.canvas import Canvas
 from c4_sign.lib.screen.base import ScreenBase
 from c4_sign.lib.screen.physical.driver import lcd
@@ -81,6 +84,8 @@ class MatrixScreen(ScreenBase):
         self.__address_table = numpy.argsort(numpy.array(top_left).reshape(1024))
         # 1024-long list of addresses
 
+        self.__draw_thread = None
+
         # Finished table generation, now load screen...
         self.loading_screen()
 
@@ -88,6 +93,15 @@ class MatrixScreen(ScreenBase):
         # for i in range(32*32):
         #     self.__pixels[i] = canvas[i]
         self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
+        if self.__draw_thread is not None:
+            self.__draw_thread.join()
+        self.__draw_thread = threading.Thread(target=self.__pixels.show)
+        self.__draw_thread.start()
+        # self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
+        # self.__pixels.show()
+
+    def update_display_thread(self, canvas):
+        # self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
         self.__pixels.show()
 
     def update_lcd(self, text):
