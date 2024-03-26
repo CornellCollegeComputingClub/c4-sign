@@ -45,6 +45,7 @@ class Complex:
 class BurningShip(ScreenTask):
     title = "Burning Ship"
     artist = "Mac Coleman"
+    ignore = True
 
     def prepare(self):
         self.center = Complex(0, 0)
@@ -118,7 +119,6 @@ class BurningShip(ScreenTask):
 
         if self.iterations < self.max_iterations:
             self.iterations += 1
-
 
         if self.frame > self.intro_time:
             self.scale *= 0.995

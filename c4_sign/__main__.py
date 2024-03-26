@@ -38,6 +38,10 @@ def run_gif():
     source = Path("docs/images/screen_tasks")
     source.mkdir(parents=True, exist_ok=True)
     existing = [x.stem for x in source.glob("*.webp")]
+    removed = [x for x in existing if x not in [task.__class__.__name__ for task in tasks]]
+    for remove in removed:
+        print(f"Removing {remove}.webp")
+        (source / f"{remove}.webp").unlink()
     tasks = [task for task in tasks if task.__class__.__name__ not in existing]
     for task in track(tasks, description="Converting!"):
         print(f"Running {task.__class__.__name__}")
