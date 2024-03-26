@@ -236,7 +236,6 @@ class OptimScreenTask(ScreenTask):
         if self.is_optim:
             # load image from cache path
             graphics.draw_image(canvas, 0, 0, self.cache_path / f"{self.current_frame:04d}.png")
-            graphics.draw_text(canvas, FONT_PICO, 0, 6, (255, 255, 255, 127), "Optim")
             self.current_frame += 1
             if self.current_frame >= self.max_frames:
                 return True
