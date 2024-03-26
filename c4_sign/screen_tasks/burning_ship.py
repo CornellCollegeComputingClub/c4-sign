@@ -45,6 +45,7 @@ class Complex:
 class BurningShip(OptimScreenTask):
     title = "Burning Ship"
     artist = "Mac Coleman"
+    ignore = True
 
     def prepare(self):
         self.center = Complex(0, 0)

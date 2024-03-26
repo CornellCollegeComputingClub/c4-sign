@@ -1,8 +1,7 @@
+import threading
+
 import board
 import numpy
-
-import threading
-from neopixel_write import neopixel_write
 
 from c4_sign.lib.canvas import Canvas
 from c4_sign.lib.screen.base import ScreenBase

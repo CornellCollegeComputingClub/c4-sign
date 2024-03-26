@@ -6,12 +6,12 @@
 **Artist**: Luna
 
 ![BadApple](images/screen_tasks/BadApple.webp)
-## BurningShip
-**Title**: Burning Ship
+## ExplosionMOTD
+**Title**: Explosion!
 
 **Artist**: Mac Coleman
 
-![BurningShip](images/screen_tasks/BurningShip.webp)
+![ExplosionMOTD](images/screen_tasks/ExplosionMOTD.webp)
 ## JuliaSet
 **Title**: Julia Sets
 

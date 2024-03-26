@@ -1,14 +1,13 @@
 from datetime import timedelta
 
-from c4_sign.base_task import ScreenTask
-from c4_sign.lib import graphics
-from c4_sign.lib.assets import file_from_google_drive, video_to_images
-from c4_sign.lib.canvas import Canvas
-
-from c4_sign.consts import MOTD_TEXT, FONT_9x15, FONT_5x7, COLOR_PURPLE, COLOR_WHITE
-
-from PIL import Image
 from numpy import array
+from PIL import Image
+
+from c4_sign.base_task import ScreenTask
+from c4_sign.consts import COLOR_PURPLE, COLOR_WHITE, MOTD_TEXT, FONT_5x7, FONT_9x15
+from c4_sign.lib import graphics
+from c4_sign.lib.assets import file_from_google_drive
+from c4_sign.lib.canvas import Canvas
 
 
 class ExplosionMOTD(ScreenTask):
@@ -18,8 +17,6 @@ class ExplosionMOTD(ScreenTask):
     def __init__(self):
         super().__init__(timedelta(seconds=1), timedelta(hours=1))
         self.prepare_explosion_motd()
-
-
 
     def prepare_explosion_motd(self):
         self.__image_folder_path = file_from_google_drive("explosion")
@@ -34,7 +31,6 @@ class ExplosionMOTD(ScreenTask):
         self.__length = self.__frame_count + self.__wait_frames + len(self.__message) * 5 + 20
         self.__reverse_frame = 0
         return True
-    
 
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
 
@@ -61,8 +57,7 @@ class ExplosionMOTD(ScreenTask):
             index = max(1, self.__frame_count - self.__reverse_frame) if reverse else self.__frame + 1
             if reverse:
                 self.__reverse_frame += 1
-            img = Image.open(self.__image_folder_path / self.__title_format_string.format(index)).convert(
-                "RGBA")
+            img = Image.open(self.__image_folder_path / self.__title_format_string.format(index)).convert("RGBA")
             graphics.draw_image(canvas, 0, 0, array(img))
 
             if index == 1 and reverse:
