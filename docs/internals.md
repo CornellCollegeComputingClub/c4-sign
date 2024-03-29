@@ -85,6 +85,16 @@ def teardown(self, forced: bool = False):
     self.weather_data = None
 ```
 
+## Optimized Screen Tasks
+
+Optimized Screen Tasks are almost identical to their regular counterpart, except that they have a few key differences, the most notable of which is that they memoize each output frame so that processing is sped up down the line. Thus, `prepare`, `draw_frame`, and `teardown` can be called outside of actually drawing to the screen, as the scheduler tries to cache things before its needed.
+
+When overriding `prepare` or `teardown`, ensure that you call the parent's method (and, in the case of prepare, `and` the result)!
+
+### Special Quirks
+
+* Will disable drawing to the main sign while optimization is underway.
+
 ## Lifecycle Of This Program
 
 TODO: Write this :3!
