@@ -11,7 +11,7 @@ from c4_sign.lib.screen.physical.neopixel import NeoPixel
 
 class MatrixScreen(ScreenBase):
     def __init__(self):
-        self.__pixels = NeoPixel(board.D18, 32 * 32, brightness=0.05, auto_write=False)
+        self.__pixels = NeoPixel(board.D18, 32 * 32, brightness=0.15, auto_write=False)
         self.__lcd = lcd()
         self.__cached_text = " " * 32
 
