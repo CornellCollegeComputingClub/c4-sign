@@ -12,6 +12,10 @@ Get in touch with us if you have any questions or want advice for how to write y
 The LED Sign channel of our discord server is a great place to get advice both from club executives and from other students.
 Feel free to make whatever you like for the sign, this is a chance to use your programming skills to channel your creativity and self-expression!
 
+# Installation and Setup
+
+Check [the tutorial](./docs/tutorial.md) to learn how you can begin writing your own sign programs.
+
 # Program Examples
 You can see simulated outputs of the display programs [here](./docs/screen_tasks.md).
 If you want to see how each task works, the programs can be found in `/c4_sign/screen_tasks`.
