@@ -61,7 +61,7 @@ class BurningShip(OptimScreenTask):
             Complex(-(0.8194765540832001 + 0.8196362197226658) / 2, -(0.9403571999704258 + 0.9405396096087764) / 2),
             Complex(-(1.7730901168969844 + 1.7730901168969884) / 2, -(0.0657946834733513 + 0.06579468347335482) / 2),
         ]
-        self.chosen_point = None
+        self.chosen_point = random.choice(self.epic_points)
         return super().prepare()
 
     def get_lcd_text(self) -> str:
@@ -119,9 +119,6 @@ class BurningShip(OptimScreenTask):
 
         if self.iterations < self.max_iterations:
             self.iterations += 1
-
-        if self.frame > self.intro_time and self.chosen_point is None:
-            self.chosen_point = random.choice(self.epic_points)
 
         if self.frame > self.intro_time:
             self.scale *= 0.995
