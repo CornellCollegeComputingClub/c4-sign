@@ -3,7 +3,7 @@ import random
 from dataclasses import dataclass
 from datetime import timedelta
 
-from c4_sign.base_task import ScreenTask
+from c4_sign.base_task import OptimScreenTask
 from c4_sign.lib.canvas import Canvas
 
 
@@ -42,7 +42,7 @@ class Complex:
         return self.real**2 + self.imag**2
 
 
-class BurningShip(ScreenTask):
+class BurningShip(OptimScreenTask):
     title = "Burning Ship"
     artist = "Mac Coleman"
     ignore = True

@@ -8,11 +8,13 @@ In order to work on the sign, you will first need to have Python 3.9 (or above) 
 
 With the necessities out of the way, let's set up your environment!
 
-First, we must clone the repository to your computer. You may use a GUI if you have one, but we'll be using the command line for this guide.
+First, you must fork the repository on GitHub. This will create a copy of the repository under your own GitHub account. To do this, just hit the `Fork` button in the top right corner, and follow the instructions.
+
+Next, we must clone the repository to your computer. You may use a GUI if you have one, but we'll be using the command line for this guide.
 
 ```sh
 luna (~) > cd Documents/Code
-luna (~/Documents/Code) > git clone https://github.com/CornellCollegeComputingClub/c4-sign.git
+luna (~/Documents/Code) > git clone https://github.com/itsactuallyluna9/c4-sign.git
 Cloning into 'c4-sign'...
 remote: Enumerating objects: 606, done.
 remote: Counting objects: 100% (311/311), done.
@@ -52,6 +54,7 @@ from c4_sign.lib import graphics
 class Demo(ScreenTask):
     title = "Demo"
     artist = "Mac Coleman"
+    ignore = True
 
     def prepare(self):
         self.frame = 0
@@ -72,10 +75,13 @@ Starting at the top, we import a class called ScreenTask and our graphics librar
 
 Next up, we have the `title` and `artist` variables. Change these to the title of your program and your name! (While you're at it, rename the class also!)
 
+Also, remember to remove the `ignore` variable! (If `ignore` is true, the sign will outright ignore your sub-program's existence!)
+
 ```diff
 - class Demo(ScreenTask):
 -     title = "Demo"
 -     artist = "Mac Coleman"
+-     ignore = True
 + class FavoriteColor(ScreenTask):
 +     title = "Favorite Color"
 +     artist = "Luna"

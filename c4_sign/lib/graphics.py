@@ -1,7 +1,9 @@
+from pathlib import Path
 from typing import Union
 
 import bdfparser
 import numpy
+from PIL import Image
 
 from .canvas import Canvas
 
@@ -414,7 +416,7 @@ def fill_polygon(canvas: Canvas, points: list[tuple[int, int]], color: int) -> N
             __stroke_horizontal_line(canvas, x1, x2, y, color)
 
 
-def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.ndarray) -> None:
+def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: Union[Path, Image.Image, numpy.ndarray]) -> None:
     """
     Draws an image on the canvas. Useful for "sprites", photos, and other graphics!
 
@@ -424,6 +426,11 @@ def draw_image(canvas: Canvas, top_left_x: int, top_left_y: int, image: numpy.nd
     :param image: The image to draw.
     :return: None
     """
+    if isinstance(image, Path):
+        image = Image.open(image)
+
+    if isinstance(image, Image.Image):
+        image = numpy.array(image)
 
     width, height, depth = image.shape
 
