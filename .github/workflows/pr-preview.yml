@@ -30,7 +30,7 @@ jobs:
         run: |
           python -m c4_sign --generate-pr-preview
       - name: Comment PR with Preview Image
-        uses: opengisch/comment-pr-with-images@upload_only
+        uses: opengisch/comment-pr-with-images@main
         with:
           images: "preview/**.webm"
           upload_to: "imgur"
