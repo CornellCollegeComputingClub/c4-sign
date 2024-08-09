@@ -75,6 +75,79 @@ def run_gif():
 
     exit(0)
 
+def generate_pr_preview():
+    from datetime import timedelta
+    from pathlib import Path
+
+    from PIL import Image, ImageDraw, ImageFont
+
+    from c4_sign.lib.canvas import Canvas
+    from subprocess import run
+    import importlib
+    from c4_sign.base_task import ScreenTask, OptimScreenTask
+
+    try:
+        from rich.progress import track
+    except ImportError:
+
+        def track(iter, description=""):
+            yield from iter
+
+    delta_t = timedelta(seconds=1 / 24)
+    canvas = Canvas()
+    font = ImageFont.truetype("Courier", 16)
+    source = Path("preview")
+    source.mkdir(parents=True, exist_ok=True)
+    # git diff --name-only -r HEAD^1 HEAD
+    changed_files = run(["git", "diff", "--name-only", "-r", "HEAD^1", "HEAD"], capture_output=True, text=True).stdout.splitlines()
+    # anything in c4_sign/screen_tasks/*.py we wanna generate
+    tasks = []
+    for file in changed_files:
+        if "c4_sign/screen_tasks" in file:
+            print(file)
+            # we need to import the module
+            obj = importlib.import_module(file.replace("/", ".")[:-3])
+            for name, obj in obj.__dict__.items():
+                if (
+                    isinstance(obj, type)
+                    and issubclass(obj, ScreenTask)
+                    and obj not in (ScreenTask, OptimScreenTask)
+                    and obj.ignore is False
+                ):
+                    if issubclass(obj, OptimScreenTask):
+                        obj.should_optimize = False
+                    tasks.append(obj())
+    for task in track(tasks, description="Converting!"):
+        print(f"Running {task.__class__.__name__}")
+        duration = 0
+        images = []
+        task.prepare()
+        while True:
+            canvas.clear()
+            text = task.get_lcd_text()
+            result = task.draw(canvas, delta_t)
+            img = Image.new("RGB", (256, 384))
+            draw = ImageDraw.Draw(img)
+            for y in range(32):
+                for x in range(32):
+                    r, g, b = canvas.get_pixel(x, y)
+                    draw.rectangle((x * 8, y * 8, (x + 1) * 8, (y + 1) * 8), fill=(r, g, b))
+            # add text
+            draw.text((0, 320), text[16:], font=font, fill=(255, 255, 255))
+            draw.text((0, 300), text[:16], font=font, fill=(255, 255, 255))
+            images.append(img)
+            duration += 1 / 24
+            if result or duration > 30:
+                break
+        images[0].save(
+            source / f"{task.__class__.__name__}.webp",
+            save_all=True,
+            append_images=images[1:],
+            duration=(1 / 24) * 1000,
+            loop=0,
+        )
+
+    exit(0)
 
 def main(args=None):
     if args.purge_cache:
@@ -82,6 +155,8 @@ def main(args=None):
 
         purge_cache()
         print("Cache purged!")
+    if args.generate_pr_preview:
+        return generate_pr_preview()
     if args.gif:
         print("GIF mode!")
         if args.purge_cache:
@@ -108,6 +183,7 @@ if __name__ == "__main__":
     parser.add_argument("--gif", action="store_true")
     parser.add_argument("--profile", action="store_true")
     parser.add_argument("--purge-cache", action="store_true")
+    parser.add_argument("--generate-pr-preview", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.profile:
         try:

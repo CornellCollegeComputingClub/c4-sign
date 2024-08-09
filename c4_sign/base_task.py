@@ -188,7 +188,6 @@ class OptimScreenTask(ScreenTask):
         super().__init__(suggested_run_time, max_run_time)
         self.cache_path = cache_path() / "optim" / self.__class__.__name__
         self.cache_path.mkdir(parents=True, exist_ok=True)
-        print(self.cache_path)
         self.optimize()
 
     def optimize(self):
