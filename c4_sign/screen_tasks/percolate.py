@@ -35,11 +35,12 @@ class Percolate(ScreenTask):
     
     def draw_frame(self, canvas, delta_time):
         # each frame, add a new block somewhere on the grid if it's empty
-        while True:
-            x, y = random.randint(0, 31), random.randint(0, 31)
-            if self.grid[x][y] == 0:
-                self.grid[x][y] = 1
-                break
+        if not percolates(self.grid):
+            while True:
+                x, y = random.randint(0, 31), random.randint(0, 31)
+                if self.grid[x][y] == 0:
+                    self.grid[x][y] = 1
+                    break
         # check if the grid percolates
         # copy grid to canvas
         result = percolates(self.grid)
