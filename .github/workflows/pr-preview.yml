@@ -1,0 +1,33 @@
+name: PR Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "c4_sign/screen_tasks/*.py"
+
+jobs:
+  generate_preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+      - name: Generate Preview Image
+        run: |
+          python -m c4_sign --generate-pr-preview
+      - name: Comment PR with Preview Image
+        uses: opengisch/comment-pr-with-images@upload_only
+        with:
+          images: "preview/**.webm"
+          upload_to: "imgur"
+
