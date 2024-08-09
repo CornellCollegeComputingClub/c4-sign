@@ -95,7 +95,7 @@ def generate_pr_preview():
 
     delta_t = timedelta(seconds=1 / 24)
     canvas = Canvas()
-    font = ImageFont.truetype("Courier", 16)
+    font = ImageFont.truetype("./Source_Code_Pro/source-code-pro-v23-latin-regular.ttf", 16)
     source = Path("preview")
     source.mkdir(parents=True, exist_ok=True)
     # git diff --name-only -r HEAD^1 HEAD
