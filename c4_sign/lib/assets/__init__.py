@@ -7,6 +7,7 @@ from pathlib import Path
 import ffmpeg_downloader as ffdl
 import gdown
 import requests
+import yt_dlp
 from PIL import Image
 
 
@@ -202,31 +203,53 @@ def __write_cache(url, path):
         json.dump(cache_data, f)
 
 
+def __format_selector(ctx):
+    # formats are already sorted worst to best
+    # so, we want *basically* the worst format
+    # that is still a video (ofc)
+    formats = ctx.get("formats")
+    worst_video = next(f for f in formats if (f["vcodec"] != "none" and f["acodec"] == "none"))
+    audio_ext = {"mp4": "m4a", "webm": "webm"}[worst_video["ext"]]
+    worst_audio = next(
+        f for f in formats if (f.get("acodec", "none") != "none" and f["vcodec"] == "none" and f["ext"] == audio_ext)
+    )
+
+    yield {
+        "format_id": f'{worst_video["format_id"]}+{worst_audio["format_id"]}',
+        "ext": worst_video["ext"],
+        "requested_formats": [worst_video, worst_audio],
+        "protocol": f'{worst_video["protocol"]}+{worst_audio["protocol"]}',
+    }
+
+
 def __download_video(videoURL):
     cache = cache_path()
-    data = requests.post(
-        "https://co.wuk.sh/api/json",
-        json={
-            "url": videoURL,
-            "vCodec": "h264",
-            "vQuality": "144",  # we're making this 32x32! we don't need high quality
-            "isAudioMuted": "true",
-        },
-        headers={"Content-Type": "application/json", "Accept": "application/json"},
-    ).json()
-    video = requests.get(data["url"], stream=True)
-    # get filename from content-disposition
-    filename = Path(video.headers["content-disposition"].split("filename=")[1].strip('"'))
-    filename = cache / filename
-    with filename.open("wb") as f:
-        for chunk in video.iter_content(chunk_size=8192):
-            f.write(chunk)
+    filename = None
+
+    def __filename_hook(d):
+        nonlocal filename
+        if d["status"] == "finished":
+            filename = Path(d["info_dict"]["filename"])
+
+    with yt_dlp.YoutubeDL(
+        {
+            "format": __format_selector,
+            "fragment_retries": 6,
+            "noprogress": True,
+            "outtmpl": str(cache / "%(id)s.%(ext)s"),
+            "quiet": True,
+            "retries": 3,
+            "progress_hooks": [__filename_hook],
+        }
+    ) as ydl:
+        ydl.download([videoURL])
+
     image_folder = cache / filename.stem
     image_folder.mkdir()
     # get ffmpeg
     ffmpeg = get_ffmpeg()
     # convert video to images
-    subprocess.run([ffmpeg, "-i", filename, "-vf", "fps=24", f"{image_folder}/%d.png"])
+    subprocess.run([ffmpeg, "-i", filename, "-vf", "fps=24", f"{image_folder}/%d.png"], check=True)
     # save to cache
     __write_cache(videoURL, image_folder)
     return image_folder
