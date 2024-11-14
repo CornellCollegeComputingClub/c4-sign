@@ -20,6 +20,6 @@ git pull
 # sudo python3 -m pip install -e .
 # this takes a while to run. TODO: FIX.
 
-sudo python3 -m c4_sign
+sudo /home/c4/c4-sign/venv/bin/python3 -m c4_sign
 
 exit 0
