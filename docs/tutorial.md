@@ -121,10 +121,68 @@ We'll press Ctrl+C in our terminal to stop the simulator, and do some more work 
 
 ## Adding Motion
 
+We're going to keep it simple, and have a ball of our perferred color fly around the screen for a bit!
+
+We'll want to add some variables to keep track of where our ball is, and where it's heading. To do this, we'll add some variables to our `prepare(self)` function (making sure to `import random`)...
+
+```py
+def prepare(self):
+    # position
+    self.x = random.randint(0, 31)
+    self.y = random.randint(0, 31)
+    
+    # momentum
+    self.dx = random.choice([-1, 1])
+    self.dy = random.choice([-1, 1])
+    
+    # constants
+    self.color = 0xd883ff
+    self.radius = 3
+    return super().prepare()
+```
+
+We'll also need to modify our `draw_frame(...)` function to move and draw the ball!
+
+```py
+def draw_frame(self, canvas, delta_time):
+    # 
+    self.x += self.dx
+    self.y += self.dy
+
+    # check for collisions
+    if self.x < (0 + self.radius) or self.x > (31 - self.radius):
+        self.dx = -self.dx
+    if self.y < (0 + self.radius) or self.y > (31 - self.radius):
+        self.dy = -self.dy
+    
+    # draw the ball
+    graphics.fill_circle(canvas, self.x, self.y, self.radius, self.color)
+```
+
 ## Re-Running the Simulator
 
-Re-running the simulator, we see now that
+Re-running the simulator, we see now that our ball flies around the screen! Take a moment and admire its beauty.
+
+> [!NOTE]
+> We're not going to fix it here, but the ball can sometimes spawn in a wall. Sorry!
 
 ## Publishing Our Work
+
+Now that you have your beautiful creation, how *exactly* do we get it on the sign? Simple, we must submit a **Pull Request**!
+
+To get started, we need to *commit* our work to the repository that you cloned at the start of this tutorial.
+
+```sh
+$ git add c4_sign/screen_tasks/picasso_hates_us.py
+$ git commit -m "my super cool creation"
+$ git push
+```
+
+> [!TIP]
+> You can use anything you feel comfortable with to commit and push! VS Code has a `Source Control` panel you can use to do the same thing, or you can use something like `lazygit`, `Fork`, or `Github Desktop`.
+
+Once you've done that, you'll need to open up a **Pull Request**. For futher details, see [GitHub's documentation](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)!
+
+Now, all that's left to do is wait. One of us will come and review your awesome program, give you feedback if neccessary, and merge your code in! Once that happens, check the sign in a day or so and *presto*!
 
 ## Further Reading
