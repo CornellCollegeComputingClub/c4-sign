@@ -178,7 +178,7 @@ class OptimScreenTask(ScreenTask):
     cache_path = None
     is_optim = False
     being_optimized = False
-    should_optimize = True
+    should_optimize = False
 
     def __init__(
         self,
@@ -239,4 +239,5 @@ class OptimScreenTask(ScreenTask):
             if self.current_frame >= self.max_frames:
                 return True
             return False
+        print(delta_time)
         return super().draw(canvas, delta_time)
