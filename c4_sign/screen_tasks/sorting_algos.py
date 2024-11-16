@@ -172,6 +172,7 @@ class SortingAlgorithms(ScreenTask):
         }
         self.sorting_algorithm = None
         self.arr = None
+        self.frame = 0
 
     def prepare(self):
         self.sorting_algorithm_name = random.choice(list(self.sorting_algorithms.keys()))
@@ -179,16 +180,18 @@ class SortingAlgorithms(ScreenTask):
         self.arr = list(range(1, 33))
         random.shuffle(self.arr)
         self.sorting_algorithm = self.sorting_algorithms[self.sorting_algorithm_name](self.arr)
+        self.frame = 0
         return super().prepare()
 
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
         # draw array
+        self.frame += 1
         for i, x in enumerate(self.arr):
             color = COLORS[x - 1]
             graphics.stroke_line(canvas, i, 32, i, 32 - x, color)
         try:
-            next(self.sorting_algorithm)
-            sleep(0.05)
+            if self.frame % 2 == 0: # only update every other frame
+                next(self.sorting_algorithm)
             return False
         except StopIteration:
             return True
