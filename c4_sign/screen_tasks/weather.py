@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 import arrow
+from loguru import logger
 
 from c4_sign.base_task import ScreenTask
 from c4_sign.consts import COLOR_GRAY, COLOR_RED, COLOR_WHITE, FONT_PICO
@@ -8,37 +9,35 @@ from c4_sign.lib import graphics
 from c4_sign.util import internet_is_available, lerp, map_value, requests_get_1hr_cache
 
 WEATHER_CODES = {
+    # have to be 8 chars or less
     0: "Clear",
-    1: "PtlyCldy",
-    2: "Cloudy",
+    1: "MosClear",
+    2: "PtlyCldy",
     3: "Overcast",
-    10: "LtShwrs",
-    11: "Showers",
-    12: "HvShwrs",
-    20: "LtSnow",
-    21: "Snow",
-    22: "HvSnow",
-    30: "LtTStrm",
-    31: "TStrm",
-    32: "HvTStrm",
-    40: "LtSleet",
-    41: "Sleet",
-    42: "HvSleet",
-    50: "LtFrzRn",
-    51: "FrzRain",
-    52: "HvFrzRn",
-    60: "LtHail",
-    61: "Hail",
-    62: "HvHail",
-    70: "LtFog",
-    71: "Fog",
-    72: "HvFog",
-    80: "LtMist",
-    81: "Dust",
-    82: "HvMist",
-    90: "LtSand",
-    91: "Sandstrm",
-    92: "HvSandst",
+    45: "Fog",
+    48: "Fog",
+    51: "LtDriz",
+    53: "Drizzle",
+    55: "HvyDriz",
+    56: "FrzDriz",
+    57: "FrzDriz",
+    61: "LtRain",
+    63: "Rain",
+    65: "HvyRain",
+    66: "FrzRain",
+    67: "FrzRain",
+    71: "LtSnow",
+    73: "Snow",
+    75: "HvySnow",
+    77: "Sleet",
+    80: "LtShwr",
+    81: "Showers",
+    82: "HvyShwr",
+    85: "SnowShwr",
+    86: "SnowShwr",
+    95: "TStorm",
+    96: "TStorm",
+    99: "TStorm",
 }
 
 
@@ -47,6 +46,9 @@ class Weather(ScreenTask):
     artist = "Luna"
 
     def __init__(self):
+        for k, v in WEATHER_CODES.items():
+            if len(v) > 8:
+                logger.error(f"WEATHER_CODES[{k}] = {v} is too long! Must be 8 chars or less.")
         super().__init__()
 
     def prepare(self):
