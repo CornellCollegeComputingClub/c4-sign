@@ -2,7 +2,6 @@ import threading
 
 from loguru import logger
 
-import board
 import numpy
 
 from c4_sign.lib.canvas import Canvas
@@ -14,7 +13,7 @@ from c4_sign.lib.screen.physical.neopixel import NeoPixel
 class MatrixScreen(ScreenBase):
     def __init__(self):
         logger.info("Initializing Matrix Screen (Physical)")
-        self.__pixels = NeoPixel(board.D18, 32 * 32, brightness=0.05, auto_write=False)
+        self.__pixels = NeoPixel(18, 32 * 32, brightness=0.05, auto_write=False)
         self.__lcd = lcd()
         self.__cached_text = " " * 32
 

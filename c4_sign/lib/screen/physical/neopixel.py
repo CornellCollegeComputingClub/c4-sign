@@ -2,7 +2,6 @@ from typing import Sequence, Union
 
 from loguru import logger
 
-import digitalio
 from rpi_ws281x import PixelStrip, Color
 from threading import Lock
 from copy import deepcopy
@@ -14,8 +13,6 @@ class NeoPixel:
         self.buf = bytearray(3 * num_pixels)
         self._nums = num_pixels
         self.brightness = brightness
-        self.pin = digitalio.DigitalInOut(pin)
-        self.pin.direction = digitalio.Direction.OUTPUT
         # brightness is 255 here because we apply it ourselves
         # no need for double dimming
         self.strip = PixelStrip(num_pixels, pin, 800000, 10, False, 255, 0)
