@@ -4,6 +4,8 @@ from loguru import logger
 
 import digitalio
 from neopixel_write import neopixel_write
+from threading import Lock
+from copy import deepcopy
 
 
 class NeoPixel:
@@ -15,6 +17,7 @@ class NeoPixel:
         self.pin = digitalio.DigitalInOut(pin)
         self.pin.direction = digitalio.Direction.OUTPUT
         self.auto_write = auto_write
+        self._lock = Lock()
 
     def __setitem__(self, index: Union[int, slice], val: Union[tuple[int, int, int], Sequence[tuple[int, int, int]]]):
         if isinstance(index, slice):
@@ -60,9 +63,10 @@ class NeoPixel:
                 buf[i] = int(val * self.brightness)
             self._transmit(buf)
         else:
-            self._transmit(self.buf)
+            self._transmit(deepcopy(self.buf))
 
     def _transmit(self, buf):
-        logger.trace("Transmitting to NeoPixels")
-        neopixel_write(self.pin, buf)
-        logger.trace("Transmission complete!")
+        with self._lock:
+            logger.trace("Transmitting to NeoPixels")
+            neopixel_write(self.pin, buf)
+            logger.trace("Transmission complete!")
