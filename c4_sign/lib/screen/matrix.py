@@ -60,14 +60,14 @@ class MatrixScreen(ScreenBase):
         self.loading_screen()
 
     def update_display(self, canvas: Canvas):
-        logger.debug("Updating display...")
+        logger.trace("Updating display...")
         # for i in range(32*32):
         #     self.__pixels[i] = canvas[i]
         self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
         if self.__draw_thread is not None:
-            logger.warning("Joining old draw thread...")
+            logger.trace("Joining old draw thread...")
             self.__draw_thread.join()
-        logger.debug("Starting new draw thread...")
+        logger.trace("Starting new draw thread...")
         self.__draw_thread = threading.Thread(target=self.__pixels.show)
         self.__draw_thread.start()
         # self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
