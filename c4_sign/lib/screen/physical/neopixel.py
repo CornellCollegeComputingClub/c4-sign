@@ -72,6 +72,7 @@ class NeoPixel:
     def _transmit(self, buf):
         with self._lock:
             logger.trace("Transmitting to NeoPixels")
-            self.strip[:] = buf
+            for i in range(len(buf) // 3):
+                self.strip[i] = Color(buf[i * 3], buf[i * 3 + 1], buf[i * 3 + 2])
             self.strip.show()
             logger.trace("Transmission complete!")
