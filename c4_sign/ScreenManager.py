@@ -1,5 +1,6 @@
 import importlib
 from datetime import timedelta
+import random
 from typing import Union
 
 from loguru import logger
@@ -39,6 +40,9 @@ class ScreenManager:
                     else:
                         self.tasks.append(obj())
                     logger.debug("Screen Task {} added!", obj.__name__)
+        # now, shuffle the tasks with an arbitrary seed (so that it's the same between simulator and real)
+        rand = random.Random(0xd883ff)
+        rand.shuffle(self.tasks)
         logger.info("Screen Tasks updated!")
 
     def override_current_task(self, task: Union[str, ScreenTask]):
