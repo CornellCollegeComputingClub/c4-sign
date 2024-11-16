@@ -1,6 +1,7 @@
 import traceback
 
 import arrow
+from loguru import logger
 
 from c4_sign.consts import DEV_MODE
 from c4_sign.lib.canvas import Canvas
@@ -12,6 +13,7 @@ _screen = None
 _screen_manager = ScreenManager()
 _last_update = arrow.now()
 _canvas = Canvas()
+_low_fps_counter = 0
 
 
 def init_matrix(simulator):
@@ -37,7 +39,7 @@ def screen_active():
 
 
 def update_screen():
-    global _screen, _canvas, _last_update, _screen_manager
+    global _screen, _canvas, _last_update, _screen_manager, _low_fps_counter
 
     now = arrow.now()
     delta_t = now - _last_update
@@ -62,14 +64,21 @@ def update_screen():
     try:
         _screen_manager.draw(canvas, delta_t)
     except Exception as e:
-        print("ERROR: ", e)
-        print("Traceback:" + "".join(traceback.format_tb(e.__traceback__)))
-        print(e.__traceback__.tb_frame.f_code.co_filename, e.__traceback__.tb_lineno)
+        logger.error("Caught exception while drawing screen!")
+        logger.exception(e)
         _screen_manager.override_current_task(ErrorScreenTask(e))
 
     _screen.update_display(canvas)
+    fps = 1 / delta_t.total_seconds()
+    if fps < 20:
+        _low_fps_counter += 1
+        if _low_fps_counter > 6: # .25 seconds 
+            logger.warning("Low FPS! {}", fps)
+            _low_fps_counter = 0 # reset counter so we don't spam the logs
+    else:
+        _low_fps_counter = 0
     _screen.debug_info(
-        fps=1 / delta_t.total_seconds(),
+        fps=fps,
         brightness=_screen.brightness,
         current_task=_screen_manager.current_task.__class__.__name__,
         tasks=[t.__class__.__name__ for t in _screen_manager.tasks],

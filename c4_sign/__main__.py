@@ -3,6 +3,14 @@ import argparse
 from c4_sign.screen import init_matrix, update_screen
 from c4_sign.ScreenManager import ScreenManager
 from c4_sign.tasks import TaskManager
+from loguru import logger
+import sys
+
+def setup_logger():
+    logger.remove(0)
+    logger.add(sys.stderr, level="INFO")
+    logger.add("c4_sign.log", level="DEBUG", rotation="00:30", retention="1 week", compression="gz")
+
 
 
 def run_gif():
@@ -93,6 +101,7 @@ def generate_pr_preview():
         def track(iter, description=""):
             yield from iter
 
+    logger.info("Generating PR preview!")
     delta_t = timedelta(seconds=1 / 24)
     canvas = Canvas()
     font = ImageFont.truetype("./Source_Code_Pro/source-code-pro-v23-latin-regular.ttf", 16)
@@ -104,7 +113,7 @@ def generate_pr_preview():
     tasks = []
     for file in changed_files:
         if "c4_sign/screen_tasks" in file:
-            print(file)
+            logger.debug("Found changed file: {}", file)
             # we need to import the module
             obj = importlib.import_module(file.replace("/", ".")[:-3])
             for name, obj in obj.__dict__.items():
@@ -118,6 +127,7 @@ def generate_pr_preview():
                         obj.should_optimize = False
                     tasks.append(obj())
     for task in track(tasks, description="Converting!"):
+        logger.info("Running {}", task.__class__.__name__)
         print(f"Running {task.__class__.__name__}")
         duration = 0
         images = []
@@ -139,6 +149,7 @@ def generate_pr_preview():
             duration += 1 / 24
             if result or duration > 30:
                 break
+        logger.info("Saving {}", task.__class__.__name__)
         images[0].save(
             source / f"{task.__class__.__name__}.webp",
             save_all=True,
@@ -146,10 +157,14 @@ def generate_pr_preview():
             duration=(1 / 24) * 1000,
             loop=0,
         )
+    logger.info("Processed all PR preview tasks")
 
     exit(0)
 
+@logger.catch
 def main(args=None):
+    setup_logger()
+    logger.info("Starting up!")
     if args.purge_cache:
         from c4_sign.lib.assets import purge_cache
 
@@ -158,19 +173,22 @@ def main(args=None):
     if args.generate_pr_preview:
         return generate_pr_preview()
     if args.gif:
+        logger.info("Starting in GIF mode")
         print("GIF mode!")
         if args.purge_cache:
             # we're also gonna clear the gif folder, just so we're forced to regenerate them
             from pathlib import Path
             from shutil import rmtree
 
+            logger.info("Purging GIF folder")
             source = Path("docs/images/screen_tasks")
             rmtree(source, ignore_errors=True)
+            logger.info("GIF folder purged!")
         return run_gif()
     init_matrix(args.simulator)
     tm = TaskManager()
 
-    print("Finishing up startup...")
+    logger.info("Finishing startup; starting main loop!")
 
     while True:
         tm.check_and_run_tasks()

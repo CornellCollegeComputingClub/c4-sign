@@ -6,6 +6,7 @@ from pathlib import Path
 
 import ffmpeg_downloader as ffdl
 import gdown
+from loguru import logger
 import requests
 import yt_dlp
 from PIL import Image
@@ -51,7 +52,9 @@ def get_ffmpeg():
         n.presets = None
         n.version = None
         n.force = False
+        logger.info("Installing FFmpeg...")
         ffdl_install(n)
+        logger.info("FFmpeg installed!")
     return ffdl.ffmpeg_path
 
 
@@ -72,6 +75,7 @@ def video_to_images(videoURL, resize=True):
     else:
         folder = __download_video(videoURL)
         if resize:
+            logger.info("Resizing images for {}", videoURL)
             for image in folder.iterdir():
                 resize_image(image, (32, 32))
         return folder
@@ -150,12 +154,15 @@ def __download_google_drive_file(path):
     # download the folder from google drive
     folder = cache_path() / "google_drive"
     url = "https://drive.google.com/drive/folders/1PweM5UME7iaHHXBA2m3Fbw3vI0Xlk5Fn"
+    logger.info("Downloading google drive folder")
     gdown.download_folder(url, output=str(folder), quiet=False)
+    logger.debug("Google drive folder downloaded")
     # return the file
     file = folder / path
     if file.exists():
         return file
     else:
+        logger.error("File {} not found in google drive folder!", path)
         raise FileNotFoundError(f"File {path} not found in google drive folder!")
 
 
@@ -163,11 +170,14 @@ def purge_cache():
     """
     Purges the cache directory.
     """
+    logger.info("Purging cache")
     cache = cache_path()
     shutil.rmtree(cache)
+    logger.info("Cache purged!")
 
 
 def __download_file(url):
+    logger.info("Downloading file from {}", url)
     cache = cache_path()
     image = requests.get(url, stream=True)
     filename = Path(url.split("/")[-1])
@@ -214,6 +224,8 @@ def __format_selector(ctx):
         f for f in formats if (f.get("acodec", "none") != "none" and f["vcodec"] == "none" and f["ext"] == audio_ext)
     )
 
+    logger.debug("Selected formats: {}", [worst_video, worst_audio])
+
     yield {
         "format_id": f'{worst_video["format_id"]}+{worst_audio["format_id"]}',
         "ext": worst_video["ext"],
@@ -223,6 +235,7 @@ def __format_selector(ctx):
 
 
 def __download_video(videoURL):
+    logger.info("Downloading video from {}", videoURL)
     cache = cache_path()
     filename = None
 
@@ -242,6 +255,7 @@ def __download_video(videoURL):
             "progress_hooks": [__filename_hook],
         }
     ) as ydl:
+        logger.debug("Downloading video")
         ydl.download([videoURL])
 
     image_folder = cache / filename.stem
@@ -249,6 +263,7 @@ def __download_video(videoURL):
     # get ffmpeg
     ffmpeg = get_ffmpeg()
     # convert video to images
+    logger.debug("Converting video to images")
     subprocess.run([ffmpeg, "-i", filename, "-vf", "fps=24", f"{image_folder}/%d.png"], check=True)
     # save to cache
     __write_cache(videoURL, image_folder)

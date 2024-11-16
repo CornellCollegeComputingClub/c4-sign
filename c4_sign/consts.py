@@ -4,7 +4,7 @@ from c4_sign.lib import graphics
 
 MOTD_TEXT = "Welcome to Cornell!"
 
-DEV_MODE = False
+DEV_MODE = True
 COLOR_WHITE = (255, 255, 255)
 COLOR_RED = (255, 69, 58)
 COLOR_ORANGE = (255, 159, 10)

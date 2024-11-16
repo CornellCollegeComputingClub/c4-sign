@@ -5,6 +5,8 @@
 
 from time import *
 
+from loguru import logger
+
 from . import i2c_lib
 
 # commands
@@ -57,6 +59,7 @@ Rs = 0b00000001  # Register select bit
 class lcd:
     # initializes objects and lcd
     def __init__(self, ADDRESS=0x27):
+        logger.debug("Initializing LCD")
         self.lcd_device = i2c_lib.i2c_device(ADDRESS)
 
         self.lcd_write(0x03)
@@ -69,6 +72,7 @@ class lcd:
         self.lcd_write(LCD_CLEARDISPLAY)
         self.lcd_write(LCD_ENTRYMODESET | LCD_ENTRYLEFT)
         sleep(0.2)
+        logger.debug("LCD Initialized")
 
     # clocks EN to latch command
     def lcd_strobe(self, data):
@@ -93,10 +97,11 @@ class lcd:
         elif state in ("off", "Off", "OFF"):
             self.lcd_device.write_cmd(LCD_NOBACKLIGHT)
         else:
-            print("Unknown State!")
+            logger.error("Unknown state {}", state)
 
     # put string function
     def lcd_display_string(self, string, line):
+        logger.debug("Displaying string {} on line {}", string, line)
         if line == 1:
             self.lcd_write(0x80)
         if line == 2:
@@ -111,5 +116,6 @@ class lcd:
 
     # clear lcd and set to home
     def lcd_clear(self):
+        logger.debug("Clearing LCD")
         self.lcd_write(LCD_CLEARDISPLAY)
         self.lcd_write(LCD_RETURNHOME)

@@ -1,11 +1,14 @@
 from typing import Sequence, Union
 
+from loguru import logger
+
 import digitalio
 from neopixel_write import neopixel_write
 
 
 class NeoPixel:
     def __init__(self, pin, num_pixels, brightness=1.0, auto_write=True):
+        logger.debug("Initializing NeoPixels")
         self.buf = bytearray(3 * num_pixels)
         self._nums = num_pixels
         self.brightness = brightness
@@ -50,6 +53,7 @@ class NeoPixel:
 
     def show(self):
         if self.brightness < 1.0:
+            logger.debug("Applying brightness")
             # apply brightness
             buf = bytearray(len(self.buf))
             for i, val in enumerate(self.buf):
@@ -59,4 +63,6 @@ class NeoPixel:
             self._transmit(self.buf)
 
     def _transmit(self, buf):
+        logger.debug("Transmitting to NeoPixels")
         neopixel_write(self.pin, buf)
+        logger.debug("Transmission complete!")

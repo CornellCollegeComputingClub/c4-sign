@@ -29,7 +29,6 @@ def start_server(to_web: Queue, from_web: Queue):
 
     @socketio.on("update")
     def update(data):
-        print("Received", data)
         from_web.put(data)
 
     print("Starting server on port 5000")

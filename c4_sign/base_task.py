@@ -2,6 +2,7 @@ import shutil
 from datetime import timedelta
 
 import arrow
+from loguru import logger
 
 from c4_sign.consts import FONT_PICO
 from c4_sign.lib import graphics
@@ -125,9 +126,11 @@ class ScreenTask:
         self.elapsed_time += delta_time
         result = self.draw_frame(canvas, delta_time)
         if self.is_over_max_time:
+            logger.warning("Task {} is over max time! Stopping forcefully...", self.__class__.__name__)
             self.teardown(forced=True)
             return True
         if result and self.is_over_suggested_time:
+            logger.info("Task {} is done!", self.__class__.__name__)
             self.teardown()
             return True
         return False
@@ -195,13 +198,14 @@ class OptimScreenTask(ScreenTask):
         # let's do some optimization!!
         if not self.should_optimize:
             return
-        print(f"Optimizing {self.__class__.__name__}")
+        logger.info(f"Optimizing {self.__class__.__name__}")
         canvas = Canvas()
         delta_time = timedelta(seconds=1 / 24)
         # call child's prepare method
         self.prepare()
         self.being_optimized = True
         if len(list(self.cache_path.glob("*.png"))):
+            logger.debug("Already optimized!")
             self.max_frames = len(list(self.cache_path.glob("*.png")))
             self.teardown()
             self.is_optim = True
@@ -218,15 +222,18 @@ class OptimScreenTask(ScreenTask):
         self.teardown()
         self.is_optim = True
         self.being_optimized = False
+        logger.info(f"Optimized {self.__class__.__name__} with {self.max_frames} frames")
 
     def unoptimize(self):
         # remove all files in the cache path.
+        logger.debug(f"Unoptimizing {self.__class__.__name__}")
         self.max_frames = 0
         self.is_optim = False
         shutil.rmtree(self.cache_path)
 
     def prepare(self):
         if self.being_optimized:  # don't run if we're optimizing
+            logger.info("{} is being optimized! Skipping execution!", self.__class__.__name__)
             return False
         self.current_frame = 0
         return super().prepare()
@@ -239,5 +246,4 @@ class OptimScreenTask(ScreenTask):
             if self.current_frame >= self.max_frames:
                 return True
             return False
-        print(delta_time)
         return super().draw(canvas, delta_time)

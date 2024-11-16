@@ -21,6 +21,7 @@ setup(
         "ffmpeg-downloader",
         "setuptools",
         "yt-dlp",
+        "loguru",
     ],
     extras_require={
         "physical": ["rpi_ws281x", "adafruit-circuitpython-neopixel", "smbus"],
