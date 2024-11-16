@@ -53,7 +53,7 @@ class NeoPixel:
 
     def show(self):
         if self.brightness < 1.0:
-            logger.debug("Applying brightness")
+            logger.trace("Applying brightness")
             # apply brightness
             buf = bytearray(len(self.buf))
             for i, val in enumerate(self.buf):
@@ -63,6 +63,6 @@ class NeoPixel:
             self._transmit(self.buf)
 
     def _transmit(self, buf):
-        logger.debug("Transmitting to NeoPixels")
+        logger.trace("Transmitting to NeoPixels")
         neopixel_write(self.pin, buf)
-        logger.debug("Transmission complete!")
+        logger.trace("Transmission complete!")
