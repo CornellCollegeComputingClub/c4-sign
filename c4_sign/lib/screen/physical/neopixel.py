@@ -33,7 +33,7 @@ class NeoPixel:
 
     def _set_item(self, index, val: tuple[int, int, int]):
         # val = (r, g, b)
-        # neopixels use GRB
+        # neopixels use GRB, but rpi_ws281x uses RGB.
         if index < 0:
             index += len(self)
         if index >= self._nums or index < 0:
@@ -41,8 +41,8 @@ class NeoPixel:
         offset = index * 3
         if isinstance(val, int):
             val = (val >> 16, val >> 8, val)
-        self.buf[offset] = val[1]  # green
-        self.buf[offset + 1] = val[0]  # red
+        self.buf[offset] = val[0]  # red
+        self.buf[offset + 1] = val[1]  # green
         self.buf[offset + 2] = val[2]  # blue
 
     def __getitem__(self, index):
