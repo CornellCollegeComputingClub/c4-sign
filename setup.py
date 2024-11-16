@@ -24,7 +24,7 @@ setup(
         "loguru",
     ],
     extras_require={
-        "physical": ["rpi_ws281x", "adafruit-circuitpython-neopixel", "smbus"],
+        "physical": ["rpi_ws281x", "smbus"],
         "simulator": ["flask", "flask-socketio"],
         "misc": ["black", "autoflake", "isort", "pyinstrument"],
     },

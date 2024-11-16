@@ -3,7 +3,7 @@ from typing import Sequence, Union
 from loguru import logger
 
 import digitalio
-from neopixel_write import neopixel_write
+from rpi_ws281x import PixelStrip, Color
 from threading import Lock
 from copy import deepcopy
 
@@ -16,6 +16,10 @@ class NeoPixel:
         self.brightness = brightness
         self.pin = digitalio.DigitalInOut(pin)
         self.pin.direction = digitalio.Direction.OUTPUT
+        # brightness is 255 here because we apply it ourselves
+        # no need for double dimming
+        self.strip = PixelStrip(num_pixels, pin, 800000, 10, False, 255, 0)
+        self.strip.begin()
         self.auto_write = auto_write
         self._lock = Lock()
 
@@ -68,5 +72,6 @@ class NeoPixel:
     def _transmit(self, buf):
         with self._lock:
             logger.trace("Transmitting to NeoPixels")
-            neopixel_write(self.pin, buf)
+            self.strip[:] = buf
+            self.strip.show()
             logger.trace("Transmission complete!")
