@@ -12,13 +12,13 @@ class Uptime(ScreenTask):
 
     def __init__(self):
         super().__init__()
-        self.started = arrow.now()
+        self.sign_started = arrow.now()
 
     def prepare(self):
         return super().prepare()
 
     def draw_frame(self, canvas, delta_time):
         now = arrow.now()
-        uptime = now - self.started
+        uptime = now - self.sign_started
         uptime_str = str(uptime).split(".")[0]
         graphics.draw_text(canvas, FONT_PICO, 1, 6, COLOR_TEAL, uptime_str)
