@@ -9,6 +9,8 @@ from c4_sign.lib import graphics
 class Uptime(ScreenTask):
     title = "Uptime"
     artist = "Luna"
+    ignore = True
+
 
     def __init__(self):
         super().__init__()
@@ -24,3 +26,4 @@ class Uptime(ScreenTask):
         graphics.draw_text(canvas, FONT_PICO, 1, 6, COLOR_TEAL, uptime_str)
         graphics.draw_text(canvas, FONT_PICO, 1, 12, COLOR_RED, self.sign_started.format("HH:mm:ss"))
         graphics.draw_text(canvas, FONT_PICO, 1, 18, COLOR_GREEN, now.format("HH:mm:ss"))
+        graphics.draw_text(canvas, FONT_PICO, 1, 24, COLOR_TEAL, f"{round(1/delta_time.total_seconds())} fps")
