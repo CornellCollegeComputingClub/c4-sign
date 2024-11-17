@@ -2,7 +2,7 @@
 import arrow
 
 from c4_sign.base_task import ScreenTask
-from c4_sign.consts import COLOR_TEAL, FONT_PICO
+from c4_sign.consts import COLOR_GREEN, COLOR_RED, COLOR_TEAL, FONT_PICO
 from c4_sign.lib import graphics
 
 
@@ -22,3 +22,5 @@ class Uptime(ScreenTask):
         uptime = now - self.sign_started
         uptime_str = str(uptime).split(".")[0]
         graphics.draw_text(canvas, FONT_PICO, 1, 6, COLOR_TEAL, uptime_str)
+        graphics.draw_text(canvas, FONT_PICO, 1, 12, COLOR_RED, self.sign_started.format("HH:mm:ss"))
+        graphics.draw_text(canvas, FONT_PICO, 1, 18, COLOR_GREEN, now.format("HH:mm:ss"))
