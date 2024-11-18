@@ -1,5 +1,6 @@
 import random
 from c4_sign.base_task import ScreenTask
+from c4_sign.consts import COLOR_GRAY, COLOR_TEAL
 
 def percolates(grid):
     # check if the grid percolates
@@ -46,5 +47,8 @@ class Percolate(ScreenTask):
         result = percolates(self.grid)
         for x in range(32):
             for y in range(32):
-                canvas.set_pixel(x, y, self.grid[x][y] * 0x7F7F7F)
+                if self.grid[x][y] == 1:
+                    canvas.set_pixel(x, y, COLOR_GRAY)
+                elif self.grid[x][y] == 2:
+                    canvas.set_pixel(x, y, COLOR_TEAL)
         return result
