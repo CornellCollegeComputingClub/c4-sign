@@ -159,7 +159,7 @@ COLORS = [
 
 
 class SortingAlgorithms(ScreenTask):
-    name = "Sorting Algorithms"
+    title = "Sorting Algorithms"
     artist = "Luna"
 
     def __init__(self):
