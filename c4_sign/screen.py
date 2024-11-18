@@ -10,14 +10,14 @@ from c4_sign.screen_tasks.error import ErrorScreenTask
 from c4_sign.ScreenManager import ScreenManager
 
 _screen = None
-_screen_manager = ScreenManager()
+_screen_manager = None
 _last_update = arrow.now()
 _canvas = Canvas()
 _low_fps_counter = 0
 
 
-def init_matrix(simulator):
-    global _screen
+def init_matrix(simulator, make_histograms):
+    global _screen, _screen_manager
     if simulator:
         from c4_sign.lib.screen.simulator import SimulatorScreen
 
@@ -26,6 +26,9 @@ def init_matrix(simulator):
         from c4_sign.lib.screen.matrix import MatrixScreen
 
         _screen = MatrixScreen()
+
+    _screen_manager = ScreenManager(make_histograms)
+
     lm = LoadingManager(_screen)
     _screen_manager.update_tasks(lm)
 

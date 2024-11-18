@@ -11,10 +11,11 @@ from c4_sign.loading_manager import LoadingManager
 
 
 class ScreenManager:
-    def __init__(self):
+    def __init__(self, make_histograms):
         self.tasks = []
         self.current_task = None
         self.index = 0
+        self.make_histograms = make_histograms
 
     @property
     def current_tasks(self) -> list[ScreenTask]:
@@ -36,9 +37,13 @@ class ScreenManager:
                     logger.debug("Adding screen task: {}", obj.__name__)
                     if loading_manager:
                         with loading_manager(obj.__name__):
-                            self.tasks.append(obj())
+                            instance = obj()
+                            instance.set_make_histogram(self.make_histograms)
+                            self.tasks.append(instance)
                     else:
-                        self.tasks.append(obj())
+                        instance = obj()
+                        instance.set_make_histogram(self.make_histograms)
+                        self.tasks.append(instance)
                     logger.debug("Screen Task {} added!", obj.__name__)
         # now, shuffle the tasks with an arbitrary seed (so that it's the same between simulator and real)
         rand = random.Random(0xd883ff)

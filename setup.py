@@ -22,6 +22,7 @@ setup(
         "setuptools",
         "yt-dlp",
         "loguru",
+        "matplotlib",
     ],
     extras_require={
         "physical": ["rpi_ws281x", "smbus"],
