@@ -3,6 +3,8 @@ package com.cornellcollegecomputingclub.java_c4sign;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import org.apache.commons.lang3.StringUtils;
+
 public abstract class JavaTaskBase {
     private String title;
     private String artist;
@@ -52,6 +54,9 @@ public abstract class JavaTaskBase {
     }
 
     public String getLcdText() {
-        return "Lol";
+        String line1 = StringUtils.center(this.title, 16).substring(0, 16);
+        String line2 = "By: ";
+        line2 = line2.concat(StringUtils.center(this.artist, 16)).substring(0, 16);
+        return line1.concat(line2);
     }
 }
