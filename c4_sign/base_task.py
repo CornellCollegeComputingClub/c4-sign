@@ -163,6 +163,7 @@ class ScreenTask:
             now = arrow.now()
             plt.savefig(temp_path / f"{now.year}-{now.month}-{now.day}_{self.title}_histogram.png")
             plt.close()
+            print(f"Written graph for {self.title} by {self.artist}!")
 
         pass
 

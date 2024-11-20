@@ -10,7 +10,7 @@ public class RainbowWaveJava extends JavaTaskBase {
     Random rand;
 
     public RainbowWaveJava() {
-        super.setTitle("Rainbow Wave");
+        super.setTitle("RainbowWaveJava");
         super.setArtist("Mac Coleman");
 
         this.rand = new Random();
