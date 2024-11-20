@@ -35,6 +35,24 @@ public abstract class JavaTaskBase {
         return this.artist;
     }
 
+    public boolean prepare() {
+        /**
+         * This method is called when the task is first run.
+         * If this method returns false, the task will be skipped.
+         * If this method returns true, the task will be run.
+         */
+        return true;
+    }
+
+
+    public void teardown(boolean forced) {
+        /**
+        * Teardown: This method is called when the task stops running.
+        * If the task was stopped forcefully, the forced parameter will be true.
+        * If your task requires special cleanup, override this method!
+        */
+    }
+
     public abstract boolean drawFrame(byte[][][] canvas, double timeDelta);
 
     public boolean draw(double timeDelta) {
