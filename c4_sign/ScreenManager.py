@@ -5,7 +5,9 @@ from typing import Union
 
 from loguru import logger
 
-from c4_sign.base_task import OptimScreenTask, ScreenTask
+from py4j.java_gateway import JavaGateway
+
+from c4_sign.base_task import OptimScreenTask, ScreenTask, JavaTask
 from c4_sign.lib.canvas import Canvas
 from c4_sign.loading_manager import LoadingManager
 
@@ -31,7 +33,7 @@ class ScreenManager:
                 if (
                     isinstance(obj, type)
                     and issubclass(obj, ScreenTask)
-                    and obj not in (ScreenTask, OptimScreenTask)
+                    and obj not in (ScreenTask, OptimScreenTask, JavaTask)
                     and obj.ignore is False
                 ):
                     logger.debug("Adding screen task: {}", obj.__name__)
@@ -45,6 +47,25 @@ class ScreenManager:
                         instance.set_make_histogram(self.make_histograms)
                         self.tasks.append(instance)
                     logger.debug("Screen Task {} added!", obj.__name__)
+
+        # Next load the java tasks!
+        java_task_controller = JavaGateway().entry_point
+        tasks = java_task_controller.getActiveTasks()
+
+        print("Java tasks discovered:")
+        for task in tasks:
+            print("Java task found: ", task)
+            if loading_manager:
+                with loading_manager(task.getTitle()):
+                    instance = JavaTask(task)
+                    instance.set_make_histogram(self.make_histograms)
+                    self.tasks.append(instance)
+            else:
+                instance = JavaTask(task)
+                instance.set_make_histogram(self.make_histograms)
+                self.tasks.append(instance)
+            logger.debug("Screen Task {} added!", task.getTitle())
+
         # now, shuffle the tasks with an arbitrary seed (so that it's the same between simulator and real)
         rand = random.Random(0xd883ff)
         rand.shuffle(self.tasks)

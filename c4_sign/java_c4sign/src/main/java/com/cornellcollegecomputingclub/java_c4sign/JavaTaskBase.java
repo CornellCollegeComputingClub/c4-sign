@@ -11,12 +11,11 @@ public abstract class JavaTaskBase {
     private String title;
     private String artist;
     private byte[][][] canvas;
-    public static boolean ignored = false;
+    public static boolean ignore = false;
 
     public JavaTaskBase() {
         this.title = "Unknown";
         this.artist = "Unknown";
-        this.canvas = new byte[Constants.SCREEN_WIDTH][Constants.SCREEN_HEIGHT][Constants.SCREEN_COLORS];
     }
 
     public void setTitle(String newTitle) {
@@ -41,6 +40,7 @@ public abstract class JavaTaskBase {
          * If this method returns false, the task will be skipped.
          * If this method returns true, the task will be run.
          */
+        this.canvas = new byte[Constants.SCREEN_WIDTH][Constants.SCREEN_HEIGHT][Constants.SCREEN_COLORS];
         return true;
     }
 
@@ -51,6 +51,7 @@ public abstract class JavaTaskBase {
         * If the task was stopped forcefully, the forced parameter will be true.
         * If your task requires special cleanup, override this method!
         */
+        this.canvas = null;
     }
 
     public abstract boolean drawFrame(byte[][][] canvas, double timeDelta);
@@ -79,5 +80,9 @@ public abstract class JavaTaskBase {
         String line2 = "By: ";
         line2 = line2.concat(StringUtils.center(this.artist, Constants.LCD_WIDTH)).substring(0, Constants.LCD_WIDTH);
         return line1.concat(line2);
+    }
+
+    public String toString() {
+        return this.title.concat(" by ").concat(this.artist);
     }
 }
