@@ -1,5 +1,13 @@
 #!/bin/bash
 
+function notify_failure() {
+    echo -e "\033[0;31m"
+    echo "Contact C4 by emailing us at c4@cornellcollege.edu, or through our Discord in the LED sign channel!"
+    echo "We will try to help you get it working!"
+    echo -e "Failed to setup java project!\033[0m"
+}
+
+trap notify_failure ERR
 set -o errexit
 
 mvn --version
@@ -30,6 +38,7 @@ else
     echo "Required version is 0.10.9.7"
     echo "Contact C4 by emailing us at c4@cornellcollege.edu, or through our Discord in the LED sign channel!"
     echo "Let us know that we should update our packages :)"
+    echo -e "Failed to setup java project!\033[0m"
     exit 1
 fi
 
