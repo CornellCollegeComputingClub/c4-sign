@@ -1,6 +1,6 @@
 import argparse
 
-from c4_sign.screen import init_matrix, update_screen
+from c4_sign.screen import Screen
 from c4_sign.ScreenManager import ScreenManager
 from c4_sign.tasks import TaskManager
 from loguru import logger
@@ -185,14 +185,15 @@ def main(args=None):
             rmtree(source, ignore_errors=True)
             logger.info("GIF folder purged!")
         return run_gif()
-    init_matrix(args.simulator, args.histograms)
+    s = Screen()
+    s.init_matrix(args.simulator, args.histograms)
     tm = TaskManager()
 
     logger.info("Finishing startup; starting main loop!")
 
     while True:
         tm.check_and_run_tasks()
-        update_screen()
+        s.update_screen()
 
 
 if __name__ == "__main__":

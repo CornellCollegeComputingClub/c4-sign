@@ -10,6 +10,8 @@ import subprocess
 from pathlib import Path
 from loguru import logger
 
+from c4_sign.screen import Screen
+
 try:
     from pyinstrument import Profiler
     from pyinstrument.renderers import SpeedscopeRenderer
@@ -47,13 +49,13 @@ def gather_stats():
     }
     return data
 
-def screen_test():
+def screen_test(screen: Screen):
     pass
 
-def run_histograms():
+def run_histograms(screen: Screen):
     pass
 
-def run_instrumentation():
+def run_instrumentation(screen: Screen):
     pass
 
 def compile_results():
@@ -85,11 +87,14 @@ def debug_main():
         z.writestr("README.md", README)
         z.writestr("stats.json", json.dumps(stats, indent=2))
 
-        screen_test()
+        s = Screen()
+        s.init_matrix(simulator=True)
 
-        run_histograms()
+        screen_test(s)
 
-        run_instrumentation()
+        run_histograms(s)
+
+        run_instrumentation(s)
 
         compile_results()
 
