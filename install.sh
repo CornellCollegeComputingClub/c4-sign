@@ -1,5 +1,5 @@
 sudo apt update
-sudo apt install -y python3-pip git python3-dev python3-libgpiod ffmpeg
+sudo apt install -y python3-pip git python3-dev python3-libgpiod ffmpeg maven
 git clone https://github.com/CornellCollegeComputingClub/c4-sign
 cd c4-sign
 git config pull.rebase false
