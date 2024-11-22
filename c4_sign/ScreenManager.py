@@ -1,11 +1,13 @@
 import importlib
 from datetime import timedelta
 import random
+import subprocess
 from typing import Union
 
 from loguru import logger
 
 from py4j.java_gateway import JavaGateway
+from py4j.protocol import Py4JError
 
 from c4_sign.base_task import OptimScreenTask, ScreenTask, JavaTask
 from c4_sign.lib.canvas import Canvas
@@ -13,11 +15,12 @@ from c4_sign.loading_manager import LoadingManager
 
 
 class ScreenManager:
-    def __init__(self, make_histograms):
+    def __init__(self, make_histograms, enable_java):
         self.tasks = []
         self.current_task = None
         self.index = 0
         self.make_histograms = make_histograms
+        self.java_enabled = enable_java
 
     @property
     def current_tasks(self) -> list[ScreenTask]:
@@ -48,23 +51,56 @@ class ScreenManager:
                         self.tasks.append(instance)
                     logger.debug("Screen Task {} added!", obj.__name__)
 
-        # Next load the java tasks!
-        java_task_controller = JavaGateway().entry_point
-        tasks = java_task_controller.getActiveTasks()
 
-        print("Java tasks discovered:")
-        for task in tasks:
-            print("Java task found: ", task)
-            if loading_manager:
-                with loading_manager(task.getTitle()):
+        if self.java_enabled:
+            from time import sleep
+            # start java server!
+
+            subprocess.Popen(["./bin/start_java_server.sh"])
+
+            # Next load the java tasks!
+            gateway = JavaGateway()
+            java_task_controller = None
+            tasks = None
+            attempts = 0
+
+            while tasks is None and attempts < 10:
+                try:
+                    java_task_controller = gateway.entry_point
+                    tasks = java_task_controller.getActiveTasks()
+                except Py4JError:
+                    java_task_controller = None
+                    tasks = None
+                finally:
+                    sleep(2.5)
+                    logger.info("Waiting for java server to start...")
+                attempts += 1
+
+            if java_task_controller is None or tasks is None:
+                logger.error("Unable to establish connection to Py4J Gateway Server!")
+                logger.error("Did you remember to compile the java project with ../bin/compile_java_project.sh?")
+                logger.error("If you don't want to run Java tasks, run the command again with the --disable-java flag.")
+                import sys
+                sys.exit(1)
+
+            tasks = java_task_controller.getActiveTasks()
+
+            logger.info("Connection to Py4J Gateway Server established!")
+
+            logger.debug("Java tasks discovered!")
+            for task in tasks:
+                if loading_manager:
+                    with loading_manager(task.getTitle()):
+                        instance = JavaTask(task)
+                        instance.set_make_histogram(self.make_histograms)
+                        self.tasks.append(instance)
+                else:
                     instance = JavaTask(task)
                     instance.set_make_histogram(self.make_histograms)
                     self.tasks.append(instance)
-            else:
-                instance = JavaTask(task)
-                instance.set_make_histogram(self.make_histograms)
-                self.tasks.append(instance)
-            logger.debug("Screen Task {} added!", task.getTitle())
+                logger.debug("Screen Task {} added!", task.getTitle())
+        else:
+            logger.warning("Java tasks are disabled! This is fine on the simulator, but make sure they're enabled in the physical display!")
 
         # now, shuffle the tasks with an arbitrary seed (so that it's the same between simulator and real)
         rand = random.Random(0xd883ff)

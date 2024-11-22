@@ -224,7 +224,7 @@ def main(args=None):
             rmtree(source, ignore_errors=True)
             logger.info("GIF folder purged!")
         return run_gif()
-    init_matrix(args.simulator, args.histograms)
+    init_matrix(args.simulator, args.histograms, not args.disable_java)
     tm = TaskManager()
 
     logger.info("Finishing startup; starting main loop!")
@@ -237,6 +237,7 @@ def main(args=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--simulator", action="store_true")
+    parser.add_argument("--disable-java", action="store_true")
     parser.add_argument("--gif", action="store_true")
     parser.add_argument("--profile", action="store_true")
     parser.add_argument("--histograms", action="store_true")
