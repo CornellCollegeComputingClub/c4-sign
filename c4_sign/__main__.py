@@ -2,15 +2,10 @@ import argparse
 
 from c4_sign.screen import init_matrix, update_screen
 from c4_sign.ScreenManager import ScreenManager
+from c4_sign.log import setup_logger
 from c4_sign.tasks import TaskManager
 from loguru import logger
 import sys
-
-def setup_logger():
-    logger.remove(0)
-    logger.add(sys.stderr, level="INFO")
-    logger.add("c4_sign.log", level="DEBUG", rotation="00:30", retention="1 week", compression="gz")
-
 
 
 def run_gif():
