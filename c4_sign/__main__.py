@@ -23,7 +23,7 @@ def run_gif():
         def track(iter, description=""):
             yield from iter
 
-    screen_manager = ScreenManager()
+    screen_manager = ScreenManager(False, True)
     screen_manager.update_tasks()
     delta_t = timedelta(seconds=1 / 24)
     canvas = Canvas()
