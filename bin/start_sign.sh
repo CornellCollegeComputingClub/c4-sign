@@ -20,6 +20,8 @@ git pull
 # sudo python3 -m pip install -e .
 # this takes a while to run. TODO: FIX.
 
+./home/c4/c4-sign/venv/bin/python3 tools/compile_java_project.py
+
 sudo /home/c4/c4-sign/venv/bin/python3 -m c4_sign
 
 exit 0

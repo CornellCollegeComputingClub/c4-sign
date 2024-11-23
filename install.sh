@@ -6,7 +6,7 @@ git config pull.rebase false
 sudo -H python3 -m venv ./venv
 sudo -H /home/c4/c4-sign/venv/bin/python3 -m pip install -e '.[physical]'
 sudo cp -v ./bin/c4-sign.service /lib/systemd/system/
-./bin/setup_java_project.sh
-./bin/compile_java_project.sh
+python tools/setup_java_project.py
+python tools/compile_java_project.py
 sudo systemctl enable c4-sign.service
 sudo reboot now
