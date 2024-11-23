@@ -2,7 +2,11 @@ import importlib
 from datetime import timedelta
 import random
 import subprocess
+import os
+import sys
 from typing import Union
+from pathlib import Path
+from time import sleep
 
 from loguru import logger
 
@@ -53,10 +57,11 @@ class ScreenManager:
 
 
         if self.java_enabled:
-            from time import sleep
             # start java server!
 
-            subprocess.Popen(["./bin/start_java_server.sh"])
+            java_server_script_path = Path(os.path.abspath(os.path.dirname(__file__))) / ".." / "tools" / "start_java_server.py"
+
+            subprocess.Popen(["python", java_server_script_path])
 
             # Next load the java tasks!
             gateway = JavaGateway()
@@ -64,7 +69,7 @@ class ScreenManager:
             tasks = None
             attempts = 0
 
-            while tasks is None and attempts < 10:
+            while tasks is None and attempts < 30:
                 try:
                     java_task_controller = gateway.entry_point
                     tasks = java_task_controller.getActiveTasks()
@@ -72,7 +77,7 @@ class ScreenManager:
                     java_task_controller = None
                     tasks = None
                 finally:
-                    sleep(2.5)
+                    sleep(0.25)
                     logger.info("Waiting for java server to start...")
                 attempts += 1
 
@@ -80,7 +85,6 @@ class ScreenManager:
                 logger.error("Unable to establish connection to Py4J Gateway Server!")
                 logger.error("Did you remember to compile the java project with ../bin/compile_java_project.sh?")
                 logger.error("If you don't want to run Java tasks, run the command again with the --disable-java flag.")
-                import sys
                 sys.exit(1)
 
             tasks = java_task_controller.getActiveTasks()
@@ -111,14 +115,14 @@ class ScreenManager:
         # if task is a string, find the task by name
         if isinstance(task, str):
             for t in self.tasks:
-                if t.__class__.__name__ == task:
+                if t.title == task:
                     task = t
                     break
             else:
                 # task not found!
                 logger.warning(f"Task {task} not found!")
                 return
-        logger.info("Overriding current task with {}", task.__class__.__name__)
+        logger.info("Overriding current task with {}", task.title)
         if self.current_task:
             self.current_task.teardown(True)
         self.current_task = task
