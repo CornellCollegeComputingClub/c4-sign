@@ -83,7 +83,7 @@ class ScreenManager:
 
             if java_task_controller is None or tasks is None:
                 logger.error("Unable to establish connection to Py4J Gateway Server!")
-                logger.error("Did you remember to compile the java project with ../bin/compile_java_project.sh?")
+                logger.error("Did you remember to compile the java project with tools/compile_java_project.py?")
                 logger.error("If you don't want to run Java tasks, run the command again with the --disable-java flag.")
                 sys.exit(1)
 
