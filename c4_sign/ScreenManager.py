@@ -59,33 +59,11 @@ class ScreenManager:
         if self.java_enabled:
             # start java server!
 
-            java_server_script_path = Path(os.path.abspath(os.path.dirname(__file__))) / ".." / "tools" / "start_java_server.py"
+            script_path = os.path.abspath(os.path.dirname(__file__))
 
-            subprocess.Popen(["python", java_server_script_path])
+            gateway = JavaGateway.launch_gateway(classpath=str(Path(script_path) / "java_c4sign" / "target" / "java_c4sign-1.0-SNAPSHOT.jar"), die_on_exit=True)
 
-            # Next load the java tasks!
-            gateway = JavaGateway()
-            java_task_controller = None
-            tasks = None
-            attempts = 0
-
-            while tasks is None and attempts < 30:
-                try:
-                    java_task_controller = gateway.entry_point
-                    tasks = java_task_controller.getActiveTasks()
-                except Py4JError:
-                    java_task_controller = None
-                    tasks = None
-                finally:
-                    sleep(0.25)
-                    logger.info("Waiting for java server to start...")
-                attempts += 1
-
-            if java_task_controller is None or tasks is None:
-                logger.error("Unable to establish connection to Py4J Gateway Server!")
-                logger.error("Did you remember to compile the java project with tools/compile_java_project.py?")
-                logger.error("If you don't want to run Java tasks, run the command again with the --disable-java flag.")
-                sys.exit(1)
+            java_task_controller = gateway.jvm.com.cornellcollegecomputingclub.java_c4sign.JavaTaskController()
 
             tasks = java_task_controller.getActiveTasks()
 
