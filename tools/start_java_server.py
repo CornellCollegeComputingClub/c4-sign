@@ -21,7 +21,7 @@ script_directory = os.path.abspath(os.path.dirname(__file__))
 os.chdir(Path(script_directory))
 
 py4j_jar_location = Path.home() / ".m2" / "repository" / "org" / "py4j" / "py4j" / "0.10.9.7" / "py4j-0.10.9.7.jar"
-java_c4sign_jar_location = Path.cwd() / ".." / "c4_sign" / "java_c4sign" / "target" / "java_c4sign-1.0-SNAPSHOT.jar"
+java_c4sign_jar_location = Path(script_directory) / ".." / "c4_sign" / "java_c4sign" / "target" / "java_c4sign-1.0-SNAPSHOT.jar"
 
 try:
     result = subprocess.run([
