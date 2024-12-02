@@ -3,19 +3,19 @@ from loguru import logger
 
 from c4_sign.consts import DEV_MODE
 from c4_sign.lib.canvas import Canvas
-from c4_sign.loading_manager import LoadingManager
+from c4_sign.loading_manager import ScreenLoadingManager
 from c4_sign.screen_tasks.error import ErrorScreenTask
 from c4_sign.ScreenManager import ScreenManager
 
 
 class Screen:
     __screen = None
-    __screen_manager = None
+    __screen_manager = ScreenManager()
     __last_update = arrow.now()
     __canvas = Canvas()
     __low_fps_counter = 0
 
-    def init_matrix(self, simulator: bool, histograms = False):
+    def init_matrix(self, simulator: bool, update_tasks = True):
         if simulator:
             from c4_sign.lib.screen.simulator import SimulatorScreen
 
@@ -24,10 +24,10 @@ class Screen:
             from c4_sign.lib.screen.matrix import MatrixScreen
 
             self.__screen = MatrixScreen()
-        self.__screen_manager = ScreenManager(histograms)
 
-        lm = LoadingManager(self.__screen)
-        self.__screen_manager.update_tasks(lm)
+        if update_tasks:
+            lm = ScreenLoadingManager(self.__screen)
+            self.__screen_manager.update_tasks(lm)
 
     def screen_active(self):
         if DEV_MODE:

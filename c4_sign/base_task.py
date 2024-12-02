@@ -86,7 +86,7 @@ class ScreenTask:
         if max_run_time < suggested_run_time:
             max_run_time = suggested_run_time
         self.max_run_time = max_run_time
-        self.make_histogram = False
+        self.capture_histogram = False
         self.draw_time_samples = []
 
     def set_suggested_run_time(self, suggested_run_time):
@@ -96,9 +96,6 @@ class ScreenTask:
 
     def set_max_run_time(self, max_run_time):
         self.max_run_time = max_run_time
-
-    def set_make_histogram(self, make_histogram):
-        self.make_histogram = make_histogram
 
     def prepare(self):
         """
@@ -125,44 +122,6 @@ class ScreenTask:
 
     def teardown(self, forced=False):
         # do any cleanup here!
-        if self.make_histogram:
-            from matplotlib import pyplot as plt
-            import tempfile
-            from pathlib import Path
-            import os
-            import math
-
-            plt.style.use("fivethirtyeight")
-
-            plt.suptitle("Draw time frequency for '" + self.title + "' by " + self.artist, wrap=True)
-            plt.title(f"(n = {len(self.draw_time_samples)} frames)", fontsize="medium", wrap=True)
-            plt.xlabel("Draw Times (ms)")
-            plt.ylabel("Frames")
-
-            acceptable = 41.66 # Maximum acceptable draw time
-
-            max_time = max(self.draw_time_samples)
-            max_time = max(max_time, acceptable)
-            bin_width = 2.5 # milliseconds
-
-            if len(self.draw_time_samples) > 0:
-                median = sorted(self.draw_time_samples)[len(self.draw_time_samples)//2]
-                plt.axvline(median, color="black", label="Median draw time", linewidth = 2)
-
-            plt.axvline(acceptable, color="#fc4f30", label="Maximum acceptable time", linewidth=2)
-
-            plt.legend(loc="best")
-            plt.hist(self.draw_time_samples, bins=math.ceil(max_time/bin_width), range=(0, max_time), edgecolor="white")
-
-            plt.tight_layout()
-
-            temp_path = Path(tempfile.gettempdir()) / "c4_histograms"
-            temp_path.mkdir(parents=True, exist_ok=True)
-            
-            now = arrow.now()
-            plt.savefig(temp_path / f"{now.year}-{now.month}-{now.day}_{self.title}_histogram.png")
-            plt.close()
-
         pass
 
     def draw(self, canvas: Canvas, delta_time: timedelta):
@@ -174,7 +133,7 @@ class ScreenTask:
         result = self.draw_frame(canvas, delta_time)
         draw_time = arrow.now() - draw_time
 
-        if self.make_histogram:
+        if self.capture_histogram:
             self.draw_time_samples.append(draw_time.total_seconds() * 1000) # Append draw time in milliseconds
 
         if self.is_over_max_time:

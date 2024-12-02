@@ -8,6 +8,35 @@ from c4_sign.lib.screen.simulator import SimulatorScreen
 
 
 class LoadingManager:
+    def __call__(self, text):
+        """
+        Called before __enter__.
+        """
+        return self
+
+    def __enter__(self):
+        """
+        Start
+        """
+        return self
+    
+    def __exit__(self, *args):
+        """
+        End
+        """
+        pass
+
+class DebugLoadingManager(LoadingManager):
+    def __call__(self, text):
+        return self
+    
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, *args):
+        pass
+
+class ScreenLoadingManager(LoadingManager):
     def __init__(self, screen: ScreenBase):
         self.screen = screen
         self.is_simulator = isinstance(screen, SimulatorScreen)

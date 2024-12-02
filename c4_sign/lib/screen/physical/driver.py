@@ -3,7 +3,7 @@
 # Provided for public use under the GNU General Public License
 #
 
-from time import *
+from time import sleep
 
 from loguru import logger
 

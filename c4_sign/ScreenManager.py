@@ -7,21 +7,20 @@ from loguru import logger
 
 from c4_sign.base_task import OptimScreenTask, ScreenTask
 from c4_sign.lib.canvas import Canvas
-from c4_sign.loading_manager import LoadingManager
+from c4_sign.loading_manager import ScreenLoadingManager
 
 
 class ScreenManager:
-    def __init__(self, make_histograms):
+    def __init__(self):
         self.tasks = []
         self.current_task = None
         self.index = 0
-        self.make_histograms = make_histograms
 
     @property
     def current_tasks(self) -> list[ScreenTask]:
         return self.tasks
 
-    def update_tasks(self, loading_manager: Union[None, LoadingManager] = None):
+    def update_tasks(self, loading_manager: Union[None, ScreenLoadingManager] = None):
         # import all files in screen_tasks
         logger.info("Updating screen tasks")
         mod = importlib.import_module("c4_sign.screen_tasks")
@@ -38,15 +37,14 @@ class ScreenManager:
                     if loading_manager:
                         with loading_manager(obj.__name__):
                             instance = obj()
-                            instance.set_make_histogram(self.make_histograms)
                             self.tasks.append(instance)
                     else:
                         instance = obj()
-                        instance.set_make_histogram(self.make_histograms)
                         self.tasks.append(instance)
                     logger.debug("Screen Task {} added!", obj.__name__)
         # now, shuffle the tasks with an arbitrary seed (so that it's the same between simulator and real)
         rand = random.Random(0xd883ff)
+        self.tasks.sort(key=lambda x: x.__class__.__name__)
         rand.shuffle(self.tasks)
         logger.info("Screen Tasks updated!")
 
