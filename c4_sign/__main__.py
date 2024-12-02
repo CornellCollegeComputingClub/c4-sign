@@ -23,7 +23,7 @@ def run_gif():
         def track(iter, description=""):
             yield from iter
 
-    screen_manager = ScreenManager()
+    screen_manager = ScreenManager(False, True)
     screen_manager.update_tasks()
     delta_t = timedelta(seconds=1 / 24)
     canvas = Canvas()
@@ -156,6 +156,45 @@ def generate_pr_preview():
 
     exit(0)
 
+def upload_histograms(args):
+        import subprocess
+        import tempfile
+        from pathlib import Path
+        import arrow
+        import requests
+
+        directory = "c4_histograms"
+        tarball = "c4_histograms.tar.gz"
+        temp_path = tempfile.gettempdir()
+
+        print(f"Histograms available at {Path(temp_path) / directory}")
+
+        if args.no_upload:
+            print("Skipping histogram upload")
+            return
+
+        proc = subprocess.run(["tar", "-C", temp_path, "-czf", f"{Path(temp_path) / tarball}", directory])
+        if proc.returncode != 0:
+            print(f"Failed to tar histograms directory at {Path(temp_path) / directory}")
+            print(proc.stderr.decode() if proc.stderr is not None else "")
+            print("Unable to compress histograms!")
+            print("Unable to upload histograms!")
+            return
+
+        files = {
+            'reqtype': (None, 'fileupload'),
+            'time': (None, '1h'),
+            'fileToUpload': open(Path(temp_path) / tarball, 'rb'),
+        }
+
+        response = requests.post('https://litterbox.catbox.moe/resources/internals/api.php', files=files)
+
+        if response.ok:
+            print("Successfully uploaded histograms!")
+            print(f"Histograms can be found at: {response.text} as a .tar.gz file.")
+        else:
+            print("Failed to upload histograms: " + str(response))
+
 @logger.catch
 def main(args=None):
     setup_logger()
@@ -180,7 +219,7 @@ def main(args=None):
             rmtree(source, ignore_errors=True)
             logger.info("GIF folder purged!")
         return run_gif()
-    init_matrix(args.simulator, args.histograms)
+    init_matrix(args.simulator, args.histograms, not args.disable_java)
     tm = TaskManager()
 
     logger.info("Finishing startup; starting main loop!")
@@ -193,9 +232,11 @@ def main(args=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--simulator", action="store_true")
+    parser.add_argument("--disable-java", action="store_true")
     parser.add_argument("--gif", action="store_true")
     parser.add_argument("--profile", action="store_true")
     parser.add_argument("--histograms", action="store_true")
+    parser.add_argument("--no-upload", action="store_true")
     parser.add_argument("--purge-cache", action="store_true")
     parser.add_argument("--generate-pr-preview", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
@@ -221,34 +262,9 @@ if __name__ == "__main__":
         try:
             main(args)
         except KeyboardInterrupt:
-            import subprocess
-            import tempfile
-            from pathlib import Path
-            import arrow
-            import requests
+            pass
 
-            directory = "c4_histograms"
-            tarball = "c4_histograms.tar.gz"
-            temp_path = tempfile.gettempdir()
-
-            proc = subprocess.run(["tar", "-C", temp_path, "-czf", f"{Path(temp_path) / tarball}", directory])
-            if proc.returncode != 0:
-                print(f"Failed to tar histograms directory at {Path(temp_path) / directory}")
-                print(proc.stderr.decode() if proc.stderr is not None else "")
-
-            files = {
-                'reqtype': (None, 'fileupload'),
-                'time': (None, '1h'),
-                'fileToUpload': open(Path(temp_path) / tarball, 'rb'),
-            }
-
-            response = requests.post('https://litterbox.catbox.moe/resources/internals/api.php', files=files)
-            
-            if response.ok:
-                print("Successfully uploaded histograms!")
-                print(f"Histograms can be found at: {response.text} as a .tar.gz file.")
-            else:
-                print("Failed to upload histograms: " + str(response))
+        upload_histograms(args)
 
     else:
         main(args)

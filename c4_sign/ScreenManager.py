@@ -1,21 +1,30 @@
 import importlib
 from datetime import timedelta
 import random
+import subprocess
+import os
+import sys
 from typing import Union
+from pathlib import Path
+from time import sleep
 
 from loguru import logger
 
-from c4_sign.base_task import OptimScreenTask, ScreenTask
+from py4j.java_gateway import JavaGateway
+from py4j.protocol import Py4JError
+
+from c4_sign.base_task import OptimScreenTask, ScreenTask, JavaTask
 from c4_sign.lib.canvas import Canvas
 from c4_sign.loading_manager import LoadingManager
 
 
 class ScreenManager:
-    def __init__(self, make_histograms):
+    def __init__(self, make_histograms, enable_java):
         self.tasks = []
         self.current_task = None
         self.index = 0
         self.make_histograms = make_histograms
+        self.java_enabled = enable_java
 
     @property
     def current_tasks(self) -> list[ScreenTask]:
@@ -31,7 +40,7 @@ class ScreenManager:
                 if (
                     isinstance(obj, type)
                     and issubclass(obj, ScreenTask)
-                    and obj not in (ScreenTask, OptimScreenTask)
+                    and obj not in (ScreenTask, OptimScreenTask, JavaTask)
                     and obj.ignore is False
                 ):
                     logger.debug("Adding screen task: {}", obj.__name__)
@@ -45,6 +54,36 @@ class ScreenManager:
                         instance.set_make_histogram(self.make_histograms)
                         self.tasks.append(instance)
                     logger.debug("Screen Task {} added!", obj.__name__)
+
+
+        if self.java_enabled:
+            # start java server!
+
+            script_path = os.path.abspath(os.path.dirname(__file__))
+
+            gateway = JavaGateway.launch_gateway(classpath=str(Path(script_path) / "java_c4sign" / "target" / "java_c4sign-1.0-SNAPSHOT.jar"), die_on_exit=True)
+
+            java_task_controller = gateway.jvm.com.cornellcollegecomputingclub.java_c4sign.JavaTaskController()
+
+            tasks = java_task_controller.getActiveTasks()
+
+            logger.info("Connection to Py4J Gateway Server established!")
+
+            logger.debug("Java tasks discovered!")
+            for task in tasks:
+                if loading_manager:
+                    with loading_manager(task.getTitle()):
+                        instance = JavaTask(task)
+                        instance.set_make_histogram(self.make_histograms)
+                        self.tasks.append(instance)
+                else:
+                    instance = JavaTask(task)
+                    instance.set_make_histogram(self.make_histograms)
+                    self.tasks.append(instance)
+                logger.debug("Screen Task {} added!", task.getTitle())
+        else:
+            logger.warning("Java tasks are disabled! This is fine on the simulator, but make sure they're enabled in the physical display!")
+
         # now, shuffle the tasks with an arbitrary seed (so that it's the same between simulator and real)
         rand = random.Random(0xd883ff)
         rand.shuffle(self.tasks)
@@ -54,14 +93,14 @@ class ScreenManager:
         # if task is a string, find the task by name
         if isinstance(task, str):
             for t in self.tasks:
-                if t.__class__.__name__ == task:
+                if t.title == task:
                     task = t
                     break
             else:
                 # task not found!
                 logger.warning(f"Task {task} not found!")
                 return
-        logger.info("Overriding current task with {}", task.__class__.__name__)
+        logger.info("Overriding current task with {}", task.title)
         if self.current_task:
             self.current_task.teardown(True)
         self.current_task = task

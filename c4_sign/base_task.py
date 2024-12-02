@@ -2,6 +2,7 @@ import shutil
 from datetime import timedelta
 
 import arrow
+import numpy
 from loguru import logger
 
 from c4_sign.consts import FONT_PICO
@@ -162,6 +163,7 @@ class ScreenTask:
             now = arrow.now()
             plt.savefig(temp_path / f"{now.year}-{now.month}-{now.day}_{self.title}_histogram.png")
             plt.close()
+            print(f"Written graph for {self.title} by {self.artist}!")
 
         pass
 
@@ -299,3 +301,29 @@ class OptimScreenTask(ScreenTask):
                 return True
             return False
         return super().draw(canvas, delta_time)
+
+class JavaTask(ScreenTask):
+    __java_task_instance = None
+
+    def __init__(self, java_task):
+        super().__init__()
+        self.__java_task_instance = java_task
+        self.title = self.__java_task_instance.getTitle();
+        self.artist = self.__java_task_instance.getArtist();
+
+    def prepare(self):
+        self.__java_task_instance.prepare()
+        return super().prepare()
+
+    def teardown(self, forced=False):
+        self.__java_task_instance.teardown(forced)
+        super().teardown(forced)
+
+    def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
+        status = self.__java_task_instance.draw(delta_time.total_seconds())
+        byte_array = self.__java_task_instance.retrieveCanvas()
+        int_array = numpy.frombuffer(byte_array, dtype=numpy.uint8)
+        int_array = int_array.reshape((32, 32, 3)).copy()
+        int_array.setflags(write=1)
+        canvas.data = int_array
+        return status

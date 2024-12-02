@@ -23,6 +23,7 @@ setup(
         "yt-dlp",
         "loguru",
         "matplotlib",
+        "py4j",
     ],
     extras_require={
         "physical": ["rpi_ws281x", "smbus"],
