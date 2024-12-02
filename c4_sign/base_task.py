@@ -326,3 +326,4 @@ class JavaTask(ScreenTask):
         int_array = int_array.reshape((32, 32, 3)).copy()
         int_array.setflags(write=1)
         canvas.data = int_array
+        return status
