@@ -1,6 +1,11 @@
 package com.cornellcollegecomputingclub.java_c4sign;
 
 import com.cornellcollegecomputingclub.java_c4sign.Constants;
+import com.cornellcollegecomputingclub.java_c4sign.TaskResult;
+
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.awt.Graphics2D;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -10,7 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class JavaTaskBase {
     private String title;
     private String artist;
-    private byte[][][] canvas;
+    private BufferedImage canvas;
+    private WritableRaster raster;
+    private Graphics2D graphics;
     public static boolean ignore = false;
 
     public JavaTaskBase() {
@@ -40,7 +47,9 @@ public abstract class JavaTaskBase {
          * If this method returns false, the task will be skipped.
          * If this method returns true, the task will be run.
          */
-        this.canvas = new byte[Constants.SCREEN_WIDTH][Constants.SCREEN_HEIGHT][Constants.SCREEN_COLORS];
+        this.canvas = new BufferedImage(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
+        this.raster = this.canvas.getRaster();
+        this.graphics = this.canvas.createGraphics();
         return true;
     }
 
@@ -52,27 +61,22 @@ public abstract class JavaTaskBase {
         * If your task requires special cleanup, override this method!
         */
         this.canvas = null;
+        this.raster = null;
+        this.graphics.dispose();
     }
 
-    public abstract boolean drawFrame(byte[][][] canvas, double timeDelta);
+    public abstract boolean drawFrame(BufferedImage canvas, Graphics2D graphics, WritableRaster raster, double timeDelta);
 
-    public boolean draw(double timeDelta) {
-        this.canvas = new byte[Constants.SCREEN_WIDTH][Constants.SCREEN_HEIGHT][Constants.SCREEN_COLORS];
-        boolean finished = this.drawFrame(this.canvas, timeDelta);
-        return finished;
+    public TaskResult draw(double timeDelta) {
+        this.graphics.clearRect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        boolean finished = this.drawFrame(this.canvas, this.graphics, this.raster, timeDelta);
+
+        //We're all synchronous here, right? 
+        return new TaskResult(this.raster, finished);
     }
 
-    public byte[] retrieveCanvas() {
-        ByteBuffer intBuffer = ByteBuffer.allocate(Constants.SCREEN_COLORS*Constants.SCREEN_WIDTH*Constants.SCREEN_HEIGHT);
-        intBuffer.order(ByteOrder.LITTLE_ENDIAN);
-
-        for (int i = 0; i < Constants.SCREEN_WIDTH; i++) {
-            for (int j = 0; j < Constants.SCREEN_HEIGHT; j++) {
-                intBuffer.put(this.canvas[i][j]);
-            }
-        }
-
-        return intBuffer.array();
+    public BufferedImage retrieveCanvas() {
+        return this.canvas;
     }
 
     public String getLcdText() {

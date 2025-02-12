@@ -320,10 +320,14 @@ class JavaTask(ScreenTask):
         super().teardown(forced)
 
     def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
-        status = self.__java_task_instance.draw(delta_time.total_seconds())
-        byte_array = self.__java_task_instance.retrieveCanvas()
-        int_array = numpy.frombuffer(byte_array, dtype=numpy.uint8)
-        int_array = int_array.reshape((32, 32, 3)).copy()
-        int_array.setflags(write=1)
-        canvas.data = int_array
+        taskresult = self.__java_task_instance.draw(delta_time.total_seconds())
+        status = taskresult.isFinished()
+
+        
+        canvas.data = numpy.array(bytearray(taskresult.getCanvas())).reshape(32, 32, 3)
         return status
+    
+    def get_lcd_text(self) -> str:
+        pass
+        # TODO: Fix StringUtils not being in classpath.
+        # return self.__java_task_instance.getLcdText()

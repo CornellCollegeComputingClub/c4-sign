@@ -2,6 +2,7 @@ package com.cornellcollegecomputingclub.java_c4sign;
 
 import com.cornellcollegecomputingclub.c4sign_tasks.RainbowWaveJava;
 import com.cornellcollegecomputingclub.c4sign_tasks.MemoryStress;
+import com.cornellcollegecomputingclub.c4sign_tasks.Lissajous;
 /* ------------------------------------------------------------
  * Import your java tasks here, at the end of the list above!!!
  * ------------------------------------------------------------
@@ -15,6 +16,7 @@ public class JavaTaskController {
         JavaTaskBase[] all_tasks = {
             new RainbowWaveJava(),
             new MemoryStress(),
+            new Lissajous(),
             //Instantiate your java tasks here!
         };
 

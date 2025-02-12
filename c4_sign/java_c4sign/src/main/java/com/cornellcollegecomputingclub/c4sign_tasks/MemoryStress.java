@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.awt.Graphics2D;
+
 import com.cornellcollegecomputingclub.java_c4sign.Constants;
 import com.cornellcollegecomputingclub.java_c4sign.JavaTaskBase;
 
@@ -17,11 +21,7 @@ public class MemoryStress extends JavaTaskBase {
         super.setArtist("Luna");
     }
 
-    public boolean prepare() {
-        return super.prepare();
-    }
-
-    public boolean drawFrame(byte[][][] canvas, double deltaTime) {
+    public boolean drawFrame(BufferedImage canvas, Graphics2D graphics, WritableRaster raster, double deltaTime) {
         iLoveMemory = new byte[1024 * 1024]; // 1MB
         // do something
         for (int i = 0; i < iLoveMemory.length; i++) {
@@ -35,7 +35,7 @@ public class MemoryStress extends JavaTaskBase {
                 int j = i / 1 / 1024 / 1024;
                 int x = j % Constants.SCREEN_WIDTH;
                 int y = j / Constants.SCREEN_WIDTH;
-                canvas[x][y] = new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
+                raster.setPixel(y, x, new int[]{ 0xFF, 0x00, 0x00 });
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             // ignore
