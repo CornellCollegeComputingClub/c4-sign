@@ -2,11 +2,12 @@ import os
 import subprocess
 import sys
 import re
+import traceback
 from pathlib import Path
 
 red, green, normal = "\033[0;31m", "\033[0;32m", "\033[0m" #]]]
 
-supported_py4j_version = "0.10.9.7"
+supported_py4j_version = "0.10.9.9"
 
 def print_error(text, stderr):
     if stderr is not None:
@@ -24,7 +25,7 @@ script_directory = os.path.abspath(os.path.dirname(__file__))
 os.chdir(Path(script_directory))
 
 try:
-    result = subprocess.run(["mvn", "--version"])
+    result = subprocess.run(["mvn", "--version"], shell=True)
 
     result = subprocess.run(["python", "-m", "pip", "show", "-f", "py4j"], capture_output=True, text=True)
 
@@ -65,7 +66,8 @@ try:
             f"-Dversion={supported_py4j_version}",
             "-Dpackaging=jar",
             "-DgeneratePom=true"
-        ])
+        ],
+        shell=True)
 
     if result.returncode != 0:
         print_error("Failed to install py4j in the maven repository...", result.stderr)
@@ -73,6 +75,12 @@ try:
     print(f"{green}Successfully setup Maven project!{normal}")
 
 except FileNotFoundError as err:
+    if "-v" in sys.argv:
+        print(os.environ.get("Path"))
+        print(traceback.format_exc())
     print_error("Failed to setup Java project! Maybe you need to make sure Maven is installed?", str(err))
 except subprocess.SubprocessError as err:
+    if "-v" in sys.argv:
+        print(os.environ.get("Path"))
+        print(traceback.format_exc())
     print_error("Failed to setup Java project as a result of a subprocess error!", str(err))

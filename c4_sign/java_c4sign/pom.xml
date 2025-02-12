@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.py4j</groupId>
       <artifactId>py4j</artifactId>
-      <version>0.10.9.7</version>
+      <version>0.10.9.9</version>
       <scope>compile</scope>
     </dependency>
     <!-- Add commons-lang3 - Nice for StringUtils -->
