@@ -327,7 +327,7 @@ class JavaTask(ScreenTask):
         canvas.data = numpy.array(bytearray(taskresult.getCanvas())).reshape(32, 32, 3)
         return status
     
-    def get_lcd_text(self) -> str:
-        pass
+    # def get_lcd_text(self) -> str:
+        # pass
         # TODO: Fix StringUtils not being in classpath.
         # return self.__java_task_instance.getLcdText()
