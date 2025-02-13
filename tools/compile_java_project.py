@@ -17,18 +17,21 @@ def print_error(text, stderr):
     print(f"{red}Failed to compile!{normal}")
     sys.exit(1)
 
+def is_windows():
+    return os.name == "nt"
+
 script_directory = os.path.abspath(os.path.dirname(__file__))
 
 os.chdir(Path(script_directory) / ".." / "c4_sign" / "java_c4sign")
 
 
 try:
-    result = subprocess.run(["mvn", "--version"], shell=True)
-    result = subprocess.run(["mvn", "dependency:resolve"], shell=True)
+    result = subprocess.run(["mvn", "--version"], shell=is_windows())
+    result = subprocess.run(["mvn", "dependency:resolve"], shell=is_windows())
     if result.returncode != 0:
         print_error("Unable to resolve dependencies!", result.stderr)
 
-    result = subprocess.run(["mvn", "package"], shell=True)
+    result = subprocess.run(["mvn", "package"], shell=is_windows())
     if result.returncode != 0:
         print_error("Compilation failed!", result.stderr)
 

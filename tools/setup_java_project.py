@@ -20,12 +20,15 @@ def print_error(text, stderr):
     print(f"{red}Failed to start java server!{normal}")
     sys.exit(1)
 
+def is_windows():
+    return os.name == "nt"
+
 script_directory = os.path.abspath(os.path.dirname(__file__))
 
 os.chdir(Path(script_directory))
 
 try:
-    result = subprocess.run(["mvn", "--version"], shell=True)
+    result = subprocess.run(["mvn", "--version"], shell=is_windows())
 
     result = subprocess.run(["python", "-m", "pip", "show", "-f", "py4j"], capture_output=True, text=True)
 
@@ -67,7 +70,7 @@ try:
             "-Dpackaging=jar",
             "-DgeneratePom=true"
         ],
-        shell=True)
+        shell=is_windows())
 
     if result.returncode != 0:
         print_error("Failed to install py4j in the maven repository...", result.stderr)
