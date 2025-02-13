@@ -81,8 +81,8 @@ public abstract class JavaTaskBase {
 
     public String getLcdText() {
         String line1 = StringUtils.center(this.title, Constants.LCD_WIDTH).substring(0, Constants.LCD_WIDTH);
-        String line2 = "By: ";
-        line2 = line2.concat(StringUtils.center(this.artist, Constants.LCD_WIDTH)).substring(0, Constants.LCD_WIDTH);
+        String line2 = "By:";
+        line2 = line2.concat(StringUtils.center(this.artist, Constants.LCD_WIDTH - 3).substring(0, Constants.LCD_WIDTH - 3));
         return line1.concat(line2);
     }
 
