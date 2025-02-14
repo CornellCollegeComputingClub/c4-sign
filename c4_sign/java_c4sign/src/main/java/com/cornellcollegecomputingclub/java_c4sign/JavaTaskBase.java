@@ -3,6 +3,7 @@ package com.cornellcollegecomputingclub.java_c4sign;
 import com.cornellcollegecomputingclub.java_c4sign.Constants;
 import com.cornellcollegecomputingclub.java_c4sign.TaskResult;
 
+import java.lang.Math;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.Graphics2D;
@@ -81,8 +82,7 @@ public abstract class JavaTaskBase {
 
     public String getLcdText() {
         String line1 = StringUtils.center(this.title, Constants.LCD_WIDTH).substring(0, Constants.LCD_WIDTH);
-        String line2 = "By:";
-        line2 = line2.concat(StringUtils.center(this.artist, Constants.LCD_WIDTH - 3).substring(0, Constants.LCD_WIDTH - 3));
+        String line2 = StringUtils.center("By: ".concat(this.artist.substring(0, Math.min(Constants.LCD_WIDTH - 4, this.artist.length()))), Constants.LCD_WIDTH);
         return line1.concat(line2);
     }
 
