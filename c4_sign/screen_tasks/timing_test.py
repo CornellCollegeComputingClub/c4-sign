@@ -16,6 +16,7 @@ class ColorTest(ScreenTask):
             0xFF00FF,
             0xFFFF00,
         ]
+        return super().prepare()
 
     def draw_frame(self, canvas: Canvas, deltaTime: timedelta) -> bool:
         i = math.floor(self.elapsed_time.total_seconds() * 0.5) % 3
