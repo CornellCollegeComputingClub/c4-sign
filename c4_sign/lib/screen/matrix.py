@@ -1,5 +1,6 @@
-import threading
+from time import sleep
 
+import arrow
 from loguru import logger
 
 import numpy
@@ -59,23 +60,22 @@ class MatrixScreen(ScreenBase):
 
         self.__draw_thread = None
 
+        self._last_update = arrow.now()
+
         # Finished table generation, now load screen...
         self.loading_screen()
 
     def update_display(self, canvas: Canvas):
-        logger.trace("Updating display...")
         # for i in range(32*32):
         #     self.__pixels[i] = canvas[i]
         f = lambda c: Color(int(c[0]), int(c[1]), int(c[2]))
         colors = list(map(f, canvas.data.reshape((1024, 3))[self.__address_table]))
         for i in range(1024):
             self.__pixels[i] = colors[i]
-        if self.__draw_thread is not None:
-            logger.trace("Joining old draw thread...")
-            self.__draw_thread.join()
-        logger.trace("Starting new draw thread...")
-        self.__draw_thread = threading.Thread(target=self.__pixels.show)
-        self.__draw_thread.start()
+        self.__pixels.show()
+        now = arrow.now()
+        sleep(max(0, (1 / 24) - (now - self._last_update).total_seconds()))
+        self._last_update = arrow.now()
 
     def update_lcd(self, text):
         if text == self.__cached_text:
