@@ -6,9 +6,10 @@ from c4_sign.lib.canvas import Canvas
 
 from c4_sign.lib.graphics import fill_screen
 
-class ColorTest(ScreenTask):
+class TimingTest(ScreenTask):
     title = "Timing Test"
     artist = "Mac Coleman"
+    ignore = True
 
     def prepare(self):
         self.colors = [
