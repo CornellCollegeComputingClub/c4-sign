@@ -16,6 +16,8 @@ class MatrixScreen(ScreenBase):
         brightness = 0.05
         self.__pixels = PixelStrip(1024, 18, 800000, 10, False, int(brightness * 255), 0)
         # 1024 pixels on pin 18, 800000 hz frequency on DMA channel 10, noninverting, brightness adjusted, on channel 0
+        self.__pixels.begin()
+
         self.__lcd = lcd()
         self.__cached_text = " " * 32
 
@@ -64,19 +66,14 @@ class MatrixScreen(ScreenBase):
         logger.trace("Updating display...")
         # for i in range(32*32):
         #     self.__pixels[i] = canvas[i]
-        self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
+        f = lambda r, g, b: Color(r, g, b)
+        self.__pixels[:] = map(f, canvas.data.reshape((1024, 3))[self.__address_table])
         if self.__draw_thread is not None:
             logger.trace("Joining old draw thread...")
             self.__draw_thread.join()
         logger.trace("Starting new draw thread...")
         self.__draw_thread = threading.Thread(target=self.__pixels.show)
         self.__draw_thread.start()
-        # self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
-        # self.__pixels.show()
-
-    def update_display_thread(self, canvas):
-        # self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
-        self.__pixels.show()
 
     def update_lcd(self, text):
         if text == self.__cached_text:
