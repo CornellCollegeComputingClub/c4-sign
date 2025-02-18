@@ -66,8 +66,8 @@ class MatrixScreen(ScreenBase):
         logger.trace("Updating display...")
         # for i in range(32*32):
         #     self.__pixels[i] = canvas[i]
-        f = lambda r, g, b: Color(int(r), int(g), int(b))
-        colors = map(f, canvas.data.reshape((1024, 3))[self.__address_table])
+        f = lambda c: Color(int(c[0]), int(c[1]), int(c[2]))
+        colors = list(map(f, canvas.data.reshape((1024, 3))[self.__address_table]))
         for i in range(1024):
             self.__pixels[i] = colors[i]
         if self.__draw_thread is not None:
