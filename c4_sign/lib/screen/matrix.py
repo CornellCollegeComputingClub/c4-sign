@@ -66,10 +66,20 @@ class MatrixScreen(ScreenBase):
         self.loading_screen()
 
     def update_display(self, canvas: Canvas):
-        # for i in range(32*32):
-        #     self.__pixels[i] = canvas[i]
+        # Apply gamma correction
+        gamma = 2.8 # Who knows if this'll look nice at all
+        m_in = 255
+        m_out = 255
+
+        a = canvas.data.astype(numpy.float32)
+        a /= m_in
+        a **= gamma
+        a *= m_out
+        a += 0.5
+        a = a.astype(numpy.uint8)
+
         f = lambda c: Color(int(c[0]), int(c[1]), int(c[2]))
-        colors = list(map(f, canvas.data.reshape((1024, 3))[self.__address_table]))
+        colors = list(map(f, a.reshape((1024, 3))[self.__address_table]))
         for i in range(1024):
             self.__pixels[i] = colors[i]
         self.__pixels.show()
