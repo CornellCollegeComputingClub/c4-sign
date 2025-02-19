@@ -13,20 +13,21 @@ class RainbowWave(OptimScreenTask):
         self.frame = 0
         self.epic_colors = [
             0xFF0000,
-            0xFF6000,
+            0xFF6200,
             0xFFBF00,
-            0xB5FF00,
+            0xDDFF00,
             0x80FF00,
-            0x20FF00,
+            0x1EFF00,
             0x00FF40,
+            0x00FFA2,
             0x00FFFF,
-            0x009FFF,
+            0x009DFF,
             0x0040FF,
-            0x2000FF,
-            0x7F00FF,
-            0xDF00FF,
+            0x2200FF,
+            0x8000FF,
+            0xE100FF,
             0xFF00BF,
-            0xFF0060,
+            0xFF005D,
         ]
         return super().prepare()
 
