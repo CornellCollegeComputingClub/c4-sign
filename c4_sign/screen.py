@@ -16,7 +16,7 @@ _canvas = Canvas()
 _low_fps_counter = 0
 
 
-def init_matrix(simulator, make_histograms, enable_java):
+def init_matrix(simulator, make_histograms, enable_java, start_task):
     global _screen, _screen_manager
     if simulator:
         from c4_sign.lib.screen.simulator import SimulatorScreen
@@ -31,6 +31,9 @@ def init_matrix(simulator, make_histograms, enable_java):
 
     lm = LoadingManager(_screen)
     _screen_manager.update_tasks(lm)
+
+    if start_task != "":
+        _screen_manager.override_current_task(start_task)
 
 
 def screen_active():

@@ -219,7 +219,7 @@ def main(args=None):
             rmtree(source, ignore_errors=True)
             logger.info("GIF folder purged!")
         return run_gif()
-    init_matrix(args.simulator, args.histograms, not args.disable_java)
+    init_matrix(args.simulator, args.histograms, not args.disable_java, args.starting_task)
     tm = TaskManager()
 
     logger.info("Finishing startup; starting main loop!")
@@ -239,6 +239,7 @@ if __name__ == "__main__":
     parser.add_argument("--no-upload", action="store_true")
     parser.add_argument("--purge-cache", action="store_true")
     parser.add_argument("--generate-pr-preview", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--starting-task", action="store")
     args = parser.parse_args()
     if args.profile:
         try:
