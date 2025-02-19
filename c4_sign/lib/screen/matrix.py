@@ -14,8 +14,8 @@ from rpi_ws281x import PixelStrip, Color
 class MatrixScreen(ScreenBase):
     def __init__(self):
         logger.info("Initializing Matrix Screen (Physical)")
-        brightness = 0.05
-        self.__pixels = PixelStrip(1024, 18, 800000, 10, False, int(brightness * 255), 0)
+        self.__brightness = 0.05
+        self.__pixels = PixelStrip(1024, 18, 800000, 10, False, 255, 0)
         # 1024 pixels on pin 18, 800000 hz frequency on DMA channel 10, noninverting, brightness adjusted, on channel 0
         self.__pixels.begin()
 
@@ -69,7 +69,7 @@ class MatrixScreen(ScreenBase):
         # Apply gamma correction
         gamma = 2.8 # Who knows if this'll look nice at all
         m_in = 255
-        m_out = 255
+        m_out = int(self.__brightness * 255)
 
         a = canvas.data.astype(numpy.float32)
         a /= m_in
