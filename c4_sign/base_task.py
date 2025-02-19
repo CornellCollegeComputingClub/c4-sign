@@ -324,7 +324,7 @@ class JavaTask(ScreenTask):
         status = taskresult.isFinished()
 
         
-        canvas.data = numpy.array(bytearray(taskresult.getCanvas())).reshape(32, 32, 3)
+        canvas.data = numpy.array(bytearray(taskresult.getCanvas())).reshape(32, 32, 3)[:, :, ::-1]
         return status
     
     def get_lcd_text(self) -> str:
