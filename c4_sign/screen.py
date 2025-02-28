@@ -33,7 +33,9 @@ def init_matrix(simulator, make_histograms, enable_java, start_task):
     _screen_manager.update_tasks(lm)
 
     if start_task is not None:
+        update_screen()
         _screen_manager.override_current_task(start_task)
+
 
 
 def screen_active():
