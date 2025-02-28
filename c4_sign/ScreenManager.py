@@ -66,8 +66,9 @@ class ScreenManager:
             # TODO: Think about extracting this somewhere that makes more sense.
             c4_jar = str(Path(script_path) / "java_c4sign" / "target" / "java_c4sign-1.0-SNAPSHOT.jar")
             lang3_jar = str(Path.home() / ".m2" / "repository" / "org" / "apache" / "commons" / "commons-lang3" / "3.17.0" / "commons-lang3-3.17.0.jar")
+            math3_jar = str(Path.home() / ".m2" / "repository" / "org" / "apache" / "commons" / "commons-math3" / "3.6.1" / "commons-math3-3.6.1.jar")
 
-            gateway = JavaGateway.launch_gateway(classpath=classpath_delimiter.join([c4_jar, lang3_jar]), die_on_exit=True)
+            gateway = JavaGateway.launch_gateway(classpath=classpath_delimiter.join([c4_jar, lang3_jar, math3_jar]), die_on_exit=True)
 
             java_task_controller = gateway.jvm.com.cornellcollegecomputingclub.java_c4sign.JavaTaskController()
 
