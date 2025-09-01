@@ -6,41 +6,6 @@ from c4_sign.base_task import OptimScreenTask
 from c4_sign.lib.canvas import Canvas
 
 
-@dataclass
-class Complex:
-    real: float
-    imag: float
-
-    def __add__(self, other):
-        if isinstance(other, Complex):
-            return Complex(self.real + other.real, self.imag + other.imag)
-        if isinstance(other, float) or isinstance(other, int):
-            return Complex(self.real + other, self.imag)
-
-    def __sub__(self, other):
-        if isinstance(other, Complex):
-            return Complex(self.real - other.real, self.imag - other.imag)
-        if isinstance(other, float) or isinstance(other, int):
-            return Complex(self.real - other, self.imag)
-
-    def __mul__(self, other):
-        # (a + bi) * (c + di)
-        # a*c + a*di + b*ci + b*d*ii
-        # a*c + a*di + b*ci - b*d
-        # (a*c - b*d) + (a*d + b*c)i
-        if isinstance(other, Complex):
-            r = self.real * other.real - self.imag * other.imag
-            i = self.real * other.imag + self.imag * other.real
-            return Complex(r, i)
-        elif isinstance(other, float) or isinstance(other, int):
-            return Complex(self.real * other, self.imag * other)
-        else:
-            raise TypeError("Expected float or Complex.")
-
-    def mag_squared(self):
-        return self.real**2 + self.imag**2
-
-
 class JuliaSet(OptimScreenTask):
     title = "Julia Sets"
     artist = "Mac Coleman"
@@ -48,8 +13,8 @@ class JuliaSet(OptimScreenTask):
     def prepare(self):
         self.angle = 0
         self.angular_velocity = math.pi / (128)
-        self.center = Complex(0, 0)
-        self.c = Complex(0.751, 0)
+        self.center = complex(0, 0)
+        self.c = complex(0.751, 0)
         self.scale = 4
         self.frame = 0
         self.iterations = 1
@@ -90,13 +55,13 @@ class JuliaSet(OptimScreenTask):
                 u = u_min + (u_max - u_min) * (x - x_min) / (x_max - x_min)
                 v = v_min + (v_max - v_min) * (y - y_min) / (y_max - y_min)
 
-                z = Complex(u, v)
+                z = complex(u, v)
 
                 count = 0
-                while z.mag_squared() < 4.0 and count < self.iterations:
+                while abs(z) ** 2 < 4.0 and count < self.iterations:
                     # z = z^2 + c
-                    z = z * z
-                    z = z + self.c
+                    z **= 2
+                    z += self.c
                     count += 1
 
                 if count != self.iterations:
@@ -109,6 +74,6 @@ class JuliaSet(OptimScreenTask):
 
         # Sweep seed point around outside of main cardioid
         self.angle += self.angular_velocity
-        self.c = Complex(1.1 * math.cos(self.angle), 1.1 * math.sin(self.angle))
+        self.c = complex(1.1 * math.cos(self.angle), 1.1 * math.sin(self.angle))
 
         return True

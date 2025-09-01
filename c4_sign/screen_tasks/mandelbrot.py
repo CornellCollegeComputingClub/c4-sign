@@ -7,84 +7,32 @@ from c4_sign.base_task import OptimScreenTask
 from c4_sign.lib.canvas import Canvas
 
 
-@dataclass
-class Complex:
-    real: float
-    imag: float
-
-    def __add__(self, other):
-        if isinstance(other, Complex):
-            return Complex(self.real + other.real, self.imag + other.imag)
-        if isinstance(other, float) or isinstance(other, int):
-            return Complex(self.real + other, self.imag)
-
-    def __sub__(self, other):
-        if isinstance(other, Complex):
-            return Complex(self.real - other.real, self.imag - other.imag)
-        if isinstance(other, float) or isinstance(other, int):
-            return Complex(self.real - other, self.imag)
-
-    def __mul__(self, other):
-        # (a + bi) * (c + di)
-        # a*c + a*di + b*ci + b*d*ii
-        # a*c + a*di + b*ci - b*d
-        # (a*c - b*d) + (a*d + b*c)i
-        if isinstance(other, Complex):
-            r = self.real * other.real - self.imag * other.imag
-            i = self.real * other.imag + self.imag * other.real
-            return Complex(r, i)
-        elif isinstance(other, float) or isinstance(other, int):
-            return Complex(self.real * other, self.imag * other)
-        else:
-            raise TypeError("Expected float or Complex.")
-
-    def mag_squared(self):
-        return self.real**2 + self.imag**2
-
-
 class Mandelbrot(OptimScreenTask):
     title = "Mandelbrot Set"
     artist = "Mac Coleman"
 
     def prepare(self):
-        self.center = Complex(0, 0)
+        self.center = complex(0, 0)
         self.scale = 4
         self.frame = 0
         self.iterations = 1
         self.max_iterations = 150
         self.intro_time = 140
-        self.epic_colors = [
-            0xFF0000,
-            0xFF6000,
-            0xFFBF00,
-            0xB5FF00,
-            0x80FF00,
-            0x20FF00,
-            0x00FF40,
-            0x00FFFF,
-            0x009FFF,
-            0x0040FF,
-            0x2000FF,
-            0x7F00FF,
-            0xDF00FF,
-            0xFF00BF,
-            0xFF0060,
-        ]
         self.epic_points = [
-            Complex(-1.7692505972726005, 0.05691909790039061),
-            Complex(-1.9426247732979907, 0),
-            Complex(-0.10539082118443051, -0.9248651776994978),
-            Complex(-1.0200429643903455, 0.36748341151646224),
-            Complex(-0.7464179992675776, 0.18429674421037967),
-            Complex(0.42451275246484, 0.2075301834515165),
-            Complex(-1.2840499877929685, 0.427382332938058),
-            Complex(0.3577270507812499, -0.11002349853515625),
-            Complex(-1.985455104282924, 0),
-            Complex(-1.2517939976283483, 0.0411834716796875),
+            complex(-1.7692505972726005, 0.05691909790039061),
+            complex(-1.9426247732979907, 0),
+            complex(-0.10539082118443051, -0.9248651776994978),
+            complex(-0.7464179992675776, 0.18429674421037967),
+            complex(-1.0200429643903455, 0.36748341151646224),
+            complex(0.42451275246484, 0.2075301834515165),
+            complex(-1.2840499877929685, 0.427382332938058),
+            complex(0.3577270507812499, -0.11002349853515625),
+            complex(-1.985455104282924, 0),
+            complex(-1.2517939976283483, 0.0411834716796875),
         ]
         sign = random.choice([1, -1])
         self.chosen_point = random.choice(self.epic_points)
-        self.chosen_point.imag *= sign
+        self.chosen_point = complex(self.chosen_point.real, self.chosen_point.imag * sign)
         return super().prepare()
 
     def get_lcd_text(self) -> str:
@@ -117,11 +65,11 @@ class Mandelbrot(OptimScreenTask):
                 u = u_min + (u_max - u_min) * (x - x_min) / (x_max - x_min)
                 v = v_min + (v_max - v_min) * (y - y_min) / (y_max - y_min)
 
-                z = Complex(0, 0)
-                c = Complex(u, v)
+                z = complex(0, 0)
+                c = complex(u, v)
 
                 # 2-bulb check
-                if (c + 1).mag_squared() <= 0.0625:
+                if abs(c + 1) ** 2 <= 0.0625:
                     continue  # Don't do anything if inside two-bulb
 
                 # Cardioid check
@@ -131,7 +79,7 @@ class Mandelbrot(OptimScreenTask):
                     continue  # Don't do any tests if inside cardioid
 
                 count = 0
-                while z.mag_squared() < 4.0 and count < self.iterations:
+                while abs(z) ** 2 < 4.0 and count < self.iterations:
                     # z = z^2 + c
                     z = z * z
                     z = z + c
@@ -139,7 +87,7 @@ class Mandelbrot(OptimScreenTask):
 
                 if count != self.iterations:
                     # Continuous coloring... https://www.paridebroggi.com/blogpost/2015/05/06/fractal-continuous-coloring/
-                    continuous_index = count + 1 - (math.log(2) / math.sqrt(z.mag_squared())) / math.log(2)
+                    continuous_index = count + 1 - (math.log(2) / abs(z)) / math.log(2)
                     r = int(math.sin(0.1 * continuous_index + 1) * 127.5 + 127.5)
                     g = int(math.sin(0.13 * continuous_index + 2) * 127.5 + 127.5)
                     b = int(math.sin(0.16 * continuous_index + 4) * 127.5 + 127.5)
