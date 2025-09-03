@@ -234,4 +234,16 @@ public class ArtificialHorizon extends JavaTaskBase {
 
         return false;
     }
+
+    public void teardown(boolean forced) {
+        this.random = null;
+        this.attitudeIndicator = null;
+        this.slipIndicator = null;
+        this.slipTriangle = null;
+        this.pitchIndicator = null;
+        this.headingIndicator = null;
+        this.altitudeIndicator = null;
+
+        super.teardown(forced);
+    }
 }

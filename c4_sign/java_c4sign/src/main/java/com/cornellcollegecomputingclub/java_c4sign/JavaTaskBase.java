@@ -8,9 +8,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.Graphics2D;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class JavaTaskBase {
@@ -22,6 +19,9 @@ public abstract class JavaTaskBase {
     public static boolean ignore = false;
 
     public JavaTaskBase() {
+        /**
+         * When you write your constructor, make sure to set a title and an artist with the setTitle and setArtist methods!
+         */
         this.title = "Unknown";
         this.artist = "Unknown";
     }
@@ -59,11 +59,15 @@ public abstract class JavaTaskBase {
         /**
         * Teardown: This method is called when the task stops running.
         * If the task was stopped forcefully, the forced parameter will be true.
-        * If your task requires special cleanup, override this method!
+        * If your task instantiates any Object (aka, any type that is not one of the Java Primitive Types),
+        * make sure to delete it by setting it to null in your teardown method.
+        * Also, make sure to call super.teardown();
         */
         this.canvas = null;
         this.raster = null;
         this.graphics.dispose();
+
+        System.gc();
     }
 
     public abstract boolean drawFrame(BufferedImage canvas, Graphics2D graphics, WritableRaster raster, double timeDelta);

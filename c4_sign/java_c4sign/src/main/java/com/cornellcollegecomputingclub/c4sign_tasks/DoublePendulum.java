@@ -131,5 +131,7 @@ public class DoublePendulum extends JavaTaskBase {
         this.point2 = null;
         this.gravity = null;
         this.pastPositions = null;
+
+        super.teardown(forced);
     }
 }

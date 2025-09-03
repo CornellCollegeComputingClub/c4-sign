@@ -52,4 +52,9 @@ public class RainbowWaveJava extends JavaTaskBase {
         this.frame += 1;
         return true;
     }
+
+    public void teardown(boolean forced) {
+        this.epic_colors = null;
+        super.teardown(forced);
+    }
 }
