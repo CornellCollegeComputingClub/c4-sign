@@ -69,6 +69,27 @@ public class VerletParticle {
         other.setPosition(other.getPosition().subtract(toOther));
     }
 
+    public void applyLinearMotionConstraint(Vector2D linePoint1, Vector2D linePoint2) {
+
+        double x0 = this.currentPosition.getX();
+        double y0 = this.currentPosition.getY();
+        double x1 = linePoint1.getX();
+        double x2 = linePoint2.getX();
+        double y1 = linePoint1.getY();
+        double y2 = linePoint2.getY();
+
+        double distanceFromLine = Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) / Math.sqrt(Math.pow(y2 -y1, 2) + Math.pow(x2 - x1, 2));
+        Vector2D lineNormal = new Vector2D(-(y2 -y1), x2 - x1).normalize();
+
+        Vector2D relativeToPoint = this.currentPosition.subtract(linePoint1);
+        if (Vector2D.angle(lineNormal, relativeToPoint) < Math.PI/2) {
+            distanceFromLine *= -1;
+        }
+
+        Vector2D correction = lineNormal.scalarMultiply(distanceFromLine);
+        this.currentPosition = this.currentPosition.add(correction);
+    }
+
     public Vector2D getPosition() {
         return this.currentPosition;
     }
