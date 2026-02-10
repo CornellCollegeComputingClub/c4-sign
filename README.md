@@ -1,7 +1,7 @@
 # C4 Sign
 funny sign go brrrrrrrr
 
-![An image of the C4 Sign, displaying the C4 Logo](./docs/images/demo.jpg)
+![An image of the C4 Sign, displaying the C4 Logo](./docs/images/demo.png)
 
 The C4 Sign is an LED sign that students can write programs for to display at our events on campus!
 It features a 32x32 color LED display for graphics and a 16x2 character LCD screen for text.
