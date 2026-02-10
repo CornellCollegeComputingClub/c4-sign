@@ -100,14 +100,14 @@ class ScreenManager:
         # if task is a string, find the task by name
         if isinstance(task, str):
             for t in self.tasks:
-                if t.title == task:
+                if t.canonical_name == task:
                     task = t
                     break
             else:
                 # task not found!
                 logger.warning(f"Task {task} not found!")
                 return
-        logger.info("Overriding current task with {}", task.title)
+        logger.info("Overriding current task with {}", task.canonical_name)
         if self.current_task:
             self.current_task.teardown(True)
         self.current_task = task
@@ -121,7 +121,7 @@ class ScreenManager:
                 logger.debug("Looping back to the start!")
                 self.index = 0
             self.current_task = self.current_tasks[self.index]
-            logger.debug("Trying to start task: {}", self.current_task.__class__.__name__)
+            logger.debug("Trying to start task: {}", self.current_task.canonical_name)
             if not self.current_task.prepare():
                 # uh... we don't want to do anything!
                 # so let's just skip this task!
@@ -131,9 +131,9 @@ class ScreenManager:
                 if self.index >= len(self.current_tasks):
                     self.index = 0
                 return self.draw(canvas, delta_time)
-            logger.debug("Task {} ready!", self.current_task.__class__.__name__)
+            logger.debug("Task {} ready!", self.current_task.canonical_name)
         if self.current_task.draw(canvas, delta_time):
-            logger.debug("Task {} finished!", self.current_task.__class__.__name__)
+            logger.debug("Task {} finished!", self.current_task.canonical_name)
             self.current_task = None
             self.index += 1
             return True

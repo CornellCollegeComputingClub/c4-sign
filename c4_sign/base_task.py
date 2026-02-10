@@ -181,11 +181,11 @@ class ScreenTask:
             self.draw_time_samples.append(draw_time.total_seconds() * 1000) # Append draw time in milliseconds
 
         if self.is_over_max_time:
-            logger.warning("Task {} is over max time! Stopping forcefully...", self.__class__.__name__)
+            logger.warning("Task {} is over max time! Stopping forcefully...", self.canonical_name)
             self.teardown(forced=True)
             return True
         if result and self.is_over_suggested_time:
-            logger.info("Task {} is done!", self.__class__.__name__)
+            logger.info("Task {} is done!", self.canonical_name)
             self.teardown()
             return True
         return False
@@ -244,7 +244,7 @@ class OptimScreenTask(ScreenTask):
         max_run_time=timedelta(seconds=60),
     ):
         super().__init__(suggested_run_time, max_run_time)
-        self.cache_path = cache_path() / "optim" / self.__class__.__name__
+        self.cache_path = cache_path() / "optim" / self.canonical_name
         self.cache_path.mkdir(parents=True, exist_ok=True)
         self.optimize()
 
@@ -253,7 +253,7 @@ class OptimScreenTask(ScreenTask):
         # let's do some optimization!!
         if not self.should_optimize:
             return
-        logger.info(f"Optimizing {self.__class__.__name__}")
+        logger.info(f"Optimizing {self.canonical_name}")
         canvas = Canvas()
         delta_time = timedelta(seconds=1 / 24)
         # call child's prepare method
@@ -277,18 +277,18 @@ class OptimScreenTask(ScreenTask):
         self.teardown()
         self.is_optim = True
         self.being_optimized = False
-        logger.info(f"Optimized {self.__class__.__name__} with {self.max_frames} frames")
+        logger.info(f"Optimized {self.canonical_name} with {self.max_frames} frames")
 
     def unoptimize(self):
         # remove all files in the cache path.
-        logger.debug(f"Unoptimizing {self.__class__.__name__}")
+        logger.debug(f"Unoptimizing {self.canonical_name}")
         self.max_frames = 0
         self.is_optim = False
         shutil.rmtree(self.cache_path)
 
     def prepare(self):
         if self.being_optimized:  # don't run if we're optimizing
-            logger.info("{} is being optimized! Skipping execution!", self.__class__.__name__)
+            logger.info("{} is being optimized! Skipping execution!", self.canonical_name)
             return False
         self.current_frame = 0
         return super().prepare()

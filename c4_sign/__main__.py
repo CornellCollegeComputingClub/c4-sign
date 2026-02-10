@@ -31,6 +31,9 @@ def run_gif():
     font = ImageFont.load_default(16.0)
     with open("docs/screen_tasks.md", "w") as f:
         f.write("# Screen Tasks\n\n")
+        f.write("This page is a list of all the animations that the sign is currently configured to display!\n\n")
+        f.write("Use this page as inspiration or to see what is possible with the sign.\n\n")
+        f.write("If you want more ideas, check the Wishlist at the bottom of the [README](../README.md#wishlist).\n\n")
         for task in tasks:
             f.write(f"## {task.canonical_name}\n")
             f.write(f"**Title**: {task.title}\n\n")

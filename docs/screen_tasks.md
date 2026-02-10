@@ -1,5 +1,11 @@
 # Screen Tasks
 
+This page is a list of all the animations that the sign is currently configured to display!
+
+Use this page as inspiration or to see what is possible with the sign.
+
+If you want more ideas, check the Wishlist at the bottom of the [README](../README.md#wishlist).
+
 ## ArtificialHorizon
 **Title**: Horizon
 
