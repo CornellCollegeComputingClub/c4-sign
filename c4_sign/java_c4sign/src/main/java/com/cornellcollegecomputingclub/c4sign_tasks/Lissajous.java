@@ -1,17 +1,14 @@
 package com.cornellcollegecomputingclub.c4sign_tasks;
 
-import java.util.Random;
-import java.lang.Math;
-import java.awt.geom.Line2D;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.awt.Graphics2D;
+import java.util.Random;
 
-import com.cornellcollegecomputingclub.java_c4sign.Constants;
 import com.cornellcollegecomputingclub.java_c4sign.JavaTaskBase;
 
 public class Lissajous extends JavaTaskBase{
@@ -22,8 +19,12 @@ public class Lissajous extends JavaTaskBase{
     private double phase = 0;
 
     public Lissajous() {
+        super.setCanonicalName("Lissajous");
         super.setTitle("Lissajous");
         super.setArtist("Mac Coleman");
+        super.setDescription("Displays [lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve) " +
+        "with a color that varies along the length of the curve. A random frequency ratio between the horizontal " +
+        "and vertical components is selected at the beginning of the animation.");
     }
 
     public boolean prepare() {

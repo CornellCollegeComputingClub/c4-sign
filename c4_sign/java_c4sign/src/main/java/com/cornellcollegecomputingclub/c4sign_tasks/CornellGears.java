@@ -40,8 +40,12 @@ public class CornellGears extends JavaTaskBase {
     VerletParticle slider;
 
     public CornellGears () {
+        super.setCanonicalName("CornellGears");
         super.setTitle("Cornell Gears");
         super.setArtist("Mac Coleman");
+        super.setDescription(
+            "Displays three gears and an attached piston rod. The big gear in the center has the Cornell C."
+        );
     }
 
     public boolean prepare() {

@@ -8,8 +8,14 @@ from c4_sign.lib.canvas import Canvas
 
 
 class Mandelbrot(OptimScreenTask):
+    canonical_name = "MandelbrotSet"
     title = "Mandelbrot Set"
     artist = "Mac Coleman"
+    description = "Displays the mandelbrot set with continuous coloring. Each time the task is chosen," \
+        " one of ten different points of interest is chosen. Over the course of the task, the " \
+        "animation will pan to center that point of interest and zoom in on it slowly, revealing the" \
+        " detail and recursive structure of the mandelbrot set. The Y-value of the chosen point has a " \
+        "50-50 chance of being flipped to add more variety."
 
     def prepare(self):
         self.center = complex(0, 0)

@@ -42,8 +42,10 @@ WEATHER_CODES = {
 
 
 class Weather(ScreenTask):
+    canonical_name = "Weather"
     title = "Weather"
     artist = "Luna"
+    description = "Gets the weather from open-meteo for Mount Vernon, and displays the forecast and current conditions."
 
     def __init__(self):
         for k, v in WEATHER_CODES.items():

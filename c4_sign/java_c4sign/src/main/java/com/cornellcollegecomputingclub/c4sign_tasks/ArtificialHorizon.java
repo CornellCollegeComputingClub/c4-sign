@@ -1,20 +1,17 @@
 package com.cornellcollegecomputingclub.c4sign_tasks;
 
-import com.cornellcollegecomputingclub.java_c4sign.JavaTaskBase;
-import com.cornellcollegecomputingclub.java_c4sign.Constants;
-
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.awt.Graphics2D;
-
-import java.lang.Math;
 import java.util.Random;
-import java.awt.geom.Path2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.AffineTransform;
-import java.awt.Color;
-import java.awt.BasicStroke;
-import java.awt.RenderingHints;
+
+import com.cornellcollegecomputingclub.java_c4sign.Constants;
+import com.cornellcollegecomputingclub.java_c4sign.JavaTaskBase;
 
 public class ArtificialHorizon extends JavaTaskBase {
 
@@ -46,8 +43,13 @@ public class ArtificialHorizon extends JavaTaskBase {
     Path2D.Double altitudeIndicator;
 
     public ArtificialHorizon() {
+        super.setCanonicalName("ArtificialHorizon");
         super.setTitle("Horizon");
         super.setArtist("Mac Coleman");
+        super.setDescription(
+            "Simulates the view of an [artificial horizon](https://en.wikipedia.org/wiki/Attitude_indicator) as a plane flies around." +
+            " The plane randomly chooses a target altitude and heading and adjusts its course to reach that altitude and heading."
+        );
     }
 
     public boolean prepare() {

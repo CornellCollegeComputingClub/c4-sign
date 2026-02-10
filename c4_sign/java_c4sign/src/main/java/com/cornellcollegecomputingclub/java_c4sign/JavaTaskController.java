@@ -5,6 +5,7 @@ import com.cornellcollegecomputingclub.c4sign_tasks.Lissajous;
 import com.cornellcollegecomputingclub.c4sign_tasks.ArtificialHorizon;
 import com.cornellcollegecomputingclub.c4sign_tasks.DoublePendulum;
 import com.cornellcollegecomputingclub.c4sign_tasks.CornellGears;
+import com.cornellcollegecomputingclub.c4sign_tasks.GetInvolved;
 /* ------------------------------------------------------------
  * Import your java tasks here, at the end of the list above!!!
  * ------------------------------------------------------------
@@ -22,6 +23,7 @@ public class JavaTaskController {
             new ArtificialHorizon(),
             new DoublePendulum(),
             new CornellGears(),
+            //new GetInvolved(),
             //Instantiate your java tasks here!
         };
 

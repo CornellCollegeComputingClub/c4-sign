@@ -27,8 +27,10 @@ def percolates(grid):
     return False
 
 class Percolate(ScreenTask):
+    canonical_name = "Percolate"
     title = "Percolate"
     artist = "Luna"
+    description = "Write a description here!"
     
     def prepare(self):
         self.grid = [[0 for _ in range(32)] for _ in range(32)]

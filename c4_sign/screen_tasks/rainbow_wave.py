@@ -6,8 +6,13 @@ from c4_sign.lib.canvas import Canvas
 
 
 class RainbowWave(OptimScreenTask):
+    canonical_name = "RainbowWave"
     title = "Rainbow Wave"
     artist = "Mac Coleman"
+    description = "Displays a wave of rainbow colors emanating from the center of the screen. " \
+    "The colors are chosen from a list of 16 colors. Each pixel is assigned a color based on " \
+    "its distance from the center, and each frame the color associated with each distance is " \
+    "shifted over to make the colors propagate from the center."
 
     def prepare(self):
         self.frame = 0

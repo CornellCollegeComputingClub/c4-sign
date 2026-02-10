@@ -17,8 +17,10 @@ public class MemoryStress extends JavaTaskBase {
     private Random random = new Random();
 
     public MemoryStress() {
+        super.setCanonicalName("MemoryStress");
         super.setTitle("JVMMemory Stress");
         super.setArtist("Luna");
+        super.setDescription("Stress test the JVM garbage collector by allocating lots of memory and clearing it.");
     }
 
     public boolean drawFrame(BufferedImage canvas, Graphics2D graphics, WritableRaster raster, double deltaTime) {

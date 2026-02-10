@@ -7,8 +7,10 @@ from c4_sign.lib.canvas import Canvas
 from c4_sign.lib.graphics import fill_screen
 
 class TimingTest(ScreenTask):
+    canonical_name = "TimingTest"
     title = "Timing Test"
     artist = "Mac Coleman"
+    description = "A task originally meant to test timing of the sign and make sure that it could draw colors at a full 24 FPS."
     ignore = True
 
     def prepare(self):

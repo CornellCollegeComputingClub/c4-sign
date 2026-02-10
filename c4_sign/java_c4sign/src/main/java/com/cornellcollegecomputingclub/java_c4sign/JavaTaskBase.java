@@ -11,8 +11,10 @@ import java.awt.Graphics2D;
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class JavaTaskBase {
+    private String canonicalName;
     private String title;
     private String artist;
+    private String description;
     private BufferedImage canvas;
     private WritableRaster raster;
     private Graphics2D graphics;
@@ -22,8 +24,18 @@ public abstract class JavaTaskBase {
         /**
          * When you write your constructor, make sure to set a title and an artist with the setTitle and setArtist methods!
          */
+        this.canonicalName = "JavaTaskBase";
         this.title = "Unknown";
         this.artist = "Unknown";
+        this.description = "Base Java Task that all Java tasks should inherit from.";
+    }
+
+    public void setCanonicalName(String newCanonicalName) {
+        this.canonicalName = newCanonicalName;
+    }
+
+    public String getCanonicalName() {
+        return this.canonicalName;
     }
 
     public void setTitle(String newTitle) {
@@ -40,6 +52,14 @@ public abstract class JavaTaskBase {
 
     public String getArtist() {
         return this.artist;
+    }
+
+    public void setDescription(String newDescription) {
+        this.description = newDescription;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     public boolean prepare() {

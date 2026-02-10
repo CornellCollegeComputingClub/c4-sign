@@ -1,19 +1,19 @@
 package com.cornellcollegecomputingclub.c4sign_tasks;
 
-import com.cornellcollegecomputingclub.java_c4sign.JavaTaskBase;
-import com.cornellcollegecomputingclub.java_c4sign.VerletParticle;
-
-import java.util.Random;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.awt.Graphics2D;
 import java.awt.BasicStroke;
-import java.awt.RenderingHints;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.util.Random;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
+import com.cornellcollegecomputingclub.java_c4sign.JavaTaskBase;
+import com.cornellcollegecomputingclub.java_c4sign.VerletParticle;
 
 public class DoublePendulum extends JavaTaskBase {
     private Vector2D anchor;
@@ -28,8 +28,14 @@ public class DoublePendulum extends JavaTaskBase {
     private float hue;
 
     public DoublePendulum() {
+        this.setCanonicalName("DoublePendulum");
         this.setArtist("Mac Coleman");
         this.setTitle("Double Pendulum");
+        this.setDescription(
+            "Simulates a [double pendulum](https://en.wikipedia.org/wiki/Double_pendulum) via verlet integration physics." +
+            " The pendulum is started from a random position each time, and a trail is drawn behind the end of the pendulum to trace its path." +
+            " The trail slowly changes color throughout the animation."
+        );
     }
     
     public boolean prepare() {

@@ -7,8 +7,13 @@ from c4_sign.lib.canvas import Canvas
 
 
 class JuliaSet(OptimScreenTask):
+    canonical_name = "JuliaSet"
     title = "Julia Sets"
     artist = "Mac Coleman"
+    description = "Displays the [Julia set](https://en.wikipedia.org/wiki/Julia_set) " \
+        "of points on the Mandelbrot set forming a circle just outside the main bulb " \
+        "of the Mandelbrot set. It produces a repeating animation of the Julia set as" \
+        " the point rotates around."
 
     def prepare(self):
         self.angle = 0

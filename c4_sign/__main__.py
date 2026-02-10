@@ -27,27 +27,26 @@ def run_gif():
     screen_manager.update_tasks()
     delta_t = timedelta(seconds=1 / 24)
     canvas = Canvas()
-    tasks = screen_manager.current_tasks
-    font = ImageFont.truetype("Courier", 16)
+    tasks = sorted(screen_manager.current_tasks, key=lambda t: t.canonical_name)
+    font = ImageFont.load_default(16.0)
     with open("docs/screen_tasks.md", "w") as f:
         f.write("# Screen Tasks\n\n")
-        for task in sorted(tasks, key=lambda x: x.__class__.__name__):
-            f.write(f"## {task.__class__.__name__}\n")
+        for task in tasks:
+            f.write(f"## {task.canonical_name}\n")
             f.write(f"**Title**: {task.title}\n\n")
             f.write(f"**Artist**: {task.artist}\n\n")
-            if task.__doc__:
-                f.write(f"Description:\n```python\n{task.__doc__}\n```\n")
-            f.write(f"![{task.__class__.__name__}](images/screen_tasks/{task.__class__.__name__}.webp)\n")
+            f.write(f"{task.description}\n\n")
+            f.write(f"![{task.canonical_name}](images/screen_tasks/{task.canonical_name}.webp)\n")
     source = Path("docs/images/screen_tasks")
     source.mkdir(parents=True, exist_ok=True)
     existing = [x.stem for x in source.glob("*.webp")]
-    removed = [x for x in existing if x not in [task.__class__.__name__ for task in tasks]]
+    removed = [x for x in existing if x not in [task.canonical_name for task in tasks]]
     for remove in removed:
         print(f"Removing {remove}.webp")
         (source / f"{remove}.webp").unlink()
-    tasks = [task for task in tasks if task.__class__.__name__ not in existing]
+    tasks = [task for task in tasks if task.canonical_name not in existing]
     for task in track(tasks, description="Converting!"):
-        print(f"Running {task.__class__.__name__}")
+        print(f"Running {task.canonical_name}")
         duration = 0
         images = []
         task.prepare()
@@ -69,7 +68,7 @@ def run_gif():
             if result or duration > 30:
                 break
         images[0].save(
-            source / f"{task.__class__.__name__}.webp",
+            source / f"{task.canonical_name}.webp",
             save_all=True,
             append_images=images[1:],
             duration=(1 / 24) * 1000,
@@ -122,8 +121,8 @@ def generate_pr_preview():
                         obj.should_optimize = False
                     tasks.append(obj())
     for task in track(tasks, description="Converting!"):
-        logger.info("Running {}", task.__class__.__name__)
-        print(f"Running {task.__class__.__name__}")
+        logger.info("Running {}", task.canonical_name)
+        print(f"Running {task.canonical_name}")
         duration = 0
         images = []
         task.prepare()
@@ -144,9 +143,9 @@ def generate_pr_preview():
             duration += 1 / 24
             if result or duration > 30:
                 break
-        logger.info("Saving {}", task.__class__.__name__)
+        logger.info("Saving {}", task.canonical_name)
         images[0].save(
-            source / f"{task.__class__.__name__}.webp",
+            source / f"{task.canonical_name}.webp",
             save_all=True,
             append_images=images[1:],
             duration=(1 / 24) * 1000,

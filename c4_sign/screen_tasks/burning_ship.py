@@ -8,8 +8,13 @@ from c4_sign.lib.canvas import Canvas
 
 
 class BurningShip(OptimScreenTask):
+    canonical_name = "BurningShip"
     title = "Burning Ship"
     artist = "Mac Coleman"
+    description = "Displays the [burning ship set](https://en.wikipedia.org/wiki/Burning_Ship_fractal)," \
+        "which is like the Mandelbrot set except the absolute value of the real and imaginary components " \
+        "is taken at each step. It has interesting structures like masts on a ship, but they are hard to " \
+        "see at such low resolution."
     ignore = True
 
     def prepare(self):

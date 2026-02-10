@@ -14,8 +14,12 @@ public class RainbowWaveJava extends JavaTaskBase {
     private int frame;
 
     public RainbowWaveJava() {
+        super.setCanonicalName("RainbowWaveJava");
         super.setTitle("RainbowWaveJava");
         super.setArtist("Mac Coleman");
+        super.setDescription(
+            "A copy of the Python RainbowWave task, but it runs in Java instead. Used to test and compare how the two different versions work."
+        );
     }
 
     public boolean prepare() {

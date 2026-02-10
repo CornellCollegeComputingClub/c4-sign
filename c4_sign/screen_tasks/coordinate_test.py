@@ -5,8 +5,11 @@ from c4_sign.lib.canvas import Canvas
 
 
 class CoordinateTest(ScreenTask):
+    canonical_name = "CoordinateTest"
     title = "CoordTest"
     artist = "Mac Coleman"
+    description = "A basic task to test whether the coordinates of the sign are correct. " \
+        "The red component increases from left to right, and green from top to bottom."
     ignore = True
 
     def prepare(self):

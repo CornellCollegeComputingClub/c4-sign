@@ -73,8 +73,10 @@ class OneTimeTask:
 
 class ScreenTask:
     ignore = False
+    canonical_name = "ScreenTask"
     title = "Unknown"
     artist = "Unknown"
+    description = "The base screentask that all python tasks should inherit."
 
     def __init__(
         self,
@@ -120,11 +122,10 @@ class ScreenTask:
         # if there's nothing needed, why do we need to run?
         return True
 
-    """
-    This method is called when the task is done running.
-    """
-
     def teardown(self, forced=False):
+        """
+            This method is called when the task is done running.
+        """
         # do any cleanup here!
         if self.make_histogram:
             from matplotlib import pyplot as plt
@@ -305,11 +306,16 @@ class OptimScreenTask(ScreenTask):
 class JavaTask(ScreenTask):
     __java_task_instance = None
 
+    canonical_name = "JavaTask"
+    description = "A wrapper task used to contain tasks written in Java."
+
     def __init__(self, java_task):
         super().__init__()
         self.__java_task_instance = java_task
+        self.canonical_name = self.__java_task_instance.getCanonicalName();
         self.title = self.__java_task_instance.getTitle();
         self.artist = self.__java_task_instance.getArtist();
+        self.description = self.__java_task_instance.getDescription();
 
     def prepare(self):
         self.__java_task_instance.prepare()
