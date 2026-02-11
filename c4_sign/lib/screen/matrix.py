@@ -87,7 +87,7 @@ class MatrixScreen(ScreenBase):
         now = perf_counter_ns()
         delay = (1/24)*1000000000 - (now - self._last_update)
         end = now + delay
-        sleep(max(0, delay-0.001))
+        sleep(max(0, (delay/1000000000)-0.001))
         while now < end:
             now = perf_counter_ns()
         self._last_update = perf_counter_ns()
