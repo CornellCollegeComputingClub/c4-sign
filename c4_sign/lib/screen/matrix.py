@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, perf_counter_ns
 
 import arrow
 from loguru import logger
@@ -60,7 +60,7 @@ class MatrixScreen(ScreenBase):
 
         self.__draw_thread = None
 
-        self._last_update = arrow.now()
+        self._last_update = perf_counter_ns()
 
         # Finished table generation, now load screen...
         self.loading_screen()
@@ -83,9 +83,14 @@ class MatrixScreen(ScreenBase):
         for i in range(1024):
             self.__pixels[i] = colors[i]
         self.__pixels.show()
-        now = arrow.now()
-        sleep(max(0, (1 / 24) - (now - self._last_update).total_seconds()))
-        self._last_update = arrow.now()
+
+        now = perf_counter_ns()
+        delay = (1/24)*1000000000 - (now - self._last_update)
+        end = now + delay
+        sleep(max(0, delay-0.001))
+        while now < end:
+            now = perf_counter_ns()
+        self._last_update = perf_counter_ns()
 
     def update_lcd(self, text):
         if text == self.__cached_text:
