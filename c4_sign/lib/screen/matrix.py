@@ -66,6 +66,7 @@ class MatrixScreen(ScreenBase):
         self.loading_screen()
 
     def update_display(self, canvas: Canvas):
+        global _screen_manager
         # Apply gamma correction
         gamma = 2.8 # Who knows if this'll look nice at all
         m_in = 255
@@ -82,7 +83,12 @@ class MatrixScreen(ScreenBase):
         colors = list(map(f, a.reshape((1024, 3))[self.__address_table]))
         for i in range(1024):
             self.__pixels[i] = colors[i]
+        start_show = perf_counter_ns()
         self.__pixels.show()
+        end_show = perf_counter_ns()
+
+        if end_show - start_show > 700000:
+            logger.warning(f"Hitch detected! Current task: {_screen_manager.current_task.canonical_name}")
 
         now = perf_counter_ns()
         delay = (1/24)*1000000000 - (now - self._last_update)
