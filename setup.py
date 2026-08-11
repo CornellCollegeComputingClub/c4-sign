@@ -24,6 +24,8 @@ setup(
         "loguru",
         "matplotlib",
         "py4j",
+        "bs4",
+        "lxml",
     ],
     extras_require={
         "physical": ["rpi_ws281x", "smbus", "gpiozero"],
