@@ -12,6 +12,7 @@ from time import sleep
 
 from typing import List, Tuple
 from queue import SimpleQueue
+from datetime import datetime, UTC
 from bs4 import BeautifulSoup
 from pathlib import Path
 from io import BytesIO
@@ -57,6 +58,15 @@ class WeatherRadar(ScreenTask):
         WeatherRadar.__downloader_thread.start()
 
         self.frame = 0
+        self.__display_state = "map"
+        # Display stats
+        # "map" -> 2.5 seconds
+        # "labelfadeout" -> 1 seconds
+        # "radarfadein" -> 1.5 seconds
+        # "reflectivity" -> 3 replays
+        # "velocity" -> 3 replays
+        self.__top_text = ""
+        self.__bottom_text = ""
         super().__init__()
 
     def __refresh_radar_images_thread(queue: SimpleQueue):
@@ -107,7 +117,7 @@ class WeatherRadar(ScreenTask):
         # just filter out grey ones by selecting pixels that have both low saturation and lower value than the white pixels.
         # I haven't really tested this extensively, but it seems to work okay on the images I have tested it on.
         # Only reflectivity images should be filtered, I think velocity images should not be filtered.
-        saturation_threshold = 0.5
+        saturation_threshold = 0.55
         value_threshold = .8
         hsv = colorsys.rgb_to_hsv(r/255.0, g/255.0, b/255.0)
         if hsv[1] < saturation_threshold and hsv[2] < value_threshold:
@@ -193,8 +203,21 @@ class WeatherRadar(ScreenTask):
         
         self.frame = 0
 
-        WeatherRadar.__sr_bref_frames = sorted([(Image.open(path), str(path)) for path in WeatherRadar.__sr_bref_dir.iterdir() if path.is_file()], key=lambda x: x[1])
-        WeatherRadar.__sr_bvel_frames = sorted([(Image.open(path), str(path)) for path in WeatherRadar.__sr_bvel_dir.iterdir() if path.is_file()], key=lambda x: x[1])
+        WeatherRadar.__sr_bref_frames = sorted([(Image.open(path), path.name) for path in WeatherRadar.__sr_bref_dir.iterdir() if path.is_file()], key=lambda x: x[1])
+
+        interesting_pixels = 0
+        for image in reversed(WeatherRadar.__sr_bref_frames):
+            interesting_pixels += numpy.count_nonzero(numpy.array(image[0])[:,:,3])
+            if interesting_pixels >= 0:
+                break
+        if interesting_pixels < 0:
+            logger.info(f"There are no interesting radar images, skipping. Interesting pixels: {interesting_pixels}")
+            WeatherRadar.__sr_bref_frames = None
+            WeatherRadar.__lock.release()
+            return False
+        
+        logger.info(f"{interesting_pixels} interesting pixels detected, running WeatherRadar")
+        WeatherRadar.__sr_bvel_frames = sorted([(Image.open(path), path.name) for path in WeatherRadar.__sr_bvel_dir.iterdir() if path.is_file()], key=lambda x: x[1])
         return WeatherRadar.__ready_to_run and locked and super().prepare()
     
     def teardown(self, forced=False):
@@ -207,11 +230,15 @@ class WeatherRadar(ScreenTask):
         radar_frame = self.frame // 5
         active_sequence = WeatherRadar.__sr_bref_frames if radar_frame < WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames) else WeatherRadar.__sr_bvel_frames
         index = radar_frame % len(WeatherRadar.__sr_bref_frames) if radar_frame < WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames) else (radar_frame - WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames)) % len(WeatherRadar.__sr_bvel_frames)
-        # logger.info(f"fr: {self.frame}, i: {index}, bref: {active_sequence == WeatherRadar.__sr_bref_frames}, bvel: {active_sequence == WeatherRadar.__sr_bvel_frames}") 
+        # logger.info(f"fr: {self.frame}, i: {index}, bref: {active_sequence == WeatherRadar.__sr_bref_frames}, bvel: {active_sequence == WeatherRadar.__sr_bvel_frames}")
+        d_str = active_sequence[index][1].split("_")[4]
+        t_str = active_sequence[index][1].split("_")[5]
+        t = datetime(int(d_str[0:4]), int(d_str[4:6]), int(d_str[6:8]), hour=int(t_str[0:2]), minute=int(t_str[2:4]), second=int(t_str[4:6]), tzinfo=UTC)
+        self.__bottom_text = str(t.astimezone().time().strftime("%I:%M %p")).center(16)
         graphics.draw_image(canvas, 0, 0, numpy.array(active_sequence[index][0]))
         self.frame += 1
         return radar_frame > WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames) + WeatherRadar.__replays * len(WeatherRadar.__sr_bvel_frames)
     
     def get_lcd_text(self):
         content = "Reflectivity" if self.frame // 5 < WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames) else "Velocity"
-        return content.center(16) + " "*16
+        return content.center(16) + self.__bottom_text
