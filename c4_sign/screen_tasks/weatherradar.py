@@ -1,15 +1,21 @@
 from c4_sign.base_task import ScreenTask
+from c4_sign.lib import graphics
 import c4_sign.lib.assets
 
-import xml
 import requests
 import gzip
+import threading
+import numpy
+
+from time import sleep
 
 from typing import List, Tuple
+from queue import SimpleQueue
 from bs4 import BeautifulSoup
 from pathlib import Path
 from io import BytesIO
 from PIL import Image
+from loguru import logger
 
 class WeatherRadar(ScreenTask):
     ignore = False
@@ -33,9 +39,52 @@ class WeatherRadar(ScreenTask):
     __32_miles_to_degrees_longitude = 32 * 5280 / __degrees_of_longitude_to_feet
 
     __frames_to_request = 25 # Show 5 frames per second for five seconds. Roughly 100 to 250 minutes of coverage.
+
+    __downloader_thread = None
+    __lock = threading.Lock()
+    __message_queue = SimpleQueue()
+    __ready_to_run = False
+
+    __sr_bref_frames: List[Tuple[Image.Image, str]]
+    __sr_bvel_frames: List[Tuple[Image.Image, str]]
+
+    __replays = 3 # The number of times to replay the radar sequence
     
     def __init__(self):
+        logger.info("Starting RadarDownloader thread.")
+        WeatherRadar.__downloader_thread = threading.Thread(target=WeatherRadar.__refresh_radar_images_thread, name="RadarImageDownloader", daemon=True, args=[WeatherRadar.__message_queue])
+        WeatherRadar.__downloader_thread.start()
+
+        self.frame = 0
         super().__init__()
+
+    def __refresh_radar_images_thread(queue: SimpleQueue):
+        logger.info("RadarDownloader thread started.")
+        while True:
+            try:
+                WeatherRadar.__sr_bref_dir.mkdir(parents=True, exist_ok=True)
+                WeatherRadar.__sr_bvel_dir.mkdir(parents=True, exist_ok=True)
+                logger.info("RadarDownloader: Acquiring Bounding boxes.")
+                bounding_box = WeatherRadar.__get_bounding_boxes()
+                logger.success("RadarDownloader: Bounding boxes acquired.")
+                WeatherRadar.__lock.acquire()
+                logger.info("RadarDownloader: Acquiring SR_BREF images.")
+                WeatherRadar.__check_and_download_radar_images(WeatherRadar.__sr_bref_url, WeatherRadar.__sr_bref_dir, bounding_box)
+                logger.success("RadarDownloader: Acquired SR_BREF images.")
+                logger.info("RadarDownloader: Acquiring SR_BVEL images.")
+                WeatherRadar.__check_and_download_radar_images(WeatherRadar.__sr_bvel_url, WeatherRadar.__sr_bvel_dir, bounding_box)
+                logger.success("RadarDownloader: Acquired SR_BVEL images.")
+                WeatherRadar.__lock.release()
+
+                # At least one set of images has been downloaded! The images can now be displayed!
+                queue.put("ready")
+            except Exception as e:
+                logger.error(f"RadarDownloader: failed to download radar images.\n{str(e)}")
+                WeatherRadar.__lock.release()
+                queue.put("not ready")
+
+            sleep(2 * 60) # Sleep for 2 minutes
+
 
     def __get_bounding_boxes() -> Tuple[float, float, float, float]:
         # left, top, right, bottom
@@ -72,7 +121,7 @@ class WeatherRadar(ScreenTask):
         existing_files = [f for f in dir.iterdir() if f.is_file()]
         for file in existing_files:
             if file.name not in [l[1] for l in links]:
-                print(f"Going to delete: {file}")
+                logger.debug(f"Going to delete: {file}")
                 file.unlink(missing_ok=True)
         
         mv_bounding_box = (
@@ -89,26 +138,48 @@ class WeatherRadar(ScreenTask):
         img_top = int(dim * (bounding_box[1]-mv_bounding_box[1])/(bounding_box[1]-bounding_box[3]))
 
         for image in need_to_download:
-            print(f"Fetching {url + image[0]}")
+            logger.debug(f"Fetching {url + image[0]}")
             compressed = requests.get(url + image[0], headers=WeatherRadar.__user_agent).content
             # print(compressed[:200])
             with Image.open(BytesIO(gzip.decompress(compressed))) as tiff_image:
                 tiff_image.crop((img_left, img_top, img_left+img_width, img_top + img_height)).resize((32, 32), Image.Resampling.HAMMING).save(str(dir / image[1]))
 
-
-
-
-
     def prepare(self):
-        # Repeat and do the same for SR_BVEL
+        while not WeatherRadar.__message_queue.empty():
+            if WeatherRadar.__message_queue.get_nowait() == "ready":
+                WeatherRadar.__ready_to_run = True
+            else:
+                WeatherRadar.__ready_to_run = False
+        
+        locked = WeatherRadar.__lock.acquire(blocking=False)
+        if not WeatherRadar.__ready_to_run:
+            logger.info("Radar images not ready, skipping.")
+            return False
+        if not locked:
+            logger.info("Failed to obtain radar image lock, skipping.")
+            return False
+        
+        self.frame = 0
 
-        # Only run task if there are radar images that are not all transparent
-
-        WeatherRadar.__sr_bref_dir.mkdir(parents=True, exist_ok=True)
-        WeatherRadar.__sr_bvel_dir.mkdir(parents=True, exist_ok=True)
-        bounding_box = WeatherRadar.__get_bounding_boxes()
-        WeatherRadar.__check_and_download_radar_images(WeatherRadar.__sr_bref_url, WeatherRadar.__sr_bref_dir, bounding_box)
-        WeatherRadar.__check_and_download_radar_images(WeatherRadar.__sr_bvel_url, WeatherRadar.__sr_bvel_dir, bounding_box)
+        WeatherRadar.__sr_bref_frames = sorted([(Image.open(path), str(path)) for path in WeatherRadar.__sr_bref_dir.iterdir() if path.is_file()], key=lambda x: x[1])
+        WeatherRadar.__sr_bvel_frames = sorted([(Image.open(path), str(path)) for path in WeatherRadar.__sr_bvel_dir.iterdir() if path.is_file()], key=lambda x: x[1])
+        return WeatherRadar.__ready_to_run and locked and super().prepare()
+    
+    def teardown(self, forced=False):
+        WeatherRadar.__sr_bref_frames = None
+        WeatherRadar.__sr_bvel_frames = None
+        WeatherRadar.__lock.release()
+        return super().teardown(forced)
 
     def draw_frame(self, canvas, delta_time):
-        pass
+        radar_frame = self.frame // 5
+        active_sequence = WeatherRadar.__sr_bref_frames if radar_frame < WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames) else WeatherRadar.__sr_bvel_frames
+        index = radar_frame % len(WeatherRadar.__sr_bref_frames) if radar_frame < WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames) else (radar_frame - WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames)) % len(WeatherRadar.__sr_bvel_frames)
+        # logger.info(f"fr: {self.frame}, i: {index}, bref: {active_sequence == WeatherRadar.__sr_bref_frames}, bvel: {active_sequence == WeatherRadar.__sr_bvel_frames}") 
+        graphics.draw_image(canvas, 0, 0, numpy.array(active_sequence[index][0]))
+        self.frame += 1
+        return radar_frame > WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames) + WeatherRadar.__replays * len(WeatherRadar.__sr_bvel_frames)
+    
+    def get_lcd_text(self):
+        content = "Reflectivity" if self.frame // 5 < WeatherRadar.__replays * len(WeatherRadar.__sr_bref_frames) else "Velocity"
+        return content.center(16) + " "*16
