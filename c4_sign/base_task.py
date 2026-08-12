@@ -224,10 +224,32 @@ class ScreenTask:
         # "By: Artist"
         # but since this is a 16x2 screen, we have to truncate (if needed)
         # and pad with spaces!
-        title = self.title.center(16)
-        artist = "By: " + self.artist
-        artist = artist.center(16)
-        return title + artist
+
+        # Let's make the name and author scrollable if they are too long.
+        line1 = ""
+        line2 = ""
+
+        offset = int(self.elapsed_time.total_seconds() / 0.5) # Scroll at two characters per second)
+
+        if len(self.title) <= 16:
+            line1 = self.title.center(16)
+        else:
+            t = self.title + " " * 16
+            o = offset % len(t)
+            line1 = t[o : min(len(t), o + 16)]
+            characters_left = 16-len(line1)
+            line1 += t[:min(characters_left, len(t))]
+
+        if len(self.artist) <= 16-4:
+            line2 = ("By: " + self.artist[0:min(len(self.artist), 16-4)]).center(16)
+        else:
+            a = self.artist + " " * (16-4)
+            o = offset % len(a)
+            n = a[o : min(len(a), o + 16-4)]
+            characters_left = 16-4-len(n)
+            n += a[:min(characters_left, len(a))]
+            line2 = "By: " + n
+        return line1 + line2
 
 
 class OptimScreenTask(ScreenTask):
