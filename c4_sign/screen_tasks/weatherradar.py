@@ -6,6 +6,7 @@ import requests
 import gzip
 import threading
 import numpy
+import colorsys
 
 from time import sleep
 
@@ -69,10 +70,10 @@ class WeatherRadar(ScreenTask):
                 logger.success("RadarDownloader: Bounding boxes acquired.")
                 WeatherRadar.__lock.acquire()
                 logger.info("RadarDownloader: Acquiring SR_BREF images.")
-                WeatherRadar.__check_and_download_radar_images(WeatherRadar.__sr_bref_url, WeatherRadar.__sr_bref_dir, bounding_box)
+                WeatherRadar.__check_and_download_radar_images(WeatherRadar.__sr_bref_url, WeatherRadar.__sr_bref_dir, True, bounding_box)
                 logger.success("RadarDownloader: Acquired SR_BREF images.")
                 logger.info("RadarDownloader: Acquiring SR_BVEL images.")
-                WeatherRadar.__check_and_download_radar_images(WeatherRadar.__sr_bvel_url, WeatherRadar.__sr_bvel_dir, bounding_box)
+                WeatherRadar.__check_and_download_radar_images(WeatherRadar.__sr_bvel_url, WeatherRadar.__sr_bvel_dir, False, bounding_box)
                 logger.success("RadarDownloader: Acquired SR_BVEL images.")
                 WeatherRadar.__lock.release()
 
@@ -96,8 +97,25 @@ class WeatherRadar(ScreenTask):
         south = float(bounding_box.find("southBoundLatitude").text)
         north = float(bounding_box.find("northBoundLatitude").text)
         return (west, north, east, south)
+    
+    def __filter_gray_pixels(r, g, b, a):
+        # SR_BREF images tend to have lots of low-reflectivity clutter near the radar.
+        # Unfortunately, Mount Vernon is pretty close to the Davenport radar, so there is a lot of gray pixels over the image.
+        # This filter removes pixels that are mostly grey (low saturation)
+        # However, areas of high reflectivity circle from red to white to pink, which means that particularly strong storms
+        # have white pixels that would be removed by a simple saturation filter. These pixels are closer to white, so we will
+        # just filter out grey ones by selecting pixels that have both low saturation and lower value than the white pixels.
+        # I haven't really tested this extensively, but it seems to work okay on the images I have tested it on.
+        # Only reflectivity images should be filtered, I think velocity images should not be filtered.
+        saturation_threshold = 0.5
+        value_threshold = .8
+        hsv = colorsys.rgb_to_hsv(r/255.0, g/255.0, b/255.0)
+        if hsv[1] < saturation_threshold and hsv[2] < value_threshold:
+            return r, g, b, 0
+        else:
+            return r, g, b, a
 
-    def __check_and_download_radar_images(url: str, dir: Path, bounding_box: Tuple[float, float, float, float]) -> List[str]:
+    def __check_and_download_radar_images(url: str, dir: Path, filter: bool, bounding_box: Tuple[float, float, float, float]) -> List[str]:
         # Download new radar images.
         # Fetch from URL like https://mrms.ncep.noaa.gov/RIDGEII/L3/KDVN/SR_BREF/
         # Parse file and download neccessary images
@@ -137,12 +155,25 @@ class WeatherRadar(ScreenTask):
         img_left = int(dim * (mv_bounding_box[0]-bounding_box[0])/(bounding_box[2]-bounding_box[0]))
         img_top = int(dim * (bounding_box[1]-mv_bounding_box[1])/(bounding_box[1]-bounding_box[3]))
 
+        vectorized_filter = numpy.vectorize(WeatherRadar.__filter_gray_pixels, otypes=[numpy.uint8, numpy.uint8, numpy.uint8, numpy.uint8])
+
         for image in need_to_download:
             logger.debug(f"Fetching {url + image[0]}")
             compressed = requests.get(url + image[0], headers=WeatherRadar.__user_agent).content
             # print(compressed[:200])
             with Image.open(BytesIO(gzip.decompress(compressed))) as tiff_image:
-                tiff_image.crop((img_left, img_top, img_left+img_width, img_top + img_height)).resize((32, 32), Image.Resampling.HAMMING).save(str(dir / image[1]))
+                resized_image = tiff_image.crop((img_left, img_top, img_left+img_width, img_top + img_height)).resize((32, 32), Image.Resampling.HAMMING)
+                if filter:
+                    array = numpy.array(resized_image)
+                    red_channel, green_channel, blue_channel, alpha_channel = (
+                        array[:, :, 0],
+                        array[:, :, 1],
+                        array[:, :, 2],
+                        array[:, :, 3],
+                    )
+                    new_red, new_green, new_blue, new_alpha = vectorized_filter(red_channel, green_channel, blue_channel, alpha_channel)
+                    resized_image = Image.fromarray(numpy.stack([new_red, new_green, new_blue, new_alpha], axis=-1), "RGBA")
+                resized_image.save(str(dir / image[1]))
 
     def prepare(self):
         while not WeatherRadar.__message_queue.empty():
@@ -150,11 +181,12 @@ class WeatherRadar(ScreenTask):
                 WeatherRadar.__ready_to_run = True
             else:
                 WeatherRadar.__ready_to_run = False
-        
-        locked = WeatherRadar.__lock.acquire(blocking=False)
+
         if not WeatherRadar.__ready_to_run:
             logger.info("Radar images not ready, skipping.")
             return False
+        
+        locked = WeatherRadar.__lock.acquire(blocking=False)
         if not locked:
             logger.info("Failed to obtain radar image lock, skipping.")
             return False
