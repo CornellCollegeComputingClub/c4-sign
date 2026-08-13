@@ -100,4 +100,5 @@ def update_screen():
             _screen_manager.current_task.max_run_time.total_seconds() if _screen_manager.current_task else None
         ),
     )
+    _screen.force_next_task(_screen_manager)
     _screen.debug_override(_screen_manager)

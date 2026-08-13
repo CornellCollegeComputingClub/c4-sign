@@ -111,8 +111,20 @@ class ScreenManager:
         if self.current_task:
             self.current_task.teardown(True)
         self.current_task = task
-        self.current_task.prepare()
+        ready = self.current_task.prepare()
+        if not ready:
+            logger.warning("{} indicated that it is not ready to run, but is the target of a task override.\nThe task may not display correctly or may cause errors.", task.canonical_name)
         self.index = -1
+    
+    def next_task(self):
+        if self.current_task:
+            self.current_task.teardown(True)
+        self.index += 1
+        self.index %= len(self.tasks)
+        self.current_task = self.tasks[self.index]
+        if not self.current_task.prepare():
+            logger.info(f"Attempted to start {self.current_task.canonical_name} but it indicated it was not ready. Skipping...")
+            self.next_task()
 
     def draw(self, canvas: Canvas, delta_time: timedelta):
         if not self.current_task:

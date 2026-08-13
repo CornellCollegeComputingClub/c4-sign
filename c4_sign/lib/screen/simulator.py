@@ -43,3 +43,16 @@ class SimulatorScreen(ScreenBase):
         if data["type"] == "override":
             logger.debug("Recieved request to override current task with {}", data["task"])
             screen_manager.override_current_task(data["task"])
+        else:
+            self._from_web.put(data)
+    
+    def force_next_task(self, screen_manager):
+        if self._from_web.empty():
+            return
+        data = self._from_web.get()
+        if data["type"] == "next":
+            logger.debug("Received request to skip to next task.")
+            screen_manager.next_task()
+        else:
+            self._from_web.put(data)
+            # I think putting the data back is probably not the best idea, but it is the easiest workaround.

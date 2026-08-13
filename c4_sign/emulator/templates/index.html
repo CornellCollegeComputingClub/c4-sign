@@ -75,6 +75,7 @@
     <select id="task">
     </select>
     <button id="override_btn">Override!</button>
+    <button id="next_btn">Next Task!</button>
     <br>
     <input type="checkbox" id="screen_grid">
     <label for="screen_grid">Show Grid</label>
@@ -104,6 +105,12 @@
             socket.emit('update', {
                 type: 'override',
                 task: task_select.value
+            });
+        });
+
+        document.getElementById("next_btn").addEventListener("click", function () {
+            socket.emit('update', {
+                type: 'next',
             });
         });
 
