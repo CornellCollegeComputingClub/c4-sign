@@ -100,3 +100,6 @@ class MatrixScreen(ScreenBase):
         self.__lcd.lcd_display_string(text[:16], 1)
         self.__lcd.lcd_display_string(text[16:], 2)
         self.__cached_text = text
+
+    def force_next_task(self, screen_manager):
+        pass
