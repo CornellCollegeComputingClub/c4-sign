@@ -46,6 +46,7 @@ class WeatherRadar(ScreenTask):
     __lock = threading.Lock()
     __message_queue = SimpleQueue()
     __ready_to_run = False
+    __task_lock_acquired = False # Necessary to make sure teardown only releases the lock if the task itself has the lock.
 
     __sr_bref_frames: List[Tuple[Image.Image, str]]
     __sr_bvel_frames: List[Tuple[Image.Image, str]]
@@ -200,6 +201,8 @@ class WeatherRadar(ScreenTask):
         if not locked:
             logger.info("Failed to obtain radar image lock, skipping.")
             return False
+        else:
+            WeatherRadar.__task_lock_acquired = True
         
         self.frame = 0
 
@@ -223,7 +226,8 @@ class WeatherRadar(ScreenTask):
     def teardown(self, forced=False):
         WeatherRadar.__sr_bref_frames = None
         WeatherRadar.__sr_bvel_frames = None
-        WeatherRadar.__lock.release()
+        if WeatherRadar.__task_lock_acquired:
+            WeatherRadar.__lock.release()
         return super().teardown(forced)
 
     def draw_frame(self, canvas, delta_time):
