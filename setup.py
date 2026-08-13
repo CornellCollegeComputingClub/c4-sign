@@ -26,7 +26,7 @@ setup(
         "py4j",
     ],
     extras_require={
-        "physical": ["rpi_ws281x", "smbus"],
+        "physical": ["rpi_ws281x", "smbus", "gpiozero"],
         "simulator": ["flask", "flask-socketio"],
         "misc": ["black", "autoflake", "isort", "pyinstrument"],
     },
