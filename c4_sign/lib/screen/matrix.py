@@ -9,15 +9,25 @@ from c4_sign.lib.canvas import Canvas
 from c4_sign.lib.screen.base import ScreenBase
 from c4_sign.lib.screen.physical.driver import lcd
 from rpi_ws281x import PixelStrip, Color
-
+from gpiozero import Button
+from subprocess import check_call
 
 class MatrixScreen(ScreenBase):
+
+    __next_flag = False
+
     def __init__(self):
         logger.info("Initializing Matrix Screen (Physical)")
         self.__brightness = 0.05
         self.__pixels = PixelStrip(1024, 18, 800000, 10, False, 255, 0)
         # 1024 pixels on pin 18, 800000 hz frequency on DMA channel 10, noninverting, brightness adjusted, on channel 0
         self.__pixels.begin()
+
+        # Button(pin, pull_up, active_state, bounce_time, hold_time, hold_repeat, pin_factory)
+        self.__next_button = Button(12, pull_up=None, active_state=True, bounce_time=0.050, hold_time=15)
+        MatrixScreen.__next_flag = False # A flag that the button will set to true and be unset whenever it is handled.
+        self.__next_button.when_pressed = MatrixScreen.__handle_next_button_press
+        self.__next_button.when_held = MatrixScreen.__handle_shutdown_press
 
         self.__lcd = lcd()
         self.__cached_text = " " * 32
@@ -101,5 +111,16 @@ class MatrixScreen(ScreenBase):
         self.__lcd.lcd_display_string(text[16:], 2)
         self.__cached_text = text
 
+    def __handle_next_button_press():
+        MatrixScreen.__next_flag = True
+        logger.debug("Next button pressed.")
+
+    def __handle_shutdown_press():
+        logger.info("Shutdown button pressed! Shutting down...")
+        check_call(["sudo", "poweroff"])
+
     def force_next_task(self, screen_manager):
-        pass
+        if MatrixScreen.__next_flag:
+            MatrixScreen.__next_flag = False
+            logger.debug("Received request to skip to next task.")
+            screen_manager.next_task()
