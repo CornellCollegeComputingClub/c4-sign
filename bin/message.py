@@ -114,6 +114,6 @@ for i in range(1024):
 pixels.show()
 
 lcd_screen.lcd_clear()
-lcd_screen.lcd_display_string(args.textline1, 1)
-lcd_screen.lcd_display_string(args.textline2, 2)
+lcd_screen.lcd_display_string(args.textline1.center(16), 1)
+lcd_screen.lcd_display_string(args.textline2.center(16), 2)
 
