@@ -35,7 +35,7 @@ def draw_centered_text(array, text, font, color, y):
         for y2, row in enumerate(text_map):
             for x2, value in enumerate(row):
                 if value == 1:
-                    array[x+x2][y+y2+font_y_offset] = color
+                    array[y+y2+font_y_offset][x+x2] = color
 
 parser = argparse.ArgumentParser(prog="Message", description="Display a message on the screen and LCD")
 parser.add_argument("textline1")
@@ -113,6 +113,7 @@ for i in range(1024):
 
 pixels.show()
 
-lcd.lcd_display_string(args.textline1, 1)
-lcd.lcd_display_string(args.textline2, 2)
+lcd_screen.lcd_clear()
+lcd_screen.lcd_display_string(args.textline1, 1)
+lcd_screen.lcd_display_string(args.textline2, 2)
 
