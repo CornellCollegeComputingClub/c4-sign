@@ -1,7 +1,7 @@
 from rpi_ws281x import PixelStrip, Color
 import numpy
 import argparse
-from c4_sign.lib.screen.physical import lcd
+from c4_sign.lib.screen.physical.driver import lcd
 from c4_sign.lib.graphics import __actual_char_width
 from c4_sign.consts import FONT_4x6
 
@@ -36,7 +36,6 @@ def draw_centered_text(array, text, font, color, y):
             for x2, value in enumerate(row):
                 if value == 1:
                     array[x+x2][y+y2+font_y_offset] = color
-                    canvas.set_pixel(x + x2, y + y2 + font_y_offset, color)
 
 parser = argparse.ArgumentParser(prog="Message", description="Display a message on the screen and LCD")
 parser.add_argument("textline1")
@@ -44,7 +43,9 @@ parser.add_argument("textline2")
 parser.add_argument("-c", "--color")
 
 lcd_screen = lcd()
+print("LCD Created")
 pixels = PixelStrip(1024, 18, 800000, 10, False, 255, 0)
+print("PixelStrip Created")
 
 quadrant_one = []
 
@@ -78,16 +79,26 @@ top_left.extend(bot_left)
 
 address_table = numpy.argsort(numpy.array(top_left).reshape(1024))
 
+print("Address table created")
+
 canvas = numpy.zeros((32, 32, 3), dtype=numpy.uint8)
 
+print("Canvas created")
+
 args = parser.parse_args()
+
+print("Args parsed")
 
 color = [255, 255, 255]
 if args.color is not None:
     color = [int(args.color[1:3], 16), int(args.color[3:5], 16), int(args.color[5:7], 16)]
 
+print("Color chosen")
+
 draw_centered_text(canvas, args.textline1, FONT_4x6, color, 15)
 draw_centered_text(canvas, args.textline2, FONT_4x6, color, 16 + 7)
+
+print("Text drawn")
 
 gamma = 2.8 # Who knows if this'll look nice at all
 m_in = 255
@@ -100,11 +111,18 @@ a *= m_out
 a += 0.5
 a = a.astype(numpy.uint8)
 
+print("Gamma corrected")
+
 f = lambda c: Color(int(c[0]), int(c[1]), int(c[2]))
 colors = list(map(f, a.reshape((1024, 3))[address_table]))
 for i in range(1024):
     pixels[i] = colors[i]
+
+print("Pixels set")
 pixels.show()
+print("Pixels shown")
 
 lcd.display_string(args.textline1, 1)
 lcd.display_string(args.textline2, 2)
+
+print("LCD Displayed")
