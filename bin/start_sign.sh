@@ -5,6 +5,13 @@ set -o errexit
 
 cd /home/c4/c4-sign
 
+sudo /home/c4/c4-sign/venv/bin/python3 /home/c4/c4-sign/bin/message.py "NETWORK" "TARGET"
+
+while [["$(systemctl is-active network.target)" != 'active']] do
+    echo 'Waiting for network.'
+    sleep 0.2
+done
+
 sudo /home/c4/c4-sign/venv/bin/python3 /home/c4/c4-sign/bin/message.py "INTERNET" "CHECK"
 
 # do we have internet?
