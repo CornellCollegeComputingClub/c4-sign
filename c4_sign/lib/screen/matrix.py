@@ -11,6 +11,15 @@ from c4_sign.lib.screen.physical.driver import lcd
 from rpi_ws281x import PixelStrip, Color
 from gpiozero import Button
 from subprocess import check_call
+from multiprocessing import Process, Queue
+import queue
+
+def lcd_update_process(display: lcd, message_queue: Queue):
+    display.lcd_clear()
+    while True:
+        message = message_queue.get()
+        display.lcd_display_string(message[:16], 1)
+        display.lcd_display_string(message[16:], 2)
 
 class MatrixScreen(ScreenBase):
 
@@ -30,6 +39,9 @@ class MatrixScreen(ScreenBase):
         self.__next_button.when_held = MatrixScreen.__handle_shutdown_press
 
         self.__lcd = lcd()
+        self.__lcd_text_queue = Queue()
+        self.__lcd_process = Process(target=lcd_update_process, args=(self.__lcd, self.__lcd_text_queue,))
+        self.__lcd_process.start()
         self.__cached_text = " " * 32
 
         # Generating address table...
@@ -106,9 +118,13 @@ class MatrixScreen(ScreenBase):
         if text == self.__cached_text:
             return
         logger.debug("Updating LCD with text: {}", text)
+        if len(text) != 32:
+            logger.error("Text is not 32 characters! {}", text)
         # self.__lcd.lcd_clear()
-        self.__lcd.lcd_display_string(text[:16], 1)
-        self.__lcd.lcd_display_string(text[16:], 2)
+        try:
+            self.__lcd_text_queue.put(text, block=False)
+        except queue.Full:
+            logger.error("Attempted to enqueue LCD text, but the queue was full!")
         self.__cached_text = text
 
     def __handle_next_button_press():
