@@ -1,0 +1,116 @@
+package com.cornellcollegecomputingclub.java_c4sign;
+
+import com.cornellcollegecomputingclub.java_c4sign.Constants;
+import com.cornellcollegecomputingclub.java_c4sign.TaskResult;
+
+import java.lang.Math;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.awt.Graphics2D;
+
+import org.apache.commons.lang3.StringUtils;
+
+public abstract class JavaTaskBase {
+    private String canonicalName;
+    private String title;
+    private String artist;
+    private String description;
+    private BufferedImage canvas;
+    private WritableRaster raster;
+    private Graphics2D graphics;
+    public static boolean ignore = false;
+
+    public JavaTaskBase() {
+        /**
+         * When you write your constructor, make sure to set a title and an artist with the setTitle and setArtist methods!
+         */
+        this.canonicalName = "JavaTaskBase";
+        this.title = "Unknown";
+        this.artist = "Unknown";
+        this.description = "Base Java Task that all Java tasks should inherit from.";
+    }
+
+    public void setCanonicalName(String newCanonicalName) {
+        this.canonicalName = newCanonicalName;
+    }
+
+    public String getCanonicalName() {
+        return this.canonicalName;
+    }
+
+    public void setTitle(String newTitle) {
+        this.title = newTitle;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setArtist(String newArtist) {
+        this.artist = newArtist;
+    }
+
+    public String getArtist() {
+        return this.artist;
+    }
+
+    public void setDescription(String newDescription) {
+        this.description = newDescription;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public boolean prepare() {
+        /**
+         * This method is called when the task is first run.
+         * If this method returns false, the task will be skipped.
+         * If this method returns true, the task will be run.
+         */
+        this.canvas = new BufferedImage(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
+        this.raster = this.canvas.getRaster();
+        this.graphics = this.canvas.createGraphics();
+        return true;
+    }
+
+
+    public void teardown(boolean forced) {
+        /**
+        * Teardown: This method is called when the task stops running.
+        * If the task was stopped forcefully, the forced parameter will be true.
+        * If your task instantiates any Object (aka, any type that is not one of the Java Primitive Types),
+        * make sure to delete it by setting it to null in your teardown method.
+        * Also, make sure to call super.teardown();
+        */
+        this.canvas = null;
+        this.raster = null;
+        this.graphics.dispose();
+
+        System.gc();
+    }
+
+    public abstract boolean drawFrame(BufferedImage canvas, Graphics2D graphics, WritableRaster raster, double timeDelta);
+
+    public TaskResult draw(double timeDelta) {
+        this.graphics.clearRect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        boolean finished = this.drawFrame(this.canvas, this.graphics, this.raster, timeDelta);
+
+        //We're all synchronous here, right? 
+        return new TaskResult(this.raster, finished);
+    }
+
+    public BufferedImage retrieveCanvas() {
+        return this.canvas;
+    }
+
+    public String getLcdText() {
+        String line1 = StringUtils.center(this.title, Constants.LCD_WIDTH).substring(0, Constants.LCD_WIDTH);
+        String line2 = StringUtils.center("By: ".concat(this.artist.substring(0, Math.min(Constants.LCD_WIDTH - 4, this.artist.length()))), Constants.LCD_WIDTH);
+        return line1.concat(line2);
+    }
+
+    public String toString() {
+        return this.title.concat(" by ").concat(this.artist);
+    }
+}

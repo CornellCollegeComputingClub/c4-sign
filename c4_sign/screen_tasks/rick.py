@@ -11,8 +11,10 @@ from c4_sign.lib.assets import file_from_google_drive, video_to_images
 
 
 class RickRoll(ScreenTask):
+    canonical_name = "RickRoll"
     title = "Rick Roll"
     artist = "Luna"
+    description = "[https://en.wikipedia.org/wiki/Never_Gonna_Give_You_Up](https://www.youtube.com/watch?v=dQw4w9WgXcQ) ;)"
 
     def __init__(self):
         super().__init__(timedelta(seconds=1), timedelta(hours=1))  # :)

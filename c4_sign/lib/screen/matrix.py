@@ -1,5 +1,6 @@
-import threading
+from time import sleep, perf_counter_ns
 
+import arrow
 from loguru import logger
 
 import numpy
@@ -7,14 +8,40 @@ import numpy
 from c4_sign.lib.canvas import Canvas
 from c4_sign.lib.screen.base import ScreenBase
 from c4_sign.lib.screen.physical.driver import lcd
-from c4_sign.lib.screen.physical.neopixel import NeoPixel
+from rpi_ws281x import PixelStrip, Color
+from gpiozero import Button
+from subprocess import check_call
+from multiprocessing import Process, Queue
+import queue
 
+def lcd_update_process(display: lcd, message_queue: Queue):
+    display.lcd_clear()
+    while True:
+        message = message_queue.get()
+        display.lcd_display_string(message[:16], 1)
+        display.lcd_display_string(message[16:], 2)
 
 class MatrixScreen(ScreenBase):
+
+    __next_flag = False
+
     def __init__(self):
         logger.info("Initializing Matrix Screen (Physical)")
-        self.__pixels = NeoPixel(18, 32 * 32, brightness=0.05, auto_write=False)
+        self.__brightness = 0.05
+        self.__pixels = PixelStrip(1024, 18, 800000, 10, False, 255, 0)
+        # 1024 pixels on pin 18, 800000 hz frequency on DMA channel 10, noninverting, brightness adjusted, on channel 0
+        self.__pixels.begin()
+
+        # Button(pin, pull_up, active_state, bounce_time, hold_time, hold_repeat, pin_factory)
+        self.__next_button = Button(12, pull_up=None, active_state=True, bounce_time=0.050, hold_time=15)
+        MatrixScreen.__next_flag = False # A flag that the button will set to true and be unset whenever it is handled.
+        self.__next_button.when_pressed = MatrixScreen.__handle_next_button_press
+        self.__next_button.when_held = MatrixScreen.__handle_shutdown_press
+
         self.__lcd = lcd()
+        self.__lcd_text_queue = Queue()
+        self.__lcd_process = Process(target=lcd_update_process, args=(self.__lcd, self.__lcd_text_queue,))
+        self.__lcd_process.start()
         self.__cached_text = " " * 32
 
         # Generating address table...
@@ -55,32 +82,61 @@ class MatrixScreen(ScreenBase):
 
         self.__draw_thread = None
 
+        self._last_update = perf_counter_ns()
+
         # Finished table generation, now load screen...
         self.loading_screen()
 
     def update_display(self, canvas: Canvas):
-        logger.trace("Updating display...")
-        # for i in range(32*32):
-        #     self.__pixels[i] = canvas[i]
-        self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
-        if self.__draw_thread is not None:
-            logger.trace("Joining old draw thread...")
-            self.__draw_thread.join()
-        logger.trace("Starting new draw thread...")
-        self.__draw_thread = threading.Thread(target=self.__pixels.show)
-        self.__draw_thread.start()
-        # self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
-        # self.__pixels.show()
+        # Apply gamma correction
+        gamma = 2.8 # Who knows if this'll look nice at all
+        m_in = 255
+        m_out = int(self.__brightness * 255)
 
-    def update_display_thread(self, canvas):
-        # self.__pixels[:] = canvas.data.reshape((1024, 3))[self.__address_table]
+        a = canvas.data.astype(numpy.float32)
+        a /= m_in
+        a **= gamma
+        a *= m_out
+        a += 0.5
+        a = a.astype(numpy.uint8)
+
+        f = lambda c: Color(int(c[0]), int(c[1]), int(c[2]))
+        colors = list(map(f, a.reshape((1024, 3))[self.__address_table]))
+        for i in range(1024):
+            self.__pixels[i] = colors[i]
         self.__pixels.show()
+
+        now = perf_counter_ns()
+        delay = (1/24)*1000000000 - (now - self._last_update)
+        end = now + delay
+        sleep(max(0, (delay/1000000000)-0.001))
+        while now < end:
+            now = perf_counter_ns()
+        self._last_update = perf_counter_ns()
 
     def update_lcd(self, text):
         if text == self.__cached_text:
             return
         logger.debug("Updating LCD with text: {}", text)
-        self.__lcd.lcd_clear()
-        self.__lcd.lcd_display_string(text[:16], 1)
-        self.__lcd.lcd_display_string(text[16:], 2)
+        if len(text) != 32:
+            logger.error("Text is not 32 characters! {}", text)
+        # self.__lcd.lcd_clear()
+        try:
+            self.__lcd_text_queue.put(text, block=False)
+        except queue.Full:
+            logger.error("Attempted to enqueue LCD text, but the queue was full!")
         self.__cached_text = text
+
+    def __handle_next_button_press():
+        MatrixScreen.__next_flag = True
+        logger.debug("Next button pressed.")
+
+    def __handle_shutdown_press():
+        logger.info("Shutdown button pressed! Shutting down...")
+        check_call(["sudo", "poweroff"])
+
+    def force_next_task(self, screen_manager):
+        if MatrixScreen.__next_flag:
+            MatrixScreen.__next_flag = False
+            logger.debug("Received request to skip to next task.")
+            screen_manager.next_task()

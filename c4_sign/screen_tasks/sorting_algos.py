@@ -159,8 +159,10 @@ COLORS = [
 
 
 class SortingAlgorithms(ScreenTask):
+    canonical_name = "SortingAlgorithms"
     title = "Sorting Algorithms"
     artist = "Luna"
+    description = "A visualization of different sorting algorithms. A row of rainbow bars is sorted by color and height with insertion sort, merge sort, quick sort, or heap sort."
 
     def __init__(self):
         super().__init__(timedelta(seconds=5))

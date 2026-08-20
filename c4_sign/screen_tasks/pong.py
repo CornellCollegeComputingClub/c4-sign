@@ -9,8 +9,14 @@ from c4_sign.lib.graphics import draw_text, fill_rect
 
 
 class Pong(ScreenTask):
+    canonical_name = "Pong"
     title = "Pong"
     artist = "Mac Coleman"
+    description = "Simulates a game of [pong](https://en.wikipedia.org/wiki/Pong)" \
+    " between two players. The players (paddles) have only a basic algorithm " \
+    "controlling them. They move at a constant speed to block the ball, and if " \
+    "the ball is moving toward them they move faster. There is a score counter at" \
+    " the top, and a rainbow trail follows the ball and paddle."
 
     def prepare(self):
         self.frame = 0

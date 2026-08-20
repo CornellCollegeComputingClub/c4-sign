@@ -3,8 +3,10 @@ from c4_sign.lib import graphics
 
 
 class Demo(ScreenTask):
+    canonical_name = "DemoTask"
     title = "Demo"
     artist = "Mac Coleman"
+    description = "A basic task that flashes the screen blue and red. Not very nice-looking."
     ignore = True
 
     def prepare(self):

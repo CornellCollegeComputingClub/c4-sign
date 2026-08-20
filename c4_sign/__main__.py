@@ -23,31 +23,33 @@ def run_gif():
         def track(iter, description=""):
             yield from iter
 
-    screen_manager = ScreenManager()
+    screen_manager = ScreenManager(False, True)
     screen_manager.update_tasks()
     delta_t = timedelta(seconds=1 / 24)
     canvas = Canvas()
-    tasks = screen_manager.current_tasks
-    font = ImageFont.truetype("Courier", 16)
+    tasks = sorted(screen_manager.current_tasks, key=lambda t: t.canonical_name)
+    font = ImageFont.load_default(16.0)
     with open("docs/screen_tasks.md", "w") as f:
         f.write("# Screen Tasks\n\n")
-        for task in sorted(tasks, key=lambda x: x.__class__.__name__):
-            f.write(f"## {task.__class__.__name__}\n")
+        f.write("This page is a list of all the animations that the sign is currently configured to display!\n\n")
+        f.write("Use this page as inspiration or to see what is possible with the sign.\n\n")
+        f.write("If you want more ideas, check the Wishlist at the bottom of the [README](../README.md#wishlist).\n\n")
+        for task in tasks:
+            f.write(f"## {task.canonical_name}\n")
             f.write(f"**Title**: {task.title}\n\n")
             f.write(f"**Artist**: {task.artist}\n\n")
-            if task.__doc__:
-                f.write(f"Description:\n```python\n{task.__doc__}\n```\n")
-            f.write(f"![{task.__class__.__name__}](images/screen_tasks/{task.__class__.__name__}.webp)\n")
+            f.write(f"{task.description}\n\n")
+            f.write(f"![{task.canonical_name}](images/screen_tasks/{task.canonical_name}.webp)\n")
     source = Path("docs/images/screen_tasks")
     source.mkdir(parents=True, exist_ok=True)
     existing = [x.stem for x in source.glob("*.webp")]
-    removed = [x for x in existing if x not in [task.__class__.__name__ for task in tasks]]
+    removed = [x for x in existing if x not in [task.canonical_name for task in tasks]]
     for remove in removed:
         print(f"Removing {remove}.webp")
         (source / f"{remove}.webp").unlink()
-    tasks = [task for task in tasks if task.__class__.__name__ not in existing]
+    tasks = [task for task in tasks if task.canonical_name not in existing]
     for task in track(tasks, description="Converting!"):
-        print(f"Running {task.__class__.__name__}")
+        print(f"Running {task.canonical_name}")
         duration = 0
         images = []
         task.prepare()
@@ -69,7 +71,7 @@ def run_gif():
             if result or duration > 30:
                 break
         images[0].save(
-            source / f"{task.__class__.__name__}.webp",
+            source / f"{task.canonical_name}.webp",
             save_all=True,
             append_images=images[1:],
             duration=(1 / 24) * 1000,
@@ -122,8 +124,8 @@ def generate_pr_preview():
                         obj.should_optimize = False
                     tasks.append(obj())
     for task in track(tasks, description="Converting!"):
-        logger.info("Running {}", task.__class__.__name__)
-        print(f"Running {task.__class__.__name__}")
+        logger.info("Running {}", task.canonical_name)
+        print(f"Running {task.canonical_name}")
         duration = 0
         images = []
         task.prepare()
@@ -144,9 +146,9 @@ def generate_pr_preview():
             duration += 1 / 24
             if result or duration > 30:
                 break
-        logger.info("Saving {}", task.__class__.__name__)
+        logger.info("Saving {}", task.canonical_name)
         images[0].save(
-            source / f"{task.__class__.__name__}.webp",
+            source / f"{task.canonical_name}.webp",
             save_all=True,
             append_images=images[1:],
             duration=(1 / 24) * 1000,
@@ -155,6 +157,45 @@ def generate_pr_preview():
     logger.info("Processed all PR preview tasks")
 
     exit(0)
+
+def upload_histograms(args):
+        import subprocess
+        import tempfile
+        from pathlib import Path
+        import arrow
+        import requests
+
+        directory = "c4_histograms"
+        tarball = "c4_histograms.tar.gz"
+        temp_path = tempfile.gettempdir()
+
+        print(f"Histograms available at {Path(temp_path) / directory}")
+
+        if args.no_upload:
+            print("Skipping histogram upload")
+            return
+
+        proc = subprocess.run(["tar", "-C", temp_path, "-czf", f"{Path(temp_path) / tarball}", directory])
+        if proc.returncode != 0:
+            print(f"Failed to tar histograms directory at {Path(temp_path) / directory}")
+            print(proc.stderr.decode() if proc.stderr is not None else "")
+            print("Unable to compress histograms!")
+            print("Unable to upload histograms!")
+            return
+
+        files = {
+            'reqtype': (None, 'fileupload'),
+            'time': (None, '1h'),
+            'fileToUpload': open(Path(temp_path) / tarball, 'rb'),
+        }
+
+        response = requests.post('https://litterbox.catbox.moe/resources/internals/api.php', files=files)
+
+        if response.ok:
+            print("Successfully uploaded histograms!")
+            print(f"Histograms can be found at: {response.text} as a .tar.gz file.")
+        else:
+            print("Failed to upload histograms: " + str(response))
 
 @logger.catch
 def main(args=None):
@@ -180,7 +221,7 @@ def main(args=None):
             rmtree(source, ignore_errors=True)
             logger.info("GIF folder purged!")
         return run_gif()
-    init_matrix(args.simulator, args.histograms)
+    init_matrix(args.simulator, args.histograms, not args.disable_java, args.starting_task)
     tm = TaskManager()
 
     logger.info("Finishing startup; starting main loop!")
@@ -193,11 +234,14 @@ def main(args=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--simulator", action="store_true")
+    parser.add_argument("--disable-java", action="store_true")
     parser.add_argument("--gif", action="store_true")
     parser.add_argument("--profile", action="store_true")
     parser.add_argument("--histograms", action="store_true")
+    parser.add_argument("--no-upload", action="store_true")
     parser.add_argument("--purge-cache", action="store_true")
     parser.add_argument("--generate-pr-preview", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--starting-task", action="store")
     args = parser.parse_args()
     if args.profile:
         try:
@@ -221,34 +265,9 @@ if __name__ == "__main__":
         try:
             main(args)
         except KeyboardInterrupt:
-            import subprocess
-            import tempfile
-            from pathlib import Path
-            import arrow
-            import requests
+            pass
 
-            directory = "c4_histograms"
-            tarball = "c4_histograms.tar.gz"
-            temp_path = tempfile.gettempdir()
-
-            proc = subprocess.run(["tar", "-C", temp_path, "-czf", f"{Path(temp_path) / tarball}", directory])
-            if proc.returncode != 0:
-                print(f"Failed to tar histograms directory at {Path(temp_path) / directory}")
-                print(proc.stderr.decode() if proc.stderr is not None else "")
-
-            files = {
-                'reqtype': (None, 'fileupload'),
-                'time': (None, '1h'),
-                'fileToUpload': open(Path(temp_path) / tarball, 'rb'),
-            }
-
-            response = requests.post('https://litterbox.catbox.moe/resources/internals/api.php', files=files)
-            
-            if response.ok:
-                print("Successfully uploaded histograms!")
-                print(f"Histograms can be found at: {response.text} as a .tar.gz file.")
-            else:
-                print("Failed to upload histograms: " + str(response))
+        upload_histograms(args)
 
     else:
         main(args)

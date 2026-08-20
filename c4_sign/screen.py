@@ -16,7 +16,7 @@ _canvas = Canvas()
 _low_fps_counter = 0
 
 
-def init_matrix(simulator, make_histograms):
+def init_matrix(simulator, make_histograms, enable_java, start_task):
     global _screen, _screen_manager
     if simulator:
         from c4_sign.lib.screen.simulator import SimulatorScreen
@@ -27,10 +27,15 @@ def init_matrix(simulator, make_histograms):
 
         _screen = MatrixScreen()
 
-    _screen_manager = ScreenManager(make_histograms)
+    _screen_manager = ScreenManager(make_histograms, enable_java)
 
     lm = LoadingManager(_screen)
     _screen_manager.update_tasks(lm)
+
+    if start_task is not None:
+        update_screen()
+        _screen_manager.override_current_task(start_task)
+
 
 
 def screen_active():
@@ -83,8 +88,8 @@ def update_screen():
     _screen.debug_info(
         fps=fps,
         brightness=_screen.brightness,
-        current_task=_screen_manager.current_task.__class__.__name__,
-        tasks=[t.__class__.__name__ for t in _screen_manager.tasks],
+        current_task=_screen_manager.current_task.canonical_name if _screen_manager.current_task is not None else "None",
+        tasks=[t.canonical_name for t in _screen_manager.tasks],
         task_time_elapsed=(
             _screen_manager.current_task.elapsed_time.total_seconds() if _screen_manager.current_task else None
         ),
@@ -95,4 +100,5 @@ def update_screen():
             _screen_manager.current_task.max_run_time.total_seconds() if _screen_manager.current_task else None
         ),
     )
+    _screen.force_next_task(_screen_manager)
     _screen.debug_override(_screen_manager)
