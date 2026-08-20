@@ -106,7 +106,7 @@ class MatrixScreen(ScreenBase):
         if text == self.__cached_text:
             return
         logger.debug("Updating LCD with text: {}", text)
-        self.__lcd.lcd_clear()
+        # self.__lcd.lcd_clear()
         self.__lcd.lcd_display_string(text[:16], 1)
         self.__lcd.lcd_display_string(text[16:], 2)
         self.__cached_text = text
