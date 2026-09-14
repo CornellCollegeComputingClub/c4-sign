@@ -82,8 +82,12 @@ Problems?
 
 Please email us or ask for help in the `#led-sign` channel of our discord server!
 
+## Hardware
+You can find CAD models of the C4 sign in the `./hardware` directory.
+You can also view more information about the physical design including the original Onshape documents [here](./hardware/hardware.md).
+
 ## Updates
 
-Updates happen either:
+The C4 Sign automatically pulls from this repository under the following conditions:
 - Every 24 hours (shortly after midnight)
 - When the script is first launched (after like a reboot)
