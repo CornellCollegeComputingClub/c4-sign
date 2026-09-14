@@ -30,11 +30,11 @@ Files are in `./tablemount`. This directory contains the `.step` and `.3mf` file
 #### Printables
 | Item | Quantity | .step file | .3mf file |
 | :-- | -: | :--: | :--: |
-| Top Claw | 1 | | |
-| Back Foot | 1 | | |
-| Vertical Tee | 1 | | |
-| Front Tee | 1 | | |
-| Front Foot | 2 | | |
+| Top Claw | 1 | `./tablemount/SignTableHolder-BackFootAndClaw.step` | `SignStandClawBackFoot.3mf` |
+| Back Foot | 1 | `./tablemount/SignTableHolder-BackFootAndClaw.step` | `./tablemount/SignStandClawBackFoot.3mf`|
+| Vertical Tee | 1 | `./tablemount/SignTableHolder-Tees.step`| `./tablemount/SignStandTees.3mf`|
+| Front Tee | 1 | `./tablemount/SignTableHolder-Tees.step`| `./tablemount/SignStandTees.3mf`|
+| Front Foot | 2 | `./tablemount/SignTableHolder-FrontFeet.step`| `./tablemount/SignStandFrontFeet.3mf`|
 
 #### Non-printables
 | Item | Quantity | Description |
