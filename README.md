@@ -59,7 +59,7 @@ In order to make a program that runs on the sign, you will have to locally insta
 
 Here's how you can install the C4 Sign software:
 
-1. Make sure you have Python and Git installed. Python 3.9 or above should be good. *If you want to write your program with Java, which is recommended for graphics-intense tasks, make sure to also install Maven.*
+1. Make sure you have [Python](https://www.python.org/downloads/) and [Git](https://git-scm.com/install/) installed. Python 3.9 or above should be good. *If you want to write your program with Java, which is recommended for graphics-intense tasks, make sure to also install [Maven](https://maven.apache.org/).*
 2. Sign into Github and make a fork of this repository.
 3. Navigate to the folder where you would like to download the software, and clone your fork of our git repository!
 `git clone https://github.com/{Your username here}/c4-sign`
@@ -70,7 +70,7 @@ Here's how you can install the C4 Sign software:
 Congrats! You can now run the simulator in **python-only** mode. To do so, run:
 `python3 -m c4_sign --simulator --disable-java` and a new web browser window will appear with the simulator! It may take a while for that to happen as it will download certain resources first.
 
-If you want to work with Java, there are a few more steps.  
+If you want to work with Java, there are a few more steps. Again, make sure [Maven](https://maven.apache.org/) is installed!
   
 7. Run `python3 tools/setup_java_project.py`. This will make sure the necessary Java and Python dependencies are available.  
 8. Run `python3 tools/compile_java_project.py`. This will compile the Java project correctly for the sign software to use it. **You must run this command every time you want to test changes to a Java file.**
