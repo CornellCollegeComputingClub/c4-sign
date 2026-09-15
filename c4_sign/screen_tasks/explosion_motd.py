@@ -11,8 +11,12 @@ from c4_sign.lib.canvas import Canvas
 
 
 class ExplosionMOTD(ScreenTask):
+    canonical_name = "ExplosionMOTD"
     title = "Explosion!"
     artist = "Mac Coleman"
+    description = "Displays an explosion that reveals the C4 logo, and then displays " \
+        "the message of the day with scrolling text. At the end of the task, the " \
+        "explosion plays in reverse."
 
     def __init__(self):
         super().__init__(timedelta(seconds=1), timedelta(hours=1))

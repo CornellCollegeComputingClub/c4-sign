@@ -11,8 +11,10 @@ from c4_sign.lib.assets import file_from_google_drive, video_to_images
 
 
 class BadApple(ScreenTask):
+    canonical_name = "BadApple"
     title = "Bad Apple!!"
     artist = "Luna"
+    description = "Write a description here."
     sections = [
         range(1, 1011),
         range(1011, 2211),

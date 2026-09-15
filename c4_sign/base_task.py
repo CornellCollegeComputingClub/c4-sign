@@ -2,6 +2,7 @@ import shutil
 from datetime import timedelta
 
 import arrow
+import numpy
 from loguru import logger
 
 from c4_sign.consts import FONT_PICO
@@ -72,8 +73,10 @@ class OneTimeTask:
 
 class ScreenTask:
     ignore = False
+    canonical_name = "ScreenTask"
     title = "Unknown"
     artist = "Unknown"
+    description = "The base screentask that all python tasks should inherit."
 
     def __init__(
         self,
@@ -119,11 +122,10 @@ class ScreenTask:
         # if there's nothing needed, why do we need to run?
         return True
 
-    """
-    This method is called when the task is done running.
-    """
-
     def teardown(self, forced=False):
+        """
+            This method is called when the task is done running.
+        """
         # do any cleanup here!
         if self.make_histogram:
             from matplotlib import pyplot as plt
@@ -162,6 +164,7 @@ class ScreenTask:
             now = arrow.now()
             plt.savefig(temp_path / f"{now.year}-{now.month}-{now.day}_{self.title}_histogram.png")
             plt.close()
+            print(f"Written graph for {self.title} by {self.artist}!")
 
         pass
 
@@ -178,11 +181,11 @@ class ScreenTask:
             self.draw_time_samples.append(draw_time.total_seconds() * 1000) # Append draw time in milliseconds
 
         if self.is_over_max_time:
-            logger.warning("Task {} is over max time! Stopping forcefully...", self.__class__.__name__)
+            logger.warning("Task {} is over max time! Stopping forcefully...", self.canonical_name)
             self.teardown(forced=True)
             return True
         if result and self.is_over_suggested_time:
-            logger.info("Task {} is done!", self.__class__.__name__)
+            logger.info("Task {} is done!", self.canonical_name)
             self.teardown()
             return True
         return False
@@ -221,10 +224,32 @@ class ScreenTask:
         # "By: Artist"
         # but since this is a 16x2 screen, we have to truncate (if needed)
         # and pad with spaces!
-        title = self.title.center(16)
-        artist = "By: " + self.artist
-        artist = artist.center(16)
-        return title + artist
+
+        # Let's make the name and author scrollable if they are too long.
+        line1 = ""
+        line2 = ""
+
+        offset = int(self.elapsed_time.total_seconds() / 0.5) # Scroll at two characters per second)
+
+        if len(self.title) <= 16:
+            line1 = self.title.center(16)
+        else:
+            t = self.title + " " * 16
+            o = offset % len(t)
+            line1 = t[o : min(len(t), o + 16)]
+            characters_left = 16-len(line1)
+            line1 += t[:min(characters_left, len(t))]
+
+        if len(self.artist) <= 16-4:
+            line2 = ("By: " + self.artist[0:min(len(self.artist), 16-4)]).center(16)
+        else:
+            a = self.artist + " " * (16-4)
+            o = offset % len(a)
+            n = a[o : min(len(a), o + 16-4)]
+            characters_left = 16-4-len(n)
+            n += a[:min(characters_left, len(a))]
+            line2 = "By: " + n
+        return line1 + line2
 
 
 class OptimScreenTask(ScreenTask):
@@ -241,7 +266,7 @@ class OptimScreenTask(ScreenTask):
         max_run_time=timedelta(seconds=60),
     ):
         super().__init__(suggested_run_time, max_run_time)
-        self.cache_path = cache_path() / "optim" / self.__class__.__name__
+        self.cache_path = cache_path() / "optim" / self.canonical_name
         self.cache_path.mkdir(parents=True, exist_ok=True)
         self.optimize()
 
@@ -250,7 +275,7 @@ class OptimScreenTask(ScreenTask):
         # let's do some optimization!!
         if not self.should_optimize:
             return
-        logger.info(f"Optimizing {self.__class__.__name__}")
+        logger.info(f"Optimizing {self.canonical_name}")
         canvas = Canvas()
         delta_time = timedelta(seconds=1 / 24)
         # call child's prepare method
@@ -274,18 +299,18 @@ class OptimScreenTask(ScreenTask):
         self.teardown()
         self.is_optim = True
         self.being_optimized = False
-        logger.info(f"Optimized {self.__class__.__name__} with {self.max_frames} frames")
+        logger.info(f"Optimized {self.canonical_name} with {self.max_frames} frames")
 
     def unoptimize(self):
         # remove all files in the cache path.
-        logger.debug(f"Unoptimizing {self.__class__.__name__}")
+        logger.debug(f"Unoptimizing {self.canonical_name}")
         self.max_frames = 0
         self.is_optim = False
         shutil.rmtree(self.cache_path)
 
     def prepare(self):
         if self.being_optimized:  # don't run if we're optimizing
-            logger.info("{} is being optimized! Skipping execution!", self.__class__.__name__)
+            logger.info("{} is being optimized! Skipping execution!", self.canonical_name)
             return False
         self.current_frame = 0
         return super().prepare()
@@ -299,3 +324,36 @@ class OptimScreenTask(ScreenTask):
                 return True
             return False
         return super().draw(canvas, delta_time)
+
+class JavaTask(ScreenTask):
+    __java_task_instance = None
+
+    canonical_name = "JavaTask"
+    description = "A wrapper task used to contain tasks written in Java."
+
+    def __init__(self, java_task):
+        super().__init__()
+        self.__java_task_instance = java_task
+        self.canonical_name = self.__java_task_instance.getCanonicalName();
+        self.title = self.__java_task_instance.getTitle();
+        self.artist = self.__java_task_instance.getArtist();
+        self.description = self.__java_task_instance.getDescription();
+
+    def prepare(self):
+        self.__java_task_instance.prepare()
+        return super().prepare()
+
+    def teardown(self, forced=False):
+        self.__java_task_instance.teardown(forced)
+        super().teardown(forced)
+
+    def draw_frame(self, canvas: Canvas, delta_time: timedelta) -> bool:
+        taskresult = self.__java_task_instance.draw(delta_time.total_seconds())
+        status = taskresult.isFinished()
+
+        
+        canvas.data = numpy.array(bytearray(taskresult.getCanvas())).reshape(32, 32, 3)[:, :, ::-1]
+        return status
+    
+    def get_lcd_text(self) -> str:
+        return self.__java_task_instance.getLcdText()

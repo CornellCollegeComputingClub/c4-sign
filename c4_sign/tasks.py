@@ -30,7 +30,7 @@ class TaskManager:
         self.add_task(UpdateTask())
 
     def add_task(self, task):
-        logger.debug("Adding task: {}", task.__class__.__name__)
+        logger.debug("Adding task: {}", task.canonical_name)
         self.tasks.append(task)
 
     def check_and_run_tasks(self):

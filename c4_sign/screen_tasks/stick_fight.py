@@ -7,8 +7,10 @@ from PIL import Image
 import numpy
 
 class StickFight(ScreenTask):
+    canonical_name = "StickFight"
     title = "Stick Fight"
     artist = "Aaron Standefer"
+    description = "A stick fight animation from [youtube](https://www.youtube.com/watch?v=p4F61wWMgLY)."
     
     def __init__(self):
         super().__init__(timedelta(seconds=1), timedelta(hours=1))

@@ -7,8 +7,10 @@ from c4_sign.lib import graphics
 
 
 class Uptime(ScreenTask):
+    canonical_name = "Uptime"
     title = "Uptime"
     artist = "Luna"
+    description = "Displays the uptime of the sign."
     ignore = True
 
 
